@@ -81,3 +81,8 @@
     .drag-row:active { cursor: grabbing; }
     .drag-handle { width: 16px; height: 16px; display:inline-block; margin-right:8px; background: linear-gradient(90deg, var(--drag) 33%, transparent 33%) 0 0/6px 2px repeat-y; border-radius:3px; }
     .drag-over { outline: 2px dashed var(--accent-2); outline-offset: -2px; }
+
+    #esiChart {
+      width: 100%;
+      height: 200px;
+    }

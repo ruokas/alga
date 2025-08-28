@@ -67,6 +67,28 @@
       loadRateTemplate: document.getElementById('loadRateTemplate')
     };
 
+    let esiChart;
+
+    function initChart(){
+      const ctx = document.getElementById('esiChart').getContext('2d');
+      esiChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['ESI-1','ESI-2','ESI-3','ESI-4','ESI-5'],
+          datasets: [{
+            label: 'Count',
+            data: [0,0,0,0,0],
+            backgroundColor: '#60a5fa'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, ticks: { precision:0 } } }
+        }
+      });
+    }
+
     // --- Pagalbinės ---
     function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
     function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
@@ -241,6 +263,11 @@
       els.kAssistCell.textContent = K.toFixed(2);
       els.finalAssistCell.textContent = money(finalAssist);
 
+      if (esiChart){
+        esiChart.data.datasets[0].data = [n1, n2, n3, n4, n5];
+        esiChart.update();
+      }
+
       return {
         date: els.date.value || null,
         shift: els.shift.value,
@@ -333,5 +360,6 @@ document.getElementById('downloadCsv').addEventListener('click', (e)=>{ e.preven
 
     // Init
     renderZoneSelect(false);
+    initChart();
     resetAll();
 
