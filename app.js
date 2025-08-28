@@ -53,9 +53,10 @@
       baseAssistCell: document.getElementById('baseAssistCell'),
       kAssistCell: document.getElementById('kAssistCell'),
       finalAssistCell: document.getElementById('finalAssistCell'),
-      reset: document.getElementById('reset'),
-      copy: document.getElementById('copy'),
-      manageZones: document.getElementById('manageZones'),
+    reset: document.getElementById('reset'),
+    copy: document.getElementById('copy'),
+    downloadCsv: document.getElementById('downloadCsv'),
+    manageZones: document.getElementById('manageZones'),
       zoneModal: document.getElementById('zoneModal'),
       zoneTbody: document.getElementById('zoneTbody'),
       addZone: document.getElementById('addZone'),
@@ -259,7 +260,7 @@
       };
     }
 
-    function resetAll(){
+function resetAll(){
       els.date.value = ''; els.shift.value = 'D';
       if (!ZONES.length) ZONES = clone(DEFAULT_ZONES);
       renderZoneSelect(false);
@@ -268,14 +269,56 @@
       // bandome užkrauti tarifų šabloną
       try { const j = localStorage.getItem(LS_RATE_KEY); if (j){ const t = JSON.parse(j); els.baseRateDoc.value = t.doc ?? 0; els.baseRateNurse.value = t.nurse ?? 0; els.baseRateAssist.value = t.assist ?? 0; } else { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; } } catch { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; }
       compute();
-    }
+}
 
-    // --- Įvykiai ---
+function downloadCsv(){
+  const data = compute();
+  const rows = [
+    ['date', data.date],
+    ['shift', data.shift],
+    ['zone', data.zone],
+    ['zone_label', data.zone_label],
+    ['capacity', data.capacity],
+    ['N', data.N],
+    ['ESI1', data.ESI.n1],
+    ['ESI2', data.ESI.n2],
+    ['ESI3', data.ESI.n3],
+    ['ESI4', data.ESI.n4],
+    ['ESI5', data.ESI.n5],
+    ['ratio', data.ratio],
+    ['S', data.S],
+    ['V_bonus', data.V_bonus],
+    ['A_bonus', data.A_bonus],
+    ['K_max', data.K_max],
+    ['K_zona', data.K_zona],
+    ['base_rate_doctor', data.base_rates.doctor],
+    ['base_rate_nurse', data.base_rates.nurse],
+    ['base_rate_assistant', data.base_rates.assistant],
+    ['final_rate_doctor', data.final_rates.doctor],
+    ['final_rate_nurse', data.final_rates.nurse],
+    ['final_rate_assistant', data.final_rates.assistant]
+  ];
+  const headers = rows.map(r => r[0]).join(',');
+  const values = rows.map(r => r[1]).join(',');
+  const csv = `${headers}\n${values}`;
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'salary_calc.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// --- Įvykiai ---
     ['input','change'].forEach(evt => { ['date','shift','zone','capacity','N','kmax','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener(evt, compute); }); });
     document.getElementById('shift').addEventListener('change', setDefaultCapacity);
     document.getElementById('zone').addEventListener('change', setDefaultCapacity);
     document.getElementById('reset').addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
-    document.getElementById('copy').addEventListener('click', (e)=>{ e.preventDefault(); const payload = compute(); const txt = JSON.stringify(payload, null, 2); navigator.clipboard.writeText(txt).then(()=>{ document.getElementById('copy').textContent = 'Nukopijuota ✓'; setTimeout(()=> document.getElementById('copy').textContent = 'Kopijuoti rezultatą (JSON)', 1400); }).catch(()=>{ alert('Nepavyko nukopijuoti. Pažymėkite ir kopijuokite rankiniu būdu.'); }); });
+document.getElementById('copy').addEventListener('click', (e)=>{ e.preventDefault(); const payload = compute(); const txt = JSON.stringify(payload, null, 2); navigator.clipboard.writeText(txt).then(()=>{ document.getElementById('copy').textContent = 'Nukopijuota ✓'; setTimeout(()=> document.getElementById('copy').textContent = 'Kopijuoti rezultatą (JSON)', 1400); }).catch(()=>{ alert('Nepavyko nukopijuoti. Pažymėkite ir kopijuokite rankiniu būdu.'); }); });
+document.getElementById('downloadCsv').addEventListener('click', (e)=>{ e.preventDefault(); downloadCsv(); });
 
     // Zonų modalas
     els.manageZones.addEventListener('click', openZoneModal);
