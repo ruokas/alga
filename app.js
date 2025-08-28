@@ -29,6 +29,8 @@
       capacity: document.getElementById('capacity'),
       N: document.getElementById('N'),
       kmax: document.getElementById('kmax'),
+      shiftHours: document.getElementById('shiftHours'),
+      monthHours: document.getElementById('monthHours'),
       baseRateDoc: document.getElementById('baseRateDoc'),
       baseRateNurse: document.getElementById('baseRateNurse'),
       baseRateAssist: document.getElementById('baseRateAssist'),
@@ -47,12 +49,18 @@
       baseDocCell: document.getElementById('baseDocCell'),
       kDocCell: document.getElementById('kDocCell'),
       finalDocCell: document.getElementById('finalDocCell'),
+      shiftDocCell: document.getElementById('shiftDocCell'),
+      monthDocCell: document.getElementById('monthDocCell'),
       baseNurseCell: document.getElementById('baseNurseCell'),
       kNurseCell: document.getElementById('kNurseCell'),
       finalNurseCell: document.getElementById('finalNurseCell'),
+      shiftNurseCell: document.getElementById('shiftNurseCell'),
+      monthNurseCell: document.getElementById('monthNurseCell'),
       baseAssistCell: document.getElementById('baseAssistCell'),
       kAssistCell: document.getElementById('kAssistCell'),
       finalAssistCell: document.getElementById('finalAssistCell'),
+      shiftAssistCell: document.getElementById('shiftAssistCell'),
+      monthAssistCell: document.getElementById('monthAssistCell'),
     reset: document.getElementById('reset'),
     copy: document.getElementById('copy'),
     downloadCsv: document.getElementById('downloadCsv'),
@@ -203,6 +211,8 @@
       const baseDoc = Math.max(0, toNum(els.baseRateDoc.value));
       const baseNurse = Math.max(0, toNum(els.baseRateNurse.value));
       const baseAssist = Math.max(0, toNum(els.baseRateAssist.value));
+      const shiftH = Math.max(0, toNum(els.shiftHours.value));
+      const monthH = Math.max(0, toNum(els.monthHours.value));
       let n1 = Math.max(0, toNum(els.esi1.value));
       let n2 = Math.max(0, toNum(els.esi2.value));
       let n3 = Math.max(0, toNum(els.esi3.value));
@@ -223,6 +233,14 @@
       const finalNurse = baseNurse * K;
       const finalAssist = baseAssist * K;
 
+      const shiftDoc = finalDoc * shiftH;
+      const shiftNurse = finalNurse * shiftH;
+      const shiftAssist = finalAssist * shiftH;
+
+      const monthDoc = finalDoc * monthH;
+      const monthNurse = finalNurse * monthH;
+      const monthAssist = finalAssist * monthH;
+
       els.ratio.textContent = fmt(ratio);
       els.sShare.textContent = fmt(S);
       els.vBonus.textContent = `+${V.toFixed(2)}`;
@@ -233,14 +251,20 @@
       els.baseDocCell.textContent = money(baseDoc);
       els.kDocCell.textContent = K.toFixed(2);
       els.finalDocCell.textContent = money(finalDoc);
+      els.shiftDocCell.textContent = money(shiftDoc);
+      els.monthDocCell.textContent = money(monthDoc);
 
       els.baseNurseCell.textContent = money(baseNurse);
       els.kNurseCell.textContent = K.toFixed(2);
       els.finalNurseCell.textContent = money(finalNurse);
+      els.shiftNurseCell.textContent = money(shiftNurse);
+      els.monthNurseCell.textContent = money(monthNurse);
 
       els.baseAssistCell.textContent = money(baseAssist);
       els.kAssistCell.textContent = K.toFixed(2);
       els.finalAssistCell.textContent = money(finalAssist);
+      els.shiftAssistCell.textContent = money(shiftAssist);
+      els.monthAssistCell.textContent = money(monthAssist);
 
       return {
         date: els.date.value || null,
@@ -256,8 +280,12 @@
         A_bonus: Number(A.toFixed(2)),
         K_max: Number(kMax.toFixed(2)),
         K_zona: Number(K.toFixed(2)),
+        shift_hours: shiftH,
+        month_hours: monthH,
         base_rates: { doctor: Number(baseDoc.toFixed(2)), nurse: Number(baseNurse.toFixed(2)), assistant: Number(baseAssist.toFixed(2)) },
-        final_rates: { doctor: Number(finalDoc.toFixed(2)), nurse: Number(finalNurse.toFixed(2)), assistant: Number(finalAssist.toFixed(2)) }
+        final_rates: { doctor: Number(finalDoc.toFixed(2)), nurse: Number(finalNurse.toFixed(2)), assistant: Number(finalAssist.toFixed(2)) },
+        shift_salary: { doctor: Number(shiftDoc.toFixed(2)), nurse: Number(shiftNurse.toFixed(2)), assistant: Number(shiftAssist.toFixed(2)) },
+        month_salary: { doctor: Number(monthDoc.toFixed(2)), nurse: Number(monthNurse.toFixed(2)), assistant: Number(monthAssist.toFixed(2)) }
       };
     }
 
@@ -266,6 +294,7 @@ function resetAll(){
       if (!ZONES.length) ZONES = clone(DEFAULT_ZONES);
       renderZoneSelect(false);
       els.N.value = 0; els.kmax.value = 1.30; els.linkN.checked = true;
+      els.shiftHours.value = 12; els.monthHours.value = 0;
       els.esi1.value = 0; els.esi2.value = 0; els.esi3.value = 0; els.esi4.value = 0; els.esi5.value = 0;
       // bandome užkrauti tarifų šabloną
       try { const j = localStorage.getItem(LS_RATE_KEY); if (j){ const t = JSON.parse(j); els.baseRateDoc.value = t.doc ?? 0; els.baseRateNurse.value = t.nurse ?? 0; els.baseRateAssist.value = t.assist ?? 0; } else { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; } } catch { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; }
@@ -292,12 +321,20 @@ function downloadCsv(){
     ['A_bonus', data.A_bonus],
     ['K_max', data.K_max],
     ['K_zona', data.K_zona],
+    ['shift_hours', data.shift_hours],
+    ['month_hours', data.month_hours],
     ['base_rate_doctor', data.base_rates.doctor],
     ['base_rate_nurse', data.base_rates.nurse],
     ['base_rate_assistant', data.base_rates.assistant],
     ['final_rate_doctor', data.final_rates.doctor],
     ['final_rate_nurse', data.final_rates.nurse],
-    ['final_rate_assistant', data.final_rates.assistant]
+    ['final_rate_assistant', data.final_rates.assistant],
+    ['shift_salary_doctor', data.shift_salary.doctor],
+    ['shift_salary_nurse', data.shift_salary.nurse],
+    ['shift_salary_assistant', data.shift_salary.assistant],
+    ['month_salary_doctor', data.month_salary.doctor],
+    ['month_salary_nurse', data.month_salary.nurse],
+    ['month_salary_assistant', data.month_salary.assistant]
   ];
   const headers = rows.map(r => r[0]).join(',');
   const values = rows.map(r => r[1]).join(',');
@@ -314,7 +351,7 @@ function downloadCsv(){
 }
 
 // --- Įvykiai ---
-    ['input','change'].forEach(evt => { ['date','shift','zone','capacity','N','kmax','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener(evt, compute); }); });
+    ['input','change'].forEach(evt => { ['date','shift','zone','capacity','N','kmax','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener(evt, compute); }); });
     document.getElementById('shift').addEventListener('change', setDefaultCapacity);
     document.getElementById('zone').addEventListener('change', setDefaultCapacity);
     document.getElementById('reset').addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
