@@ -13,9 +13,8 @@ This project is a web-based tool for calculating salary rates in an emergency de
 To deploy the calculator online using GitHub Pages:
 
 1. Push the repository to GitHub.
-2. Enable GitHub Pages in the repository settings, using the default branch as the source.
-3. Access the live page at:
-   
-   `https://<your-github-username>.github.io/Salary-calculator/`
+2. On GitHub, open **Settings → Pages**. Under **Build and deployment**, choose *Deploy from a branch*, then select the `main` branch and the `/` (root) folder.
+3. (Optional) The workflow in `.github/workflows/pages.yml` will publish the site automatically on each push to `main`.
+4. Access the live page at `https://<your-github-username>.github.io/Salary-calculator/`.
 
 Replace `<your-github-username>` with your GitHub username.
