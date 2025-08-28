@@ -5,21 +5,15 @@
       document.documentElement.classList.add('light-theme');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const toggle = document.getElementById('themeToggle');
-      if (toggle) {
-        toggle.checked = document.documentElement.classList.contains('light-theme');
-        toggle.addEventListener('change', (e) => {
-          if (e.target.checked) {
-            document.documentElement.classList.add('light-theme');
-            localStorage.setItem(THEME_KEY, 'light');
-          } else {
-            document.documentElement.classList.remove('light-theme');
-            localStorage.setItem(THEME_KEY, 'dark');
-          }
-        });
-      }
-    });
+const toggle = document.getElementById('themeToggle');
+if (toggle) {
+  toggle.checked = document.documentElement.classList.contains('light-theme');
+  toggle.addEventListener('change', () => {
+    const isLight = toggle.checked;
+    document.documentElement.classList.toggle('light-theme', isLight);
+    localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+  });
+}
 
     // --- Zonų duomenys ---
     const DEFAULT_ZONES = [
