@@ -1,3 +1,26 @@
+    const THEME_KEY = 'ED_THEME';
+
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme === 'light') {
+      document.documentElement.classList.add('light-theme');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('themeToggle');
+      if (toggle) {
+        toggle.checked = document.documentElement.classList.contains('light-theme');
+        toggle.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            document.documentElement.classList.add('light-theme');
+            localStorage.setItem(THEME_KEY, 'light');
+          } else {
+            document.documentElement.classList.remove('light-theme');
+            localStorage.setItem(THEME_KEY, 'dark');
+          }
+        });
+      }
+    });
+
     // --- Zonų duomenys ---
     const DEFAULT_ZONES = [
       { id: 'RED',   name: 'Raudona (kritinė)',       group: 'Suaugusiųjų', cap: { D: 16, N: 12 } },
