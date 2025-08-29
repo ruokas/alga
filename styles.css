@@ -36,7 +36,8 @@
       color: var(--text);
     }
     .container { max-width: 1140px; margin: 24px auto; padding: 16px; }
-    .header { display: flex; justify-content: flex-end; }
+    .header { display: flex; justify-content: flex-end; margin: 8px auto; padding: 8px 16px; }
+    .header + .container { margin-top: 0; }
     .title { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .badge { padding: 4px 10px; border-radius: 999px; background: var(--panel); color: var(--muted); font-size: 12px; }
     .grid { display: grid; gap: 14px; }
