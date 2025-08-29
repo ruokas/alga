@@ -113,7 +113,8 @@ if (toggle) {
           rotation: -90,
           circumference: 180,
           cutout: '70%',
-          plugins: { legend: { display: false }, tooltip: { enabled: false } }
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          maintainAspectRatio: false
         }
       });
     }
@@ -126,7 +127,8 @@ if (toggle) {
         },
         options: {
           plugins: { legend: { display: false } },
-          scales: { x: { display: false }, y: { display: false } }
+          scales: { x: { display: false }, y: { display: false } },
+          maintainAspectRatio: false
         }
       });
     }
