@@ -10,6 +10,15 @@ You can also enter shift length and total monthly hours to see estimated earning
 2. Open `index.html` in a modern web browser.
 3. Fill in the form to see calculated coefficients and final rates.
 
+## Testing
+
+Install dependencies and run the Jest test suite:
+
+```bash
+npm install
+npm test
+```
+
 ## GitHub Pages
 
 To deploy the calculator online using GitHub Pages:

@@ -15,25 +15,6 @@ if (toggle) {
   });
 }
 
-// --- Bonus thresholds ---
-// These tables map a measured value to a bonus multiplier.
-// Edit the `limit` (inclusive upper bound) or `value` as needed.
-const THRESHOLDS = {
-  // Occupancy ratio (N/C) → V bonus
-  V_BONUS: [
-    { limit: 0.80, value: 0.00 },
-    { limit: 1.00, value: 0.05 },
-    { limit: 1.25, value: 0.10 },
-    { limit: Infinity, value: 0.15 },
-  ],
-  // High-acuity share (ESI1+ESI2)/N → A bonus
-  A_BONUS: [
-    { limit: 0.10, value: 0.00 },
-    { limit: 0.20, value: 0.05 },
-    { limit: 0.30, value: 0.10 },
-    { limit: Infinity, value: 0.15 },
-  ],
-};
 
     // --- Zonų duomenys ---
     const DEFAULT_ZONES = [
@@ -177,13 +158,6 @@ const THRESHOLDS = {
     function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
     function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
     function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${fmt(n)}`; } }
-    // Returns bonus value for given metric using threshold table
-    function getBonus(metric, table){
-      for (const {limit, value} of table){
-        if (metric <= limit) return value;
-      }
-      return 0;
-    }
 
     // Grouped select render
     function renderZoneSelect(preserve){
@@ -326,34 +300,31 @@ const THRESHOLDS = {
       let N = Math.max(0, toNum(els.N.value));
       if (els.linkN.checked){ N = n1 + n2 + n3 + n4 + n5; els.N.value = N; els.N.disabled = true; } else els.N.disabled = false;
 
-      let ratio = 0; if (C > 0) ratio = N / C;
-      const V = getBonus(ratio, THRESHOLDS.V_BONUS);
+      const data = computeCore.compute({
+        C,
+        kMax,
+        baseDoc,
+        baseNurse,
+        baseAssist,
+        shiftH,
+        monthH,
+        n1,
+        n2,
+        n3,
+        n4,
+        n5,
+        N,
+      });
 
-      const high = n1 + n2; const S = N > 0 ? high / N : 0;
-      const A = getBonus(S, THRESHOLDS.A_BONUS);
-
-      const K = Math.min(1 + V + A, kMax);
-      const finalDoc = baseDoc * K;
-      const finalNurse = baseNurse * K;
-      const finalAssist = baseAssist * K;
-
-      const shiftDoc = finalDoc * shiftH;
-      const shiftNurse = finalNurse * shiftH;
-      const shiftAssist = finalAssist * shiftH;
-
-      const monthDoc = finalDoc * monthH;
-      const monthNurse = finalNurse * monthH;
-      const monthAssist = finalAssist * monthH;
-
-      els.ratio.textContent = fmt(ratio);
-      els.sShare.textContent = fmt(S);
-      els.vBonus.textContent = `+${V.toFixed(2)}`;
-      els.aBonus.textContent = `+${A.toFixed(2)}`;
-      els.kMaxCell.textContent = kMax.toFixed(2);
-      els.kZona.textContent = K.toFixed(2);
+      els.ratio.textContent = fmt(data.ratio);
+      els.sShare.textContent = fmt(data.S);
+      els.vBonus.textContent = `+${data.V_bonus.toFixed(2)}`;
+      els.aBonus.textContent = `+${data.A_bonus.toFixed(2)}`;
+      els.kMaxCell.textContent = data.K_max.toFixed(2);
+      els.kZona.textContent = data.K_zona.toFixed(2);
 
       if (charts.ratio) {
-        charts.ratio.data.datasets[0].data = [Math.min(N, C), Math.max(C - Math.min(N, C), 0)];
+        charts.ratio.data.datasets[0].data = [Math.min(data.N, C), Math.max(C - Math.min(data.N, C), 0)];
         charts.ratio.update();
       }
       if (charts.s) {
@@ -361,23 +332,23 @@ const THRESHOLDS = {
         charts.s.update();
       }
 
-      els.baseDocCell.textContent = money(baseDoc);
-      els.kDocCell.textContent = K.toFixed(2);
-      els.finalDocCell.textContent = money(finalDoc);
-      els.shiftDocCell.textContent = money(shiftDoc);
-      els.monthDocCell.textContent = money(monthDoc);
+      els.baseDocCell.textContent = money(data.base_rates.doctor);
+      els.kDocCell.textContent = data.K_zona.toFixed(2);
+      els.finalDocCell.textContent = money(data.final_rates.doctor);
+      els.shiftDocCell.textContent = money(data.shift_salary.doctor);
+      els.monthDocCell.textContent = money(data.month_salary.doctor);
 
-      els.baseNurseCell.textContent = money(baseNurse);
-      els.kNurseCell.textContent = K.toFixed(2);
-      els.finalNurseCell.textContent = money(finalNurse);
-      els.shiftNurseCell.textContent = money(shiftNurse);
-      els.monthNurseCell.textContent = money(monthNurse);
+      els.baseNurseCell.textContent = money(data.base_rates.nurse);
+      els.kNurseCell.textContent = data.K_zona.toFixed(2);
+      els.finalNurseCell.textContent = money(data.final_rates.nurse);
+      els.shiftNurseCell.textContent = money(data.shift_salary.nurse);
+      els.monthNurseCell.textContent = money(data.month_salary.nurse);
 
-      els.baseAssistCell.textContent = money(baseAssist);
-      els.kAssistCell.textContent = K.toFixed(2);
-      els.finalAssistCell.textContent = money(finalAssist);
-      els.shiftAssistCell.textContent = money(shiftAssist);
-      els.monthAssistCell.textContent = money(monthAssist);
+      els.baseAssistCell.textContent = money(data.base_rates.assistant);
+      els.kAssistCell.textContent = data.K_zona.toFixed(2);
+      els.finalAssistCell.textContent = money(data.final_rates.assistant);
+      els.shiftAssistCell.textContent = money(data.shift_salary.assistant);
+      els.monthAssistCell.textContent = money(data.month_salary.assistant);
 
       return {
         date: els.date.value || null,
@@ -385,20 +356,7 @@ const THRESHOLDS = {
         zone: els.zone.value,
         zone_label: (ZONES.find(z=>z.id===els.zone.value)?.name) || els.zone.value,
         capacity: C,
-        N,
-        ESI: { n1, n2, n3, n4, n5 },
-        ratio: Number(fmt(ratio)),
-        S: Number(fmt(S)),
-        V_bonus: Number(V.toFixed(2)),
-        A_bonus: Number(A.toFixed(2)),
-        K_max: Number(kMax.toFixed(2)),
-        K_zona: Number(K.toFixed(2)),
-        shift_hours: shiftH,
-        month_hours: monthH,
-        base_rates: { doctor: Number(baseDoc.toFixed(2)), nurse: Number(baseNurse.toFixed(2)), assistant: Number(baseAssist.toFixed(2)) },
-        final_rates: { doctor: Number(finalDoc.toFixed(2)), nurse: Number(finalNurse.toFixed(2)), assistant: Number(finalAssist.toFixed(2)) },
-        shift_salary: { doctor: Number(shiftDoc.toFixed(2)), nurse: Number(shiftNurse.toFixed(2)), assistant: Number(shiftAssist.toFixed(2)) },
-        month_salary: { doctor: Number(monthDoc.toFixed(2)), nurse: Number(monthNurse.toFixed(2)), assistant: Number(monthAssist.toFixed(2)) }
+        ...data,
       };
     }
 
