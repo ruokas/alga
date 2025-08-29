@@ -53,8 +53,27 @@ const THRESHOLDS = {
     function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
     function sanitizeId(txt){ const s = (txt||'').toString().toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_|_$/g,''); return s || 'ZONE_' + Math.random().toString(36).slice(2,6).toUpperCase(); }
 
-    function loadZones(){ try { const j = localStorage.getItem(LS_KEY); if (j){ const arr = JSON.parse(j); if (Array.isArray(arr)) return arr; } } catch {} return clone(DEFAULT_ZONES); }
-    function saveZones(zs){ try { localStorage.setItem(LS_KEY, JSON.stringify(zs)); } catch {} }
+    function loadZones(){
+      try {
+        const j = localStorage.getItem(LS_KEY);
+        if (j){
+          const arr = JSON.parse(j);
+          if (Array.isArray(arr)) return arr;
+        }
+      } catch (err) {
+        console.error('Failed to load zones from storage', err);
+        alert('Nepavyko įkelti zonų. Patikrinkite naršyklės nustatymus (pvz., privatumo režimą ar slapukų blokavimą).');
+      }
+      return clone(DEFAULT_ZONES);
+    }
+    function saveZones(zs){
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify(zs));
+      } catch (err) {
+        console.error('Failed to save zones to storage', err);
+        alert('Nepavyko išsaugoti zonų. Patikrinkite naršyklės nustatymus (pvz., privatumo režimą ar slapukų blokavimą).');
+      }
+    }
 
     let ZONES = loadZones();
 
