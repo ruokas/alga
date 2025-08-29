@@ -59,6 +59,8 @@ if (toggle) {
       esi5: document.getElementById('esi5'),
       ratio: document.getElementById('ratio'),
       sShare: document.getElementById('sShare'),
+      ratioCanvas: document.getElementById('ratioChart'),
+      sCanvas: document.getElementById('sChart'),
       vBonus: document.getElementById('vBonus'),
       aBonus: document.getElementById('aBonus'),
       kMaxCell: document.getElementById('kMaxCell'),
@@ -91,6 +93,43 @@ if (toggle) {
       saveRateTemplate: document.getElementById('saveRateTemplate'),
       loadRateTemplate: document.getElementById('loadRateTemplate')
     };
+
+    const style = getComputedStyle(document.documentElement);
+    const accent = style.getPropertyValue('--accent').trim();
+    const borderColor = style.getPropertyValue('--border').trim();
+    const danger = style.getPropertyValue('--danger').trim();
+    const accent2 = style.getPropertyValue('--accent-2').trim();
+    const muted = style.getPropertyValue('--muted').trim();
+
+    const charts = {};
+    if (els.ratioCanvas) {
+      charts.ratio = new Chart(els.ratioCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['N', 'Likutis'],
+          datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
+        },
+        options: {
+          rotation: -90,
+          circumference: 180,
+          cutout: '70%',
+          plugins: { legend: { display: false }, tooltip: { enabled: false } }
+        }
+      });
+    }
+    if (els.sCanvas) {
+      charts.s = new Chart(els.sCanvas, {
+        type: 'bar',
+        data: {
+          labels: ['ESI1', 'ESI2', 'ESI3', 'ESI4', 'ESI5'],
+          datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: [danger, accent2, muted, muted, muted] }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: { x: { display: false }, y: { display: false } }
+        }
+      });
+    }
 
 
     // --- Pagalbinės ---
@@ -264,6 +303,15 @@ if (toggle) {
       els.aBonus.textContent = `+${A.toFixed(2)}`;
       els.kMaxCell.textContent = kMax.toFixed(2);
       els.kZona.textContent = K.toFixed(2);
+
+      if (charts.ratio) {
+        charts.ratio.data.datasets[0].data = [Math.min(N, C), Math.max(C - Math.min(N, C), 0)];
+        charts.ratio.update();
+      }
+      if (charts.s) {
+        charts.s.data.datasets[0].data = [n1, n2, n3, n4, n5];
+        charts.s.update();
+      }
 
       els.baseDocCell.textContent = money(baseDoc);
       els.kDocCell.textContent = K.toFixed(2);
