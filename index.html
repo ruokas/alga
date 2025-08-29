@@ -37,7 +37,7 @@
         <div class="row">
           <div>
             <label for="zone">Zona</label>
-            <div class="row" style="grid-template-columns: 1fr auto; gap:8px;">
+            <div class="row zone-row">
               <select id="zone"></select>
               <button id="manageZones" type="button">Tvarkyti zonas</button>
             </div>
@@ -96,7 +96,7 @@
           </div>
         </div>
 
-        <div style="margin:10px 0 6px;">
+        <div class="switch-block">
           <label class="switch">
             <input id="linkN" type="checkbox" checked />
             <span>Naudoti N = ESI1+ESI2+ESI3+ESI4+ESI5</span>
@@ -189,7 +189,7 @@
           </tbody>
         </table>
 
-        <h2 style="margin-top:14px;">Tarifai pagal rolę</h2>
+        <h2 class="role-heading">Tarifai pagal rolę</h2>
         <table class="table">
           <thead>
             <tr><th>Rolė</th><th>Bazė (€/val.)</th><th>Koef. K<sub>zona</sub></th><th>Galutinis (€/val.)</th><th>Pam. alga (€/pam.)</th><th>Mėn. alga (€/mėn.)</th></tr>
@@ -213,23 +213,23 @@
     <div class="dialog">
       <h3>Zonų tvarkymas</h3>
       <div class="help">Pridėkite, redaguokite, <strong>rikiuokite (drag&drop)</strong> ir grupuokite zonas. Pakeitimai saugomi šiame įrenginyje (<em>localStorage</em>).</div>
-      <div class="toolbar" style="margin:10px 0;">
+      <div class="toolbar">
         <button id="addZone" class="icon-btn">+ Pridėti zoną</button>
         <div class="spacer"></div>
         <button id="defaultsZones" class="warn">Numatytosios zonos</button>
         <button id="closeZoneModal">Uždaryti</button>
         <button id="saveZonesBtn" class="primary">Išsaugoti</button>
       </div>
-      <table class="table" style="margin-top:6px;">
+      <table class="table modal-table">
         <thead>
           <tr>
-            <th style="width:4%"></th>
-            <th style="width:28%">Pavadinimas</th>
-            <th style="width:14%">Kodas</th>
-            <th style="width:14%">Grupė</th>
-            <th style="width:14%">Talpa D</th>
-            <th style="width:14%">Talpa N</th>
-            <th style="width:12%">Šalinti</th>
+            <th class="w-4"></th>
+            <th class="w-28">Pavadinimas</th>
+            <th class="w-14">Kodas</th>
+            <th class="w-14">Grupė</th>
+            <th class="w-14">Talpa D</th>
+            <th class="w-14">Talpa N</th>
+            <th class="w-12">Šalinti</th>
           </tr>
         </thead>
         <tbody id="zoneTbody"></tbody>
