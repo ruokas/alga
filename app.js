@@ -15,6 +15,26 @@ if (toggle) {
   });
 }
 
+// --- Bonus thresholds ---
+// These tables map a measured value to a bonus multiplier.
+// Edit the `limit` (inclusive upper bound) or `value` as needed.
+const THRESHOLDS = {
+  // Occupancy ratio (N/C) → V bonus
+  V_BONUS: [
+    { limit: 0.80, value: 0.00 },
+    { limit: 1.00, value: 0.05 },
+    { limit: 1.25, value: 0.10 },
+    { limit: Infinity, value: 0.15 },
+  ],
+  // High-acuity share (ESI1+ESI2)/N → A bonus
+  A_BONUS: [
+    { limit: 0.10, value: 0.00 },
+    { limit: 0.20, value: 0.05 },
+    { limit: 0.30, value: 0.10 },
+    { limit: Infinity, value: 0.15 },
+  ],
+};
+
     // --- Zonų duomenys ---
     const DEFAULT_ZONES = [
       { id: 'RED',   name: 'Raudona (kritinė)',       group: 'Suaugusiųjų', cap: { D: 16, N: 12 } },
@@ -138,6 +158,13 @@ if (toggle) {
     function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
     function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
     function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${fmt(n)}`; } }
+    // Returns bonus value for given metric using threshold table
+    function getBonus(metric, table){
+      for (const {limit, value} of table){
+        if (metric <= limit) return value;
+      }
+      return 0;
+    }
 
     // Grouped select render
     function renderZoneSelect(preserve){
@@ -281,10 +308,10 @@ if (toggle) {
       if (els.linkN.checked){ N = n1 + n2 + n3 + n4 + n5; els.N.value = N; els.N.disabled = true; } else els.N.disabled = false;
 
       let ratio = 0; if (C > 0) ratio = N / C;
-      let V = 0; if (ratio <= 0.8) V = 0; else if (ratio <= 1.0) V = 0.05; else if (ratio <= 1.25) V = 0.10; else V = 0.15;
+      const V = getBonus(ratio, THRESHOLDS.V_BONUS);
 
       const high = n1 + n2; const S = N > 0 ? high / N : 0;
-      let A = 0; if (S <= 0.10) A = 0; else if (S <= 0.20) A = 0.05; else if (S <= 0.30) A = 0.10; else A = 0.15;
+      const A = getBonus(S, THRESHOLDS.A_BONUS);
 
       const K = Math.min(1 + V + A, kMax);
       const finalDoc = baseDoc * K;
