@@ -119,10 +119,10 @@ const THRESHOLDS = {
       finalAssistCell: document.getElementById('finalAssistCell'),
       shiftAssistCell: document.getElementById('shiftAssistCell'),
       monthAssistCell: document.getElementById('monthAssistCell'),
-    reset: document.getElementById('reset'),
-    copy: document.getElementById('copy'),
-    downloadCsv: document.getElementById('downloadCsv'),
-    manageZones: document.getElementById('manageZones'),
+      reset: document.getElementById('reset'),
+      copy: document.getElementById('copy'),
+      downloadCsv: document.getElementById('downloadCsv'),
+      manageZones: document.getElementById('manageZones'),
       zoneModal: document.getElementById('zoneModal'),
       zoneTbody: document.getElementById('zoneTbody'),
       addZone: document.getElementById('addZone'),
@@ -464,12 +464,27 @@ function downloadCsv(){
 }
 
 // --- Įvykiai ---
-    ['input','change'].forEach(evt => { ['date','shift','zone','capacity','N','kmax','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener(evt, compute); }); });
-    document.getElementById('shift').addEventListener('change', setDefaultCapacity);
-    document.getElementById('zone').addEventListener('change', setDefaultCapacity);
-    document.getElementById('reset').addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
-document.getElementById('copy').addEventListener('click', (e)=>{ e.preventDefault(); const payload = compute(); const txt = JSON.stringify(payload, null, 2); navigator.clipboard.writeText(txt).then(()=>{ document.getElementById('copy').textContent = 'Nukopijuota ✓'; setTimeout(()=> document.getElementById('copy').textContent = 'Kopijuoti rezultatą (JSON)', 1400); }).catch(()=>{ alert('Nepavyko nukopijuoti. Pažymėkite ir kopijuokite rankiniu būdu.'); }); });
-document.getElementById('downloadCsv').addEventListener('click', (e)=>{ e.preventDefault(); downloadCsv(); });
+    ['input','change'].forEach(evt => {
+      ['date','shift','zone','capacity','N','kmax','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
+        const el = els[id];
+        if (el) el.addEventListener(evt, compute);
+      });
+    });
+    els.shift.addEventListener('change', setDefaultCapacity);
+    els.zone.addEventListener('change', setDefaultCapacity);
+    els.reset.addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
+    els.copy.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const payload = compute();
+      const txt = JSON.stringify(payload, null, 2);
+      navigator.clipboard.writeText(txt).then(()=>{
+        els.copy.textContent = 'Nukopijuota ✓';
+        setTimeout(()=> els.copy.textContent = 'Kopijuoti rezultatą (JSON)', 1400);
+      }).catch(()=>{
+        alert('Nepavyko nukopijuoti. Pažymėkite ir kopijuokite rankiniu būdu.');
+      });
+    });
+    els.downloadCsv.addEventListener('click', (e)=>{ e.preventDefault(); downloadCsv(); });
 
     // Zonų modalas
     els.manageZones.addEventListener('click', openZoneModal);
