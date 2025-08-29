@@ -27,12 +27,12 @@
     html, body { height: 100%; }
     body {
       margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial;
-      background: linear-gradient(135deg, var(--bg), #0b1020 60%, #0a0f1a);
+      background: var(--bg);
       color: var(--text);
     }
 
     .light-theme body {
-      background: linear-gradient(135deg, var(--bg), #f1f5f9 60%, #e2e8f0);
+      background: var(--bg);
       color: var(--text);
     }
     .container { max-width: 1140px; margin: 24px auto; padding: 16px; }
