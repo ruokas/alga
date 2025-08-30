@@ -94,3 +94,13 @@ test('handles commas in zone_label', () => {
   expect(values.length).toBe(rows.length);
   expect(values[3]).toBe(data.zone_label);
 });
+
+test('csv remains valid when zone_label has commas and quotes', () => {
+  const rows = [
+    ['zone_label', 'Critical, "Red" Zone'],
+    ['capacity', 20],
+  ];
+  const csv = rowsToCsv(rows);
+  const values = parseCsvLine(csv.split('\n')[1]);
+  expect(values).toEqual(['Critical, "Red" Zone', '20']);
+});
