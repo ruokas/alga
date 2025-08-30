@@ -20,6 +20,10 @@ function getBonus(metric, table) {
   return 0;
 }
 
+function sanitize(value) {
+  return Number.isFinite(value) ? Math.max(0, value) : 0;
+}
+
 function compute({
   C,
   kMax,
@@ -35,37 +39,48 @@ function compute({
   n5,
   N,
 }) {
-  const totalN = typeof N === 'number' ? N : n1 + n2 + n3 + n4 + n5;
-  const ratio = C > 0 ? totalN / C : 0;
+  const c = sanitize(C);
+  const k = sanitize(kMax);
+  const sh = sanitize(shiftH);
+  const mh = sanitize(monthH);
+  const sN1 = sanitize(n1);
+  const sN2 = sanitize(n2);
+  const sN3 = sanitize(n3);
+  const sN4 = sanitize(n4);
+  const sN5 = sanitize(n5);
+  const totalN = Number.isFinite(N)
+    ? Math.max(0, N)
+    : sN1 + sN2 + sN3 + sN4 + sN5;
+  const ratio = c > 0 ? totalN / c : 0;
   const V = getBonus(ratio, THRESHOLDS.V_BONUS);
-  const high = n1 + n2;
+  const high = sN1 + sN2;
   const S = totalN > 0 ? high / totalN : 0;
   const A = getBonus(S, THRESHOLDS.A_BONUS);
-  const K = Math.min(1 + V + A, kMax);
+  const K = Math.max(0, Math.min(1 + V + A, k));
 
-  const finalDoc = baseDoc * K;
-  const finalNurse = baseNurse * K;
-  const finalAssist = baseAssist * K;
+  const finalDoc = Math.max(0, baseDoc * K);
+  const finalNurse = Math.max(0, baseNurse * K);
+  const finalAssist = Math.max(0, baseAssist * K);
 
-  const shiftDoc = finalDoc * shiftH;
-  const shiftNurse = finalNurse * shiftH;
-  const shiftAssist = finalAssist * shiftH;
+  const shiftDoc = finalDoc * sh;
+  const shiftNurse = finalNurse * sh;
+  const shiftAssist = finalAssist * sh;
 
-  const monthDoc = finalDoc * monthH;
-  const monthNurse = finalNurse * monthH;
-  const monthAssist = finalAssist * monthH;
+  const monthDoc = finalDoc * mh;
+  const monthNurse = finalNurse * mh;
+  const monthAssist = finalAssist * mh;
 
   return {
     N: totalN,
-    ESI: { n1, n2, n3, n4, n5 },
+    ESI: { n1: sN1, n2: sN2, n3: sN3, n4: sN4, n5: sN5 },
     ratio,
     S,
     V_bonus: V,
     A_bonus: A,
-    K_max: kMax,
+    K_max: k,
     K_zona: K,
-    shift_hours: shiftH,
-    month_hours: monthH,
+    shift_hours: sh,
+    month_hours: mh,
     base_rates: {
       doctor: baseDoc,
       nurse: baseNurse,
