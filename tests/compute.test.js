@@ -150,4 +150,37 @@ describe('compute core logic', () => {
     expect(result.shift_salary.doctor).toBe(0);
     expect(result.month_salary.doctor).toBe(0);
   });
+
+  test('custom thresholds adjust bonuses', () => {
+    const thresholds = {
+      V_BONUS: [
+        { limit: 0.5, value: 0 },
+        { limit: 1.0, value: 0.2 },
+        { limit: Infinity, value: 0.4 },
+      ],
+      A_BONUS: [
+        { limit: 0.2, value: 0 },
+        { limit: 0.4, value: 0.1 },
+        { limit: Infinity, value: 0.2 },
+      ],
+    };
+    const result = compute({
+      C: 100,
+      N: 150,
+      kMax: 2,
+      baseDoc: 10,
+      baseNurse: 10,
+      baseAssist: 10,
+      shiftH: 0,
+      monthH: 0,
+      n1: 30,
+      n2: 15,
+      n3: 105,
+      n4: 0,
+      n5: 0,
+    }, thresholds);
+    expect(result.V_bonus).toBe(0.4);
+    expect(result.A_bonus).toBe(0.1);
+    expect(result.K_zona).toBeCloseTo(1.5);
+  });
 });
