@@ -222,4 +222,29 @@ describe('compute core logic', () => {
     expect(result.shift_salary.nurse).toBeCloseTo(result.final_rates.nurse * 10);
     expect(result.month_salary.doc).toBeCloseTo(result.final_rates.doc * 100);
   });
+
+  test('supports three distinct roles', () => {
+    const result = compute({
+      C: 60,
+      N: 60,
+      kMax: 1.5,
+      roles: [
+        { id: 'a', base: 5 },
+        { id: 'b', base: 10 },
+        { id: 'c', base: 15 },
+      ],
+      shiftH: 8,
+      monthH: 40,
+      n1: 5,
+      n2: 5,
+      n3: 50,
+      n4: 0,
+      n5: 0,
+    });
+    expect(result.final_rates.a).toBeCloseTo(5 * result.K_zona);
+    expect(result.final_rates.b).toBeCloseTo(10 * result.K_zona);
+    expect(result.final_rates.c).toBeCloseTo(15 * result.K_zona);
+    expect(Object.keys(result.final_rates)).toEqual(['a', 'b', 'c']);
+    expect(result.shift_salary.c).toBeCloseTo(result.final_rates.c * 8);
+  });
 });

@@ -122,17 +122,19 @@ test('round trips data with multiple roles', () => {
     K_zona: 1.15,
     shift_hours: 8,
     month_hours: 160,
-    roles: [{ id: 'doc' }, { id: 'nurse' }],
-    base_rates: { doc: 1, nurse: 2 },
-    final_rates: { doc: 1.1, nurse: 2.2 },
-    shift_salary: { doc: 8.8, nurse: 17.6 },
-    month_salary: { doc: 176, nurse: 352 },
+    roles: [{ id: 'doc' }, { id: 'nurse' }, { id: 'assistant' }],
+    base_rates: { doc: 1, nurse: 2, assistant: 3 },
+    final_rates: { doc: 1.1, nurse: 2.2, assistant: 3.3 },
+    shift_salary: { doc: 8.8, nurse: 17.6, assistant: 26.4 },
+    month_salary: { doc: 176, nurse: 352, assistant: 528 },
   };
 
   const csv = dataToCsv(data);
   const parsed = csvToData(csv);
   expect(parsed.base_rates.doc).toBe(1);
   expect(parsed.base_rates.nurse).toBe(2);
+  expect(parsed.base_rates.assistant).toBe(3);
   expect(parsed.roles.find(r => r.id === 'doc')).toBeTruthy();
   expect(parsed.roles.find(r => r.id === 'nurse')).toBeTruthy();
+  expect(parsed.roles.find(r => r.id === 'assistant')).toBeTruthy();
 });
