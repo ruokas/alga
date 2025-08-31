@@ -43,6 +43,27 @@ describe('compute core logic', () => {
     expect(result.K_zona).toBeCloseTo(1.20);
   });
 
+  test('infers N from ESI counts when omitted', () => {
+    const result = compute({
+      C: 70,
+      kMax: 1.3,
+      baseDoc: 10,
+      baseNurse: 10,
+      baseAssist: 10,
+      shiftH: 0,
+      monthH: 0,
+      n1: 15,
+      n2: 15,
+      n3: 70,
+      n4: 0,
+      n5: 0,
+    });
+    expect(result.N).toBe(100);
+    expect(result.ratio).toBeCloseTo(100 / 70);
+    expect(result.V_bonus).toBe(0.15);
+    expect(result.A_bonus).toBe(0.10);
+  });
+
   test('bonuses capped by kMax', () => {
     const result = compute({
       C: 80,
