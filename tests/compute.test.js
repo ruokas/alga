@@ -6,9 +6,11 @@ describe('compute core logic', () => {
       C: 100,
       N: 50,
       kMax: 1.3,
-      baseDoc: 10,
-      baseNurse: 10,
-      baseAssist: 10,
+      roles: [
+        { id: 'doctor', base: 10 },
+        { id: 'nurse', base: 10 },
+        { id: 'assistant', base: 10 },
+      ],
       shiftH: 0,
       monthH: 0,
       n1: 10,
@@ -27,9 +29,11 @@ describe('compute core logic', () => {
       C: 80,
       N: 100,
       kMax: 1.3,
-      baseDoc: 10,
-      baseNurse: 10,
-      baseAssist: 10,
+      roles: [
+        { id: 'doctor', base: 10 },
+        { id: 'nurse', base: 10 },
+        { id: 'assistant', base: 10 },
+      ],
       shiftH: 0,
       monthH: 0,
       n1: 10,
@@ -47,9 +51,11 @@ describe('compute core logic', () => {
     const result = compute({
       C: 70,
       kMax: 1.3,
-      baseDoc: 10,
-      baseNurse: 10,
-      baseAssist: 10,
+      roles: [
+        { id: 'doctor', base: 10 },
+        { id: 'nurse', base: 10 },
+        { id: 'assistant', base: 10 },
+      ],
       shiftH: 0,
       monthH: 0,
       n1: 15,
@@ -69,9 +75,11 @@ describe('compute core logic', () => {
       C: 80,
       N: 120,
       kMax: 1.3,
-      baseDoc: 10,
-      baseNurse: 10,
-      baseAssist: 10,
+      roles: [
+        { id: 'doctor', base: 10 },
+        { id: 'nurse', base: 10 },
+        { id: 'assistant', base: 10 },
+      ],
       shiftH: 0,
       monthH: 0,
       n1: 20,
@@ -90,9 +98,11 @@ describe('compute core logic', () => {
       C: NaN,
       N: NaN,
       kMax: NaN,
-      baseDoc: 10,
-      baseNurse: 10,
-      baseAssist: 10,
+      roles: [
+        { id: 'doctor', base: 10 },
+        { id: 'nurse', base: 10 },
+        { id: 'assistant', base: 10 },
+      ],
       shiftH: NaN,
       monthH: NaN,
       n1: NaN,
@@ -112,9 +122,11 @@ describe('compute core logic', () => {
       C: -100,
       N: -50,
       kMax: -1,
-      baseDoc: 10,
-      baseNurse: 10,
-      baseAssist: 10,
+      roles: [
+        { id: 'doctor', base: 10 },
+        { id: 'nurse', base: 10 },
+        { id: 'assistant', base: 10 },
+      ],
       shiftH: -10,
       monthH: -160,
       n1: -5,
@@ -134,9 +146,11 @@ describe('compute core logic', () => {
       C: Infinity,
       N: Infinity,
       kMax: Infinity,
-      baseDoc: 10,
-      baseNurse: 10,
-      baseAssist: 10,
+      roles: [
+        { id: 'doctor', base: 10 },
+        { id: 'nurse', base: 10 },
+        { id: 'assistant', base: 10 },
+      ],
       shiftH: Infinity,
       monthH: Infinity,
       n1: Infinity,
@@ -168,9 +182,11 @@ describe('compute core logic', () => {
       C: 100,
       N: 150,
       kMax: 2,
-      baseDoc: 10,
-      baseNurse: 10,
-      baseAssist: 10,
+      roles: [
+        { id: 'doctor', base: 10 },
+        { id: 'nurse', base: 10 },
+        { id: 'assistant', base: 10 },
+      ],
       shiftH: 0,
       monthH: 0,
       n1: 30,
@@ -182,5 +198,28 @@ describe('compute core logic', () => {
     expect(result.V_bonus).toBe(0.4);
     expect(result.A_bonus).toBe(0.1);
     expect(result.K_zona).toBeCloseTo(1.5);
+  });
+
+  test('computes salaries for multiple roles', () => {
+    const result = compute({
+      C: 50,
+      N: 50,
+      kMax: 2,
+      roles: [
+        { id: 'doc', base: 10 },
+        { id: 'nurse', base: 20 },
+      ],
+      shiftH: 10,
+      monthH: 100,
+      n1: 10,
+      n2: 10,
+      n3: 30,
+      n4: 0,
+      n5: 0,
+    });
+    expect(result.final_rates.doc).toBeCloseTo(10 * result.K_zona);
+    expect(result.final_rates.nurse).toBeCloseTo(20 * result.K_zona);
+    expect(result.shift_salary.nurse).toBeCloseTo(result.final_rates.nurse * 10);
+    expect(result.month_salary.doc).toBeCloseTo(result.final_rates.doc * 100);
   });
 });
