@@ -19,6 +19,10 @@ npm install
 npm test
 ```
 
+## Adjusting Bonus Thresholds
+
+The calculator allows customizing the occupancy (V) and acuity (A) bonus thresholds. Click **Redaguoti priedus** in the interface to open a modal where you can edit the `V_BONUS` and `A_BONUS` arrays in JSON form. Saved thresholds persist in your browser's `localStorage` under the key `ED_THRESHOLDS`.
+
 ## GitHub Pages
 
 To deploy the calculator online using GitHub Pages:
