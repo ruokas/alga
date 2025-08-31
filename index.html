@@ -71,29 +71,15 @@
           </div>
         </div>
 
-        <div class="row">
-          <div>
-            <label for="baseRateDoc">Bazinis gydytojo tarifas (€ / val.)</label>
-            <input id="baseRateDoc" type="number" min="0" step="0.01" value="0" placeholder="pvz. 25.00" />
+        <div id="rolesBlock">
+          <label>Rolės ir baziniai tarifai</label>
+          <div id="roleInputs"></div>
+          <div class="actions">
+            <button id="addRole">+ Pridėti rolę</button>
+            <button id="saveRateTemplate">Įsiminti tarifų šabloną</button>
+            <button id="loadRateTemplate">Užkrauti šabloną</button>
           </div>
-          <div>
-            <label for="baseRateNurse">Bazinis slaugytojo tarifas (€ / val.)</label>
-            <input id="baseRateNurse" type="number" min="0" step="0.01" value="0" placeholder="pvz. 14.00" />
-          </div>
-        </div>
-        <div class="row">
-          <div>
-            <label for="baseRateAssist">Bazinis padėjėjo tarifas (€ / val.)</label>
-            <input id="baseRateAssist" type="number" min="0" step="0.01" value="0" placeholder="pvz. 9.00" />
-          </div>
-          <div>
-            <label>&nbsp;</label>
-            <div class="actions">
-              <button id="saveRateTemplate">Įsiminti tarifų šabloną</button>
-              <button id="loadRateTemplate">Užkrauti šabloną</button>
-            </div>
-            <div class="help">Tarifų šablonas saugomas vietoje (localStorage).</div>
-          </div>
+          <div class="help">Tarifų šablonas saugomas vietoje (localStorage).</div>
         </div>
 
         <div class="switch-block">
@@ -195,11 +181,7 @@
           <thead>
             <tr><th>Rolė</th><th>Bazė (€/val.)</th><th>Koef. K<sub>zona</sub></th><th>Galutinis (€/val.)</th><th>Pam. alga (€/pam.)</th><th>Mėn. alga (€/mėn.)</th></tr>
           </thead>
-          <tbody>
-            <tr><td>Gydytojas</td><td id="baseDocCell">€0,00</td><td id="kDocCell">1,00</td><td class="accent" id="finalDocCell">€0,00</td><td id="shiftDocCell">€0,00</td><td id="monthDocCell">€0,00</td></tr>
-            <tr><td>Slaugytojas</td><td id="baseNurseCell">€0,00</td><td id="kNurseCell">1,00</td><td class="accent" id="finalNurseCell">€0,00</td><td id="shiftNurseCell">€0,00</td><td id="monthNurseCell">€0,00</td></tr>
-            <tr><td>Padėjėjas</td><td id="baseAssistCell">€0,00</td><td id="kAssistCell">1,00</td><td class="accent" id="finalAssistCell">€0,00</td><td id="shiftAssistCell">€0,00</td><td id="monthAssistCell">€0,00</td></tr>
-          </tbody>
+          <tbody id="roleRatesBody"></tbody>
         </table>
 
         <div class="footer">
