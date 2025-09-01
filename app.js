@@ -368,32 +368,7 @@ function resetAll(){
       els.shiftHours.value = 12; els.monthHours.value = 0;
       els.esi1.value = 0; els.esi2.value = 0; els.esi3.value = 0; els.esi4.value = 0; els.esi5.value = 0;
       // bandome užkrauti tarifų šabloną
-      let rawRates;
-      try {
-        rawRates = localStorage.getItem(LS_RATE_KEY);
-      } catch (e) {
-        console.error('Failed to fetch base rates', e);
-        rawRates = null;
-      }
-
-      let rates;
-      try {
-        rates = rawRates ? JSON.parse(rawRates) : {};
-      } catch (e) {
-        console.error('Failed to parse base rates', e);
-        rates = {};
-      }
-
-      try {
-        els.baseRateDoc.value = rates.doc ?? 0;
-        els.baseRateNurse.value = rates.nurse ?? 0;
-        els.baseRateAssist.value = rates.assist ?? 0;
-      } catch (e) {
-        console.error('Failed to assign base rates', e);
-        els.baseRateDoc.value = 0;
-        els.baseRateNurse.value = 0;
-        els.baseRateAssist.value = 0;
-      }
+      try { const j = localStorage.getItem(LS_RATE_KEY); if (j){ const t = JSON.parse(j); els.baseRateDoc.value = t.doc ?? 0; els.baseRateNurse.value = t.nurse ?? 0; els.baseRateAssist.value = t.assist ?? 0; } else { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; } } catch { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; }
       compute();
 }
 
