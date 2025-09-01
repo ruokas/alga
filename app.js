@@ -30,7 +30,6 @@ if (toggle) {
 
     const LS_KEY = 'ED_ZONES_V2';
     const LS_RATE_KEY = 'ED_RATE_TEMPLATE_V2';
-    const LS_THRESH_KEY = 'ED_THRESHOLDS';
 
     function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
     function sanitizeId(txt){ const s = (txt||'').toString().toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_|_$/g,''); return s || 'ZONE_' + Math.random().toString(36).slice(2,6).toUpperCase(); }
@@ -113,9 +112,7 @@ if (toggle) {
       defaultsZones: document.getElementById('defaultsZones'),
       closeZoneModal: document.getElementById('closeZoneModal'),
       saveRateTemplate: document.getElementById('saveRateTemplate'),
-      loadRateTemplate: document.getElementById('loadRateTemplate'),
-      saveThresholds: document.getElementById('saveThresholds'),
-      resetThresholds: document.getElementById('resetThresholds')
+      loadRateTemplate: document.getElementById('loadRateTemplate')
     };
 
     const style = getComputedStyle(document.documentElement);
@@ -450,56 +447,6 @@ function downloadPdf(){
   }
 }
 
-function loadThresholdInputs(){
-  const tables = computeCore.loadThresholds();
-  tables.V_BONUS.forEach((row, i) => {
-    const l = document.getElementById(`vLimit${i}`);
-    const v = document.getElementById(`vValue${i}`);
-    if (l) l.value = row.limit === Infinity ? '' : row.limit;
-    if (v) v.value = row.value;
-  });
-  tables.A_BONUS.forEach((row, i) => {
-    const l = document.getElementById(`aLimit${i}`);
-    const v = document.getElementById(`aValue${i}`);
-    if (l) l.value = row.limit === Infinity ? '' : row.limit;
-    if (v) v.value = row.value;
-  });
-}
-
-function readThresholdInputs(){
-  const v = [], a = [];
-  for(let i=0;i<4;i++){
-    const l = document.getElementById(`vLimit${i}`);
-    const val = document.getElementById(`vValue${i}`);
-    const limit = parseFloat(l?.value);
-    const value = parseFloat(val?.value);
-    v.push({ limit: Number.isFinite(limit) ? limit : Infinity, value: Number.isFinite(value) ? value : 0 });
-    const la = document.getElementById(`aLimit${i}`);
-    const va = document.getElementById(`aValue${i}`);
-    const limitA = parseFloat(la?.value);
-    const valueA = parseFloat(va?.value);
-    a.push({ limit: Number.isFinite(limitA) ? limitA : Infinity, value: Number.isFinite(valueA) ? valueA : 0 });
-  }
-  return { V_BONUS: v, A_BONUS: a };
-}
-
-function saveThresholdSettings(){
-  try {
-    const data = readThresholdInputs();
-    localStorage.setItem(LS_THRESH_KEY, JSON.stringify(data));
-    compute();
-  } catch (err) {
-    console.error('Failed to save thresholds', err);
-    alert('Nepavyko išsaugoti slenksčių.');
-  }
-}
-
-function resetThresholdSettings(){
-  try { localStorage.removeItem(LS_THRESH_KEY); } catch {}
-  loadThresholdInputs();
-  compute();
-}
-
 // --- Įvykiai ---
 ['input','change'].forEach(evt => {
   ['date','zone','capacity','N','kmax','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
@@ -531,15 +478,11 @@ els.zone.addEventListener('change', setDefaultCapacity);
     els.defaultsZones.addEventListener('click', resetToDefaults);
     els.closeZoneModal.addEventListener('click', closeZoneModal);
 
-    els.saveThresholds.addEventListener('click', (e)=>{ e.preventDefault(); saveThresholdSettings(); });
-    els.resetThresholds.addEventListener('click', (e)=>{ e.preventDefault(); resetThresholdSettings(); });
-
     // Tarifų šablonai
     els.saveRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); saveRateTemplate(); });
     els.loadRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); loadRateTemplate(); });
 
     // Init
     renderZoneSelect(false);
-    loadThresholdInputs();
     resetAll();
 

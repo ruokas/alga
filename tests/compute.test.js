@@ -1,7 +1,6 @@
 const { compute } = require('../compute');
 
 describe('compute core logic', () => {
-  afterEach(() => { delete global.localStorage; });
   test('low occupancy yields no V bonus', () => {
     const result = compute({
       C: 100,
@@ -129,44 +128,5 @@ describe('compute core logic', () => {
     expect(result.K_zona).toBe(0);
     expect(result.shift_salary.doctor).toBe(0);
     expect(result.month_salary.doctor).toBe(0);
-  });
-
-  test('uses thresholds from localStorage', () => {
-    const custom = {
-      V_BONUS: [
-        { limit: 1, value: 0 },
-        { limit: 2, value: 0.5 },
-        { limit: 3, value: 0.75 },
-        { limit: Infinity, value: 1 },
-      ],
-      A_BONUS: [
-        { limit: 0.1, value: 0 },
-        { limit: 0.5, value: 0.2 },
-        { limit: 0.9, value: 0.3 },
-        { limit: Infinity, value: 0.4 },
-      ],
-    };
-    global.localStorage = {
-      getItem: () => JSON.stringify(custom),
-      setItem: () => {},
-    };
-    const result = compute({
-      C: 100,
-      N: 150,
-      kMax: 2,
-      baseDoc: 10,
-      baseNurse: 10,
-      baseAssist: 10,
-      shiftH: 0,
-      monthH: 0,
-      n1: 20,
-      n2: 5,
-      n3: 125,
-      n4: 0,
-      n5: 0,
-    });
-    expect(result.V_bonus).toBe(0.5);
-    expect(result.A_bonus).toBe(0.2);
-    expect(result.K_zona).toBeCloseTo(1.7);
   });
 });
