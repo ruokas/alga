@@ -1,4 +1,4 @@
-const DEFAULT_THRESHOLDS = {
+const THRESHOLDS = {
   V_BONUS: [
     { limit: 0.80, value: 0.00 },
     { limit: 1.00, value: 0.05 },
@@ -12,30 +12,6 @@ const DEFAULT_THRESHOLDS = {
     { limit: Infinity, value: 0.15 },
   ],
 };
-
-const THRESHOLD_LS_KEY = 'ED_THRESHOLDS';
-
-function loadThresholds() {
-  if (typeof localStorage !== 'undefined') {
-    try {
-      const raw = localStorage.getItem(THRESHOLD_LS_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (
-          parsed &&
-          typeof parsed === 'object' &&
-          Array.isArray(parsed.V_BONUS) &&
-          Array.isArray(parsed.A_BONUS)
-        ) {
-          return parsed;
-        }
-      }
-    } catch (err) {
-      // ignore parse/storage errors and fall back to defaults
-    }
-  }
-  return DEFAULT_THRESHOLDS;
-}
 
 function getBonus(metric, table) {
   for (const { limit, value } of table) {
@@ -76,11 +52,10 @@ function compute({
     ? Math.max(0, N)
     : sN1 + sN2 + sN3 + sN4 + sN5;
   const ratio = c > 0 ? totalN / c : 0;
-  const thresholds = loadThresholds();
-  const V = getBonus(ratio, thresholds.V_BONUS);
+  const V = getBonus(ratio, THRESHOLDS.V_BONUS);
   const high = sN1 + sN2;
   const S = totalN > 0 ? high / totalN : 0;
-  const A = getBonus(S, thresholds.A_BONUS);
+  const A = getBonus(S, THRESHOLDS.A_BONUS);
   const K = Math.max(0, Math.min(1 + V + A, k));
 
   const finalDoc = Math.max(0, baseDoc * K);
@@ -129,12 +104,7 @@ function compute({
   };
 }
 
-const exported = {
-  THRESHOLDS: DEFAULT_THRESHOLDS,
-  getBonus,
-  compute,
-  loadThresholds,
-};
+const exported = { THRESHOLDS, getBonus, compute };
 
 if (typeof module !== 'undefined') {
   module.exports = exported;
