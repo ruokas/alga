@@ -83,57 +83,8 @@ if (toggle) {
       }
     }
 
-    const DEFAULT_ROLES = [
-      { id: 'doctor', name: 'Gydytojas' },
-      { id: 'nurse', name: 'Slaugytojas' },
-      { id: 'assistant', name: 'Padėjėjas' },
-    ];
-    const ROLE_KEY = 'ED_ROLES';
-    function loadRoles(){
-      try {
-        const j = localStorage.getItem(ROLE_KEY);
-        if (j){
-          const arr = JSON.parse(j);
-          if (Array.isArray(arr)) return arr;
-        }
-      } catch (err){
-        console.error('Failed to load roles', err);
-      }
-      return clone(DEFAULT_ROLES);
-    }
-    function saveRoles(rs){
-      try {
-        localStorage.setItem(ROLE_KEY, JSON.stringify(rs));
-      } catch (err){
-        console.error('Failed to save roles', err);
-      }
-    }
-
     let ZONES = loadZones();
     let THRESHOLDS = loadThresholds();
-    let ROLES = loadRoles();
-
-    function renderRoleInputs(){
-      els.roleInputs.innerHTML = '';
-      ROLES.forEach(r => {
-        const div = document.createElement('div');
-        div.className = 'role-row';
-        div.dataset.id = r.id;
-        div.innerHTML = `<input type="text" class="role-name" value="${r.name}" />`+
-          `<input type="number" class="role-base" min="0" step="0.01" value="0" />`+
-          `<button type="button" class="remove-role">×</button>`;
-        els.roleInputs.appendChild(div);
-      });
-    }
-
-    function addRole(){
-      const id = 'ROLE_' + Math.random().toString(36).slice(2,6).toUpperCase();
-      ROLES.push({ id, name: 'Nauja rolė' });
-      saveRoles(ROLES);
-      renderRoleInputs();
-      loadRateTemplate();
-      compute();
-    }
 
     // --- Elementai ---
     const els = {
@@ -145,9 +96,9 @@ if (toggle) {
       kmax: document.getElementById('kmax'),
       shiftHours: document.getElementById('shiftHours'),
       monthHours: document.getElementById('monthHours'),
-      roleInputs: document.getElementById('roleInputs'),
-      addRole: document.getElementById('addRole'),
-      roleRatesBody: document.getElementById('roleRatesBody'),
+      baseRateDoc: document.getElementById('baseRateDoc'),
+      baseRateNurse: document.getElementById('baseRateNurse'),
+      baseRateAssist: document.getElementById('baseRateAssist'),
       linkN: document.getElementById('linkN'),
       esi1: document.getElementById('esi1'),
       esi2: document.getElementById('esi2'),
@@ -162,6 +113,21 @@ if (toggle) {
       aBonus: document.getElementById('aBonus'),
       kMaxCell: document.getElementById('kMaxCell'),
       kZona: document.getElementById('kZona'),
+      baseDocCell: document.getElementById('baseDocCell'),
+      kDocCell: document.getElementById('kDocCell'),
+      finalDocCell: document.getElementById('finalDocCell'),
+      shiftDocCell: document.getElementById('shiftDocCell'),
+      monthDocCell: document.getElementById('monthDocCell'),
+      baseNurseCell: document.getElementById('baseNurseCell'),
+      kNurseCell: document.getElementById('kNurseCell'),
+      finalNurseCell: document.getElementById('finalNurseCell'),
+      shiftNurseCell: document.getElementById('shiftNurseCell'),
+      monthNurseCell: document.getElementById('monthNurseCell'),
+      baseAssistCell: document.getElementById('baseAssistCell'),
+      kAssistCell: document.getElementById('kAssistCell'),
+      finalAssistCell: document.getElementById('finalAssistCell'),
+      shiftAssistCell: document.getElementById('shiftAssistCell'),
+      monthAssistCell: document.getElementById('monthAssistCell'),
       reset: document.getElementById('reset'),
       copy: document.getElementById('copy'),
       downloadCsv: document.getElementById('downloadCsv'),
@@ -363,29 +329,15 @@ if (toggle) {
 
     // --- Tarifų šablonas ---
     function saveRateTemplate(){
-      const payload = {};
-      els.roleInputs.querySelectorAll('.role-row').forEach(row => {
-        const id = row.dataset.id;
-        const base = toNum(row.querySelector('.role-base').value);
-        payload[id] = base;
-      });
+      const payload = {
+        doc: toNum(els.baseRateDoc.value),
+        nurse: toNum(els.baseRateNurse.value),
+        assist: toNum(els.baseRateAssist.value)
+      };
       try { localStorage.setItem(LS_RATE_KEY, JSON.stringify(payload)); alert('Tarifų šablonas įsimintas.'); } catch {}
     }
     function loadRateTemplate(){
-      try {
-        const j = localStorage.getItem(LS_RATE_KEY);
-        if (j){
-          const t = JSON.parse(j);
-          if (t){
-            els.roleInputs.querySelectorAll('.role-row').forEach(row => {
-              const id = row.dataset.id;
-              row.querySelector('.role-base').value = t[id] ?? 0;
-            });
-            compute();
-            return;
-          }
-        }
-      } catch {}
+      try { const j = localStorage.getItem(LS_RATE_KEY); if (j){ const t = JSON.parse(j); if (t){ els.baseRateDoc.value = t.doc ?? 0; els.baseRateNurse.value = t.nurse ?? 0; els.baseRateAssist.value = t.assist ?? 0; compute(); return; } } } catch {}
       alert('Nerasta išsaugoto šablono.');
     }
 
@@ -393,6 +345,9 @@ if (toggle) {
     function compute(){
       const C = Math.max(0, toNum(els.capacity.value));
       const kMax = Math.min(2, Math.max(1, toNum(els.kmax.value)));
+      const baseDoc = Math.max(0, toNum(els.baseRateDoc.value));
+      const baseNurse = Math.max(0, toNum(els.baseRateNurse.value));
+      const baseAssist = Math.max(0, toNum(els.baseRateAssist.value));
       const shiftH = Math.max(0, toNum(els.shiftHours.value));
       const monthH = Math.max(0, toNum(els.monthHours.value));
       let n1 = Math.max(0, toNum(els.esi1.value));
@@ -404,16 +359,12 @@ if (toggle) {
       let N = Math.max(0, toNum(els.N.value));
       if (els.linkN.checked){ N = n1 + n2 + n3 + n4 + n5; els.N.value = N; els.N.disabled = true; } else els.N.disabled = false;
 
-      const roles = Array.from(els.roleInputs.querySelectorAll('.role-row')).map(row => ({
-        id: row.dataset.id,
-        name: row.querySelector('.role-name').value,
-        base: toNum(row.querySelector('.role-base').value),
-      }));
-
       const data = computeCore.compute({
         C,
         kMax,
-        roles,
+        baseDoc,
+        baseNurse,
+        baseAssist,
         shiftH,
         monthH,
         n1,
@@ -440,18 +391,23 @@ if (toggle) {
         charts.s.update();
       }
 
-      els.roleRatesBody.innerHTML = '';
-      roles.forEach(r => {
-        const tr = document.createElement('tr');
-        const id = r.id;
-        tr.innerHTML = `<td>${r.name}</td>`+
-          `<td>${money(data.base_rates[id])}</td>`+
-          `<td>${data.K_zona.toFixed(2)}</td>`+
-          `<td class="accent">${money(data.final_rates[id])}</td>`+
-          `<td>${money(data.shift_salary[id])}</td>`+
-          `<td>${money(data.month_salary[id])}</td>`;
-        els.roleRatesBody.appendChild(tr);
-      });
+      els.baseDocCell.textContent = money(data.base_rates.doctor);
+      els.kDocCell.textContent = data.K_zona.toFixed(2);
+      els.finalDocCell.textContent = money(data.final_rates.doctor);
+      els.shiftDocCell.textContent = money(data.shift_salary.doctor);
+      els.monthDocCell.textContent = money(data.month_salary.doctor);
+
+      els.baseNurseCell.textContent = money(data.base_rates.nurse);
+      els.kNurseCell.textContent = data.K_zona.toFixed(2);
+      els.finalNurseCell.textContent = money(data.final_rates.nurse);
+      els.shiftNurseCell.textContent = money(data.shift_salary.nurse);
+      els.monthNurseCell.textContent = money(data.month_salary.nurse);
+
+      els.baseAssistCell.textContent = money(data.base_rates.assistant);
+      els.kAssistCell.textContent = data.K_zona.toFixed(2);
+      els.finalAssistCell.textContent = money(data.final_rates.assistant);
+      els.shiftAssistCell.textContent = money(data.shift_salary.assistant);
+      els.monthAssistCell.textContent = money(data.month_salary.assistant);
 
       return {
         date: els.date.value || null,
@@ -460,7 +416,6 @@ if (toggle) {
         zone_label: (ZONES.find(z=>z.id===els.zone.value)?.name) || els.zone.value,
         capacity: C,
         ...data,
-        roles: roles.map(r=>({ id: r.id, name: r.name }))
       };
     }
 
@@ -471,16 +426,83 @@ function resetAll(){
       els.N.value = 0; els.kmax.value = 1.30; els.linkN.checked = true;
       els.shiftHours.value = 12; els.monthHours.value = 0;
       els.esi1.value = 0; els.esi2.value = 0; els.esi3.value = 0; els.esi4.value = 0; els.esi5.value = 0;
-      renderRoleInputs();
-      loadRateTemplate();
+      // bandome užkrauti tarifų šabloną
+      let rawRates;
+      try {
+        rawRates = localStorage.getItem(LS_RATE_KEY);
+      } catch (e) {
+        console.error('Failed to fetch base rates', e);
+        rawRates = null;
+      }
+
+      let rates;
+      try {
+        rates = rawRates ? JSON.parse(rawRates) : {};
+      } catch (e) {
+        console.error('Failed to parse base rates', e);
+        rates = {};
+      }
+
+      try {
+        els.baseRateDoc.value = rates.doc ?? 0;
+        els.baseRateNurse.value = rates.nurse ?? 0;
+        els.baseRateAssist.value = rates.assist ?? 0;
+      } catch (e) {
+        console.error('Failed to assign base rates', e);
+        els.baseRateDoc.value = 0;
+        els.baseRateNurse.value = 0;
+        els.baseRateAssist.value = 0;
+      }
       compute();
 }
 
 function downloadCsv(){
   const data = compute();
-  const csv = (typeof csvUtils !== 'undefined' && typeof csvUtils.dataToCsv === 'function')
-    ? csvUtils.dataToCsv(data)
-    : '';
+  const rows = [
+    ['date', data.date],
+    ['shift', data.shift],
+    ['zone', data.zone],
+    ['zone_label', data.zone_label],
+    ['capacity', data.capacity],
+    ['N', data.N],
+    ['ESI1', data.ESI.n1],
+    ['ESI2', data.ESI.n2],
+    ['ESI3', data.ESI.n3],
+    ['ESI4', data.ESI.n4],
+    ['ESI5', data.ESI.n5],
+    ['ratio', data.ratio],
+    ['S', data.S],
+    ['V_bonus', data.V_bonus],
+    ['A_bonus', data.A_bonus],
+    ['K_max', data.K_max],
+    ['K_zona', data.K_zona],
+    ['shift_hours', data.shift_hours],
+    ['month_hours', data.month_hours],
+    ['base_rate_doctor', data.base_rates.doctor],
+    ['base_rate_nurse', data.base_rates.nurse],
+    ['base_rate_assistant', data.base_rates.assistant],
+    ['final_rate_doctor', data.final_rates.doctor],
+    ['final_rate_nurse', data.final_rates.nurse],
+    ['final_rate_assistant', data.final_rates.assistant],
+    ['shift_salary_doctor', data.shift_salary.doctor],
+    ['shift_salary_nurse', data.shift_salary.nurse],
+    ['shift_salary_assistant', data.shift_salary.assistant],
+    ['month_salary_doctor', data.month_salary.doctor],
+    ['month_salary_nurse', data.month_salary.nurse],
+    ['month_salary_assistant', data.month_salary.assistant]
+  ];
+  function csvValue(val){
+    const safe = (val === null || val === undefined ? '' : String(val)).replace(/"/g, '""');
+    return `"${safe}"`;
+  }
+  const csv = (()=>{
+    if (typeof csvUtils !== 'undefined' && typeof csvUtils.rowsToCsv === 'function') {
+      return csvUtils.rowsToCsv(rows);
+    }
+    const headers = rows.map(r => r[0]).join(',');
+    const values = rows.map(r => csvValue(r[1])).join(',');
+    return `${headers}\n${values}`;
+  })();
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -494,32 +516,11 @@ function downloadCsv(){
 
 // --- Įvykiai ---
     ['input','change'].forEach(evt => {
-      ['date','shift','zone','capacity','N','kmax','shiftHours','monthHours','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
+      ['date','shift','zone','capacity','N','kmax','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
         const el = els[id];
         if (el) el.addEventListener(evt, compute);
       });
     });
-    els.roleInputs.addEventListener('input', e => {
-      if (e.target.classList.contains('role-name')) {
-        const row = e.target.closest('.role-row');
-        const role = ROLES.find(r => r.id === row.dataset.id);
-        if (role) { role.name = e.target.value; saveRoles(ROLES); }
-        compute();
-      } else if (e.target.classList.contains('role-base')) {
-        compute();
-      }
-    });
-    els.roleInputs.addEventListener('click', e => {
-      if (e.target.classList.contains('remove-role')) {
-        const row = e.target.closest('.role-row');
-        ROLES = ROLES.filter(r => r.id !== row.dataset.id);
-        saveRoles(ROLES);
-        renderRoleInputs();
-        loadRateTemplate();
-        compute();
-      }
-    });
-    els.addRole.addEventListener('click', (e)=>{ e.preventDefault(); addRole(); });
     els.shift.addEventListener('change', setDefaultCapacity);
     els.zone.addEventListener('change', setDefaultCapacity);
     els.reset.addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
