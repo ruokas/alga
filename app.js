@@ -437,9 +437,14 @@ function downloadCsv(){
 }
 
 function downloadPdf(){
-  const data = compute();
-  const doc = pdfUtils.generatePdf(data);
-  doc.save('salary_calc.pdf');
+  try {
+    const data = compute();
+    const doc = pdfUtils.generatePdf(data);
+    doc.save('salary_calc.pdf');
+  } catch (err) {
+    alert('Nepavyko sugeneruoti PDF. Patikrinkite ar įkelta jsPDF biblioteka.');
+    console.error(err);
+  }
 }
 
 // --- Įvykiai ---
