@@ -30,36 +30,9 @@ if (toggle) {
 
     const LS_KEY = 'ED_ZONES_V2';
     const LS_RATE_KEY = 'ED_RATE_TEMPLATE_V2';
-    const THRESHOLDS_KEY = 'ED_THRESHOLDS';
 
     function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
     function sanitizeId(txt){ const s = (txt||'').toString().toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_|_$/g,''); return s || 'ZONE_' + Math.random().toString(36).slice(2,6).toUpperCase(); }
-
-    function stringifyThresholds(t){
-      return JSON.stringify(t, (k,v)=> v===Infinity ? 'Infinity' : v, 2);
-    }
-    function parseThresholds(str){
-      return JSON.parse(str, (k,v)=> v === 'Infinity' ? Infinity : v);
-    }
-    function loadThresholds(){
-      try {
-        const j = localStorage.getItem(THRESHOLDS_KEY);
-        if (j){
-          return parseThresholds(j);
-        }
-      } catch (err){
-        console.error('Failed to load thresholds', err);
-      }
-      return clone(computeCore.THRESHOLDS);
-    }
-    function saveThresholds(t){
-      try {
-        localStorage.setItem(THRESHOLDS_KEY, stringifyThresholds(t));
-      } catch (err){
-        console.error('Failed to save thresholds', err);
-        alert('Nepavyko išsaugoti priedų ribų. Patikrinkite naršyklės nustatymus.');
-      }
-    }
 
     function loadZones(){
       try {
@@ -84,7 +57,6 @@ if (toggle) {
     }
 
     let ZONES = loadZones();
-    let THRESHOLDS = loadThresholds();
 
     // --- Elementai ---
     const els = {
@@ -139,13 +111,7 @@ if (toggle) {
       defaultsZones: document.getElementById('defaultsZones'),
       closeZoneModal: document.getElementById('closeZoneModal'),
       saveRateTemplate: document.getElementById('saveRateTemplate'),
-      loadRateTemplate: document.getElementById('loadRateTemplate'),
-      manageThresholds: document.getElementById('manageThresholds'),
-      thresholdModal: document.getElementById('thresholdModal'),
-      thresholdsInput: document.getElementById('thresholdsInput'),
-      saveThresholdsBtn: document.getElementById('saveThresholdsBtn'),
-      defaultsThresholds: document.getElementById('defaultsThresholds'),
-      closeThresholdModal: document.getElementById('closeThresholdModal')
+      loadRateTemplate: document.getElementById('loadRateTemplate')
     };
 
     const style = getComputedStyle(document.documentElement);
@@ -302,31 +268,6 @@ if (toggle) {
 
     function resetToDefaults(){ if (confirm('Atstatyti numatytąsias zonas? Jūsų sąrašas bus pakeistas.')) { ZONES = clone(DEFAULT_ZONES); saveZones(ZONES); renderZoneEditor(); renderZoneSelect(false); } }
 
-    // --- Priedų ribų modalas ---
-    function openThresholdModal(){
-      els.thresholdsInput.value = stringifyThresholds(THRESHOLDS);
-      els.thresholdModal.classList.add('active');
-    }
-    function closeThresholdModal(){ els.thresholdModal.classList.remove('active'); }
-    function saveThresholdsAndClose(){
-      try {
-        THRESHOLDS = parseThresholds(els.thresholdsInput.value);
-        saveThresholds(THRESHOLDS);
-        compute();
-        closeThresholdModal();
-      } catch (err){
-        alert('Neteisingas JSON formatas.');
-      }
-    }
-    function resetThresholds(){
-      if (confirm('Atstatyti numatytąsias priedų ribas?')){
-        THRESHOLDS = clone(computeCore.THRESHOLDS);
-        els.thresholdsInput.value = stringifyThresholds(THRESHOLDS);
-        saveThresholds(THRESHOLDS);
-        compute();
-      }
-    }
-
     // --- Tarifų šablonas ---
     function saveRateTemplate(){
       const payload = {
@@ -373,7 +314,7 @@ if (toggle) {
         n4,
         n5,
         N,
-      }, THRESHOLDS);
+      });
 
       els.ratio.textContent = fmt(data.ratio);
       els.sShare.textContent = fmt(data.S);
@@ -543,12 +484,6 @@ function downloadCsv(){
     els.saveZonesBtn.addEventListener('click', saveZonesAndClose);
     els.defaultsZones.addEventListener('click', resetToDefaults);
     els.closeZoneModal.addEventListener('click', closeZoneModal);
-
-    // Priedų ribų modalas
-    els.manageThresholds.addEventListener('click', openThresholdModal);
-    els.saveThresholdsBtn.addEventListener('click', saveThresholdsAndClose);
-    els.defaultsThresholds.addEventListener('click', resetThresholds);
-    els.closeThresholdModal.addEventListener('click', closeThresholdModal);
 
     // Tarifų šablonai
     els.saveRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); saveRateTemplate(); });

@@ -137,7 +137,6 @@
           <button class="primary" id="reset">Išvalyti</button>
           <button id="copy">Kopijuoti rezultatą (JSON)</button>
           <button id="downloadCsv">Download CSV</button>
-          <button id="manageThresholds" type="button">Redaguoti priedus</button>
         </div>
       </div>
 
@@ -236,21 +235,6 @@
         <tbody id="zoneTbody"></tbody>
       </table>
       <div class="help small">Pastaba: <strong>Kodas</strong> turi būti unikalus (pvz., RED, YEL, GRN). Grupę galite įvesti savo (pvz., „Suaugusiųjų“, „Vaikų“).</div>
-    </div>
-  </div>
-
-  <!-- PRIEDŲ RIBŲ MODALAS -->
-  <div class="modal" id="thresholdModal" aria-hidden="true">
-    <div class="dialog">
-      <h3>Priedų ribos</h3>
-      <div class="help">Redaguokite V_BONUS ir A_BONUS JSON formatu. Naudokite "Infinity" paskutinei ribai.</div>
-      <textarea id="thresholdsInput" rows="10" style="width:100%;"></textarea>
-      <div class="toolbar">
-        <button id="defaultsThresholds" class="warn">Numatytosios</button>
-        <div class="spacer"></div>
-        <button id="closeThresholdModal">Uždaryti</button>
-        <button id="saveThresholdsBtn" class="primary">Išsaugoti</button>
-      </div>
     </div>
   </div>
 
