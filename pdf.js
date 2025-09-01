@@ -1,11 +1,21 @@
 let jsPDFLib;
-if (typeof window !== 'undefined' && window.jspdf) {
-  jsPDFLib = window.jspdf.jsPDF;
-} else {
-  jsPDFLib = require('jspdf').jsPDF;
+if (typeof window !== 'undefined') {
+  // jsPDF v2 UMD exposes window.jspdf.jsPDF, but some builds expose window.jsPDF.
+  jsPDFLib = window.jspdf?.jsPDF || window.jsPDF;
+}
+if (!jsPDFLib) {
+  try {
+    const jspdf = require('jspdf');
+    jsPDFLib = jspdf.jsPDF || jspdf.default;
+  } catch (err) {
+    console.error('jsPDF library not found', err);
+  }
 }
 
 function generatePdf(data) {
+  if (!jsPDFLib) {
+    throw new Error('jsPDF library is not loaded');
+  }
   const doc = new jsPDFLib();
   const margin = 10;
   let y = margin;
