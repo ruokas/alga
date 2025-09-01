@@ -1,4 +1,4 @@
-const { rowsToCsv, dataToCsv, csvToData } = require('../csv');
+const { rowsToCsv } = require('../csv');
 
 function parseCsvLine(line) {
   const result = [];
@@ -103,36 +103,4 @@ test('csv remains valid when zone_label has commas and quotes', () => {
   const csv = rowsToCsv(rows);
   const values = parseCsvLine(csv.split('\n')[1]);
   expect(values).toEqual(['Critical, "Red" Zone', '20']);
-});
-
-test('round trips data with multiple roles', () => {
-  const data = {
-    date: '2024-01-01',
-    shift: 'D',
-    zone: 'RED',
-    zone_label: 'Red',
-    capacity: 20,
-    N: 10,
-    ESI: { n1: 1, n2: 2, n3: 3, n4: 4, n5: 0 },
-    ratio: 0.5,
-    S: 0.3,
-    V_bonus: 0.1,
-    A_bonus: 0.05,
-    K_max: 1.3,
-    K_zona: 1.15,
-    shift_hours: 8,
-    month_hours: 160,
-    roles: [{ id: 'doc' }, { id: 'nurse' }],
-    base_rates: { doc: 1, nurse: 2 },
-    final_rates: { doc: 1.1, nurse: 2.2 },
-    shift_salary: { doc: 8.8, nurse: 17.6 },
-    month_salary: { doc: 176, nurse: 352 },
-  };
-
-  const csv = dataToCsv(data);
-  const parsed = csvToData(csv);
-  expect(parsed.base_rates.doc).toBe(1);
-  expect(parsed.base_rates.nurse).toBe(2);
-  expect(parsed.roles.find(r => r.id === 'doc')).toBeTruthy();
-  expect(parsed.roles.find(r => r.id === 'nurse')).toBeTruthy();
 });

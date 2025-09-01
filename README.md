@@ -1,6 +1,6 @@
 # Salary Calculator
 
-This project is a web-based tool for calculating salary rates in an emergency department. It computes a zone coefficient based on patient load and triage levels, then applies it to base hourly wages for any number of staff roles to produce final pay rates.
+This project is a web-based tool for calculating salary rates in an emergency department. It computes a zone coefficient based on patient load and triage levels, then applies it to base hourly wages for doctors, nurses and assistants to produce final pay rates.
 
 You can also enter shift length and total monthly hours to see estimated earnings per shift or per month.
 
@@ -18,10 +18,6 @@ Install dependencies and run the Jest test suite:
 npm install
 npm test
 ```
-
-## Custom Roles
-
-Role definitions are editable and persisted in your browser's `localStorage`. Use the **+ Pridėti rolę** button to add positions or remove existing ones. Base rate templates save and load values for all defined roles.
 
 ## Adjusting Bonus Thresholds
 

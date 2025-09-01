@@ -27,7 +27,9 @@ function sanitize(value) {
 function compute({
   C,
   kMax,
-  roles = [],
+  baseDoc,
+  baseNurse,
+  baseAssist,
   shiftH,
   monthH,
   n1,
@@ -56,19 +58,17 @@ function compute({
   const A = getBonus(S, thresholds.A_BONUS || THRESHOLDS.A_BONUS);
   const K = Math.max(0, Math.min(1 + V + A, k));
 
-  const baseRates = {};
-  const finalRates = {};
-  const shiftSalary = {};
-  const monthSalary = {};
+  const finalDoc = Math.max(0, baseDoc * K);
+  const finalNurse = Math.max(0, baseNurse * K);
+  const finalAssist = Math.max(0, baseAssist * K);
 
-  for (const r of roles) {
-    const base = sanitize(r.base);
-    const final = Math.max(0, base * K);
-    baseRates[r.id] = base;
-    finalRates[r.id] = final;
-    shiftSalary[r.id] = final * sh;
-    monthSalary[r.id] = final * mh;
-  }
+  const shiftDoc = finalDoc * sh;
+  const shiftNurse = finalNurse * sh;
+  const shiftAssist = finalAssist * sh;
+
+  const monthDoc = finalDoc * mh;
+  const monthNurse = finalNurse * mh;
+  const monthAssist = finalAssist * mh;
 
   return {
     N: totalN,
@@ -81,10 +81,26 @@ function compute({
     K_zona: K,
     shift_hours: sh,
     month_hours: mh,
-    base_rates: baseRates,
-    final_rates: finalRates,
-    shift_salary: shiftSalary,
-    month_salary: monthSalary,
+    base_rates: {
+      doctor: baseDoc,
+      nurse: baseNurse,
+      assistant: baseAssist,
+    },
+    final_rates: {
+      doctor: finalDoc,
+      nurse: finalNurse,
+      assistant: finalAssist,
+    },
+    shift_salary: {
+      doctor: shiftDoc,
+      nurse: shiftNurse,
+      assistant: shiftAssist,
+    },
+    month_salary: {
+      doctor: monthDoc,
+      nurse: monthNurse,
+      assistant: monthAssist,
+    },
   };
 }
 
