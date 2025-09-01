@@ -407,18 +407,7 @@ function downloadCsv(){
     ['month_salary_nurse', data.month_salary.nurse],
     ['month_salary_assistant', data.month_salary.assistant]
   ];
-  function csvValue(val){
-    const safe = (val === null || val === undefined ? '' : String(val)).replace(/"/g, '""');
-    return `"${safe}"`;
-  }
-  const csv = (()=>{
-    if (typeof csvUtils !== 'undefined' && typeof csvUtils.rowsToCsv === 'function') {
-      return csvUtils.rowsToCsv(rows);
-    }
-    const headers = rows.map(r => r[0]).join(',');
-    const values = rows.map(r => csvValue(r[1])).join(',');
-    return `${headers}\n${values}`;
-  })();
+  const csv = csvUtils.rowsToCsv(rows);
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
