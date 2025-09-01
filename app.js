@@ -178,16 +178,26 @@ if (toggle) {
       setDefaultCapacity();
     }
 
-    function setDefaultCapacity(){
-      const id = els.zone.value; const s = els.shift.value;
-      const z = ZONES.find(x=>x.id===id);
-      const cap = z ? (
-        s === 'D' ? (z.cap?.D ?? 20) :
-        s === 'N' ? (z.cap?.N ?? 16) :
-        (z.cap?.P ?? ((z.cap?.D ?? 20) + (z.cap?.N ?? 16)))
-      ) : 20;
-      els.capacity.value = cap;
-    }
+function setDefaultCapacity(){
+  const id = els.zone.value; const s = els.shift.value;
+  const z = ZONES.find(x=>x.id===id);
+  const cap = z ? (
+    s === 'D' ? (z.cap?.D ?? 20) :
+    s === 'N' ? (z.cap?.N ?? 16) :
+    (z.cap?.P ?? ((z.cap?.D ?? 20) + (z.cap?.N ?? 16)))
+  ) : 20;
+  els.capacity.value = cap;
+}
+
+function handleShiftChange(){
+  setDefaultCapacity();
+  if (els.shift.value === 'P') {
+    els.shiftHours.value = 24;
+  } else if (toNum(els.shiftHours.value) === 24) {
+    els.shiftHours.value = 12;
+  }
+  compute();
+}
 
     function openZoneModal(){ els.zoneModal.classList.add('active'); renderZoneEditor(); }
     function closeZoneModal(){ els.zoneModal.classList.remove('active'); }
@@ -426,14 +436,14 @@ function downloadCsv(){
 }
 
 // --- Įvykiai ---
-    ['input','change'].forEach(evt => {
-      ['date','shift','zone','capacity','N','kmax','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
-        const el = els[id];
-        if (el) el.addEventListener(evt, compute);
-      });
-    });
-    els.shift.addEventListener('change', setDefaultCapacity);
-    els.zone.addEventListener('change', setDefaultCapacity);
+['input','change'].forEach(evt => {
+  ['date','zone','capacity','N','kmax','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
+    const el = els[id];
+    if (el) el.addEventListener(evt, compute);
+  });
+});
+els.shift.addEventListener('change', handleShiftChange);
+els.zone.addEventListener('change', setDefaultCapacity);
     els.reset.addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
     els.copy.addEventListener('click', (e)=>{
       e.preventDefault();
