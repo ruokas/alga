@@ -38,7 +38,7 @@ function compute({
   n4,
   n5,
   N,
-}, thresholds = THRESHOLDS) {
+}) {
   const c = sanitize(C);
   const k = sanitize(kMax);
   const sh = sanitize(shiftH);
@@ -52,10 +52,10 @@ function compute({
     ? Math.max(0, N)
     : sN1 + sN2 + sN3 + sN4 + sN5;
   const ratio = c > 0 ? totalN / c : 0;
-  const V = getBonus(ratio, thresholds.V_BONUS || THRESHOLDS.V_BONUS);
+  const V = getBonus(ratio, THRESHOLDS.V_BONUS);
   const high = sN1 + sN2;
   const S = totalN > 0 ? high / totalN : 0;
-  const A = getBonus(S, thresholds.A_BONUS || THRESHOLDS.A_BONUS);
+  const A = getBonus(S, THRESHOLDS.A_BONUS);
   const K = Math.max(0, Math.min(1 + V + A, k));
 
   const finalDoc = Math.max(0, baseDoc * K);
