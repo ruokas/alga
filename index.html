@@ -134,11 +134,12 @@
         </div>
 
 
-        <div class="actions">
-          <button class="primary" id="reset">Išvalyti</button>
-          <button id="copy">Kopijuoti rezultatą (JSON)</button>
-          <button id="downloadCsv">Download CSV</button>
-        </div>
+          <div class="actions">
+            <button class="primary" id="reset">Išvalyti</button>
+            <button id="copy">Kopijuoti rezultatą (JSON)</button>
+            <button id="downloadCsv">Download CSV</button>
+            <button id="downloadPdf">Download PDF</button>
+          </div>
       </div>
 
       <div class="card">
@@ -240,9 +241,11 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="compute.js" defer></script>
-  <script src="csv.js" defer></script>
-  <script src="app.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="compute.js" defer></script>
+    <script src="csv.js" defer></script>
+    <script src="pdf.js" defer></script>
+    <script src="app.js" defer></script>
 </body>
 </html>

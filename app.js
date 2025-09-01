@@ -103,6 +103,7 @@ if (toggle) {
       reset: document.getElementById('reset'),
       copy: document.getElementById('copy'),
       downloadCsv: document.getElementById('downloadCsv'),
+      downloadPdf: document.getElementById('downloadPdf'),
       manageZones: document.getElementById('manageZones'),
       zoneModal: document.getElementById('zoneModal'),
       zoneTbody: document.getElementById('zoneTbody'),
@@ -435,6 +436,12 @@ function downloadCsv(){
   URL.revokeObjectURL(url);
 }
 
+function downloadPdf(){
+  const data = compute();
+  const doc = pdfUtils.generatePdf(data);
+  doc.save('salary_calc.pdf');
+}
+
 // --- Įvykiai ---
 ['input','change'].forEach(evt => {
   ['date','zone','capacity','N','kmax','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
@@ -445,7 +452,7 @@ function downloadCsv(){
 els.shift.addEventListener('change', handleShiftChange);
 els.zone.addEventListener('change', setDefaultCapacity);
     els.reset.addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
-    els.copy.addEventListener('click', (e)=>{
+      els.copy.addEventListener('click', (e)=>{
       e.preventDefault();
       const payload = compute();
       const txt = JSON.stringify(payload, null, 2);
@@ -456,7 +463,8 @@ els.zone.addEventListener('change', setDefaultCapacity);
         alert('Nepavyko nukopijuoti. Pažymėkite ir kopijuokite rankiniu būdu.');
       });
     });
-    els.downloadCsv.addEventListener('click', (e)=>{ e.preventDefault(); downloadCsv(); });
+      els.downloadCsv.addEventListener('click', (e)=>{ e.preventDefault(); downloadCsv(); });
+      els.downloadPdf.addEventListener('click', (e)=>{ e.preventDefault(); downloadPdf(); });
 
     // Zonų modalas
     els.manageZones.addEventListener('click', openZoneModal);
