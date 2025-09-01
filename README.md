@@ -23,13 +23,6 @@ npm test
 
 Role definitions are editable and persisted in your browser's `localStorage`. Use the **+ Pridėti rolę** button to add positions or remove existing ones. Base rate templates save and load values for all defined roles.
 
-## CSV Export and Import
-
-Downloading results as CSV will include a set of columns for every defined role:
-`base_rate_<role>`, `final_rate_<role>`, `shift_salary_<role>` and
-`month_salary_<role>`. The parser reconstructs the role list from these
-columns, allowing data to round‑trip through the CSV format even as roles are added or removed.
-
 ## Adjusting Bonus Thresholds
 
 The calculator allows customizing the occupancy (V) and acuity (A) bonus thresholds. Click **Redaguoti priedus** in the interface to open a modal where you can edit the `V_BONUS` and `A_BONUS` arrays in JSON form. Saved thresholds persist in your browser's `localStorage` under the key `ED_THRESHOLDS`.
