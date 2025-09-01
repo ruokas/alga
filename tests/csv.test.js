@@ -104,3 +104,23 @@ test('csv remains valid when zone_label has commas and quotes', () => {
   const values = parseCsvLine(csv.split('\n')[1]);
   expect(values).toEqual(['Critical, "Red" Zone', '20']);
 });
+
+test('csv handles paros shift', () => {
+  const data = {
+    shift: 'P',
+    shift_hours: 24,
+    shift_salary: { doctor: 24, nurse: 24, assistant: 24 },
+  };
+
+  const rows = [
+    ['shift', data.shift],
+    ['shift_hours', data.shift_hours],
+    ['shift_salary_doctor', data.shift_salary.doctor],
+    ['shift_salary_nurse', data.shift_salary.nurse],
+    ['shift_salary_assistant', data.shift_salary.assistant],
+  ];
+
+  const csv = rowsToCsv(rows);
+  const values = parseCsvLine(csv.split('\n')[1]);
+  expect(values).toEqual(['P', '24', '24', '24', '24']);
+});
