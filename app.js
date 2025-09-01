@@ -18,14 +18,14 @@ if (toggle) {
 
     // --- Zonų duomenys ---
     const DEFAULT_ZONES = [
-      { id: 'RED',   name: 'Raudona (kritinė)',       group: 'Suaugusiųjų', cap: { D: 16, N: 12 } },
-      { id: 'YEL',   name: 'Geltona (vidutinė)',      group: 'Suaugusiųjų', cap: { D: 22, N: 15 } },
-      { id: 'GRN',   name: 'Žalia (mažesnė skuba)',   group: 'Suaugusiųjų', cap: { D: 28, N: 20 } },
-      { id: 'TRIAGE',name: 'Triage/registracija',     group: 'Bendra',       cap: { D: 35, N: 24 } },
-      { id: 'OBS',   name: 'Stebėjimo zona',          group: 'Bendra',       cap: { D: 14, N: 10 } },
-      { id: 'PROCS', name: 'Procedūrų zona',          group: 'Bendra',       cap: { D: 12, N: 10 } },
-      { id: 'PED',   name: 'Vaikų zona',              group: 'Vaikų',        cap: { D: 20, N: 14 } },
-      { id: 'OTHER', name: 'Kita',                    group: 'Bendra',       cap: { D: 20, N: 16 } }
+      { id: 'RED',   name: 'Raudona (kritinė)',       group: 'Suaugusiųjų', cap: { D: 16, N: 12, P: 28 } },
+      { id: 'YEL',   name: 'Geltona (vidutinė)',      group: 'Suaugusiųjų', cap: { D: 22, N: 15, P: 37 } },
+      { id: 'GRN',   name: 'Žalia (mažesnė skuba)',   group: 'Suaugusiųjų', cap: { D: 28, N: 20, P: 48 } },
+      { id: 'TRIAGE',name: 'Triage/registracija',     group: 'Bendra',       cap: { D: 35, N: 24, P: 59 } },
+      { id: 'OBS',   name: 'Stebėjimo zona',          group: 'Bendra',       cap: { D: 14, N: 10, P: 24 } },
+      { id: 'PROCS', name: 'Procedūrų zona',          group: 'Bendra',       cap: { D: 12, N: 10, P: 22 } },
+      { id: 'PED',   name: 'Vaikų zona',              group: 'Vaikų',        cap: { D: 20, N: 14, P: 34 } },
+      { id: 'OTHER', name: 'Kita',                    group: 'Bendra',       cap: { D: 20, N: 16, P: 36 } }
     ];
 
     const LS_KEY = 'ED_ZONES_V2';
@@ -181,7 +181,11 @@ if (toggle) {
     function setDefaultCapacity(){
       const id = els.zone.value; const s = els.shift.value;
       const z = ZONES.find(x=>x.id===id);
-      const cap = z ? (s==='D' ? (z.cap?.D ?? 20) : (z.cap?.N ?? 16)) : 20;
+      const cap = z ? (
+        s === 'D' ? (z.cap?.D ?? 20) :
+        s === 'N' ? (z.cap?.N ?? 16) :
+        (z.cap?.P ?? ((z.cap?.D ?? 20) + (z.cap?.N ?? 16)))
+      ) : 20;
       els.capacity.value = cap;
     }
 
@@ -213,6 +217,7 @@ if (toggle) {
           <td><input type="text" value="${z.group || ''}" data-idx="${idx}" data-field="group" placeholder="pvz., Suaugusiųjų" /></td>
           <td><input type="number" min="0" step="1" value="${z.cap?.D ?? 0}" data-idx="${idx}" data-field="capD" /></td>
           <td><input type="number" min="0" step="1" value="${z.cap?.N ?? 0}" data-idx="${idx}" data-field="capN" /></td>
+          <td><input type="number" min="0" step="1" value="${z.cap?.P ?? 0}" data-idx="${idx}" data-field="capP" /></td>
           <td><button data-action="del" data-idx="${idx}">Šalinti</button></td>`;
         els.zoneTbody.appendChild(tr);
       });
@@ -228,6 +233,7 @@ if (toggle) {
           if (f==='group') ZONES[i].group = v;
           if (f==='capD') { ZONES[i].cap = ZONES[i].cap || {}; ZONES[i].cap.D = toNum(v); }
           if (f==='capN') { ZONES[i].cap = ZONES[i].cap || {}; ZONES[i].cap.N = toNum(v); }
+          if (f==='capP') { ZONES[i].cap = ZONES[i].cap || {}; ZONES[i].cap.P = toNum(v); }
           renderZoneSelect(true);
         });
       });
@@ -246,7 +252,7 @@ if (toggle) {
       const baseName = 'Nauja zona';
       let n = 1; let id;
       do { id = sanitizeId(baseName + ' ' + n); n++; } while (ZONES.some(z=>z.id===id));
-      ZONES.push({ id, name: baseName, group: '', cap: { D: 20, N: 16 } });
+      ZONES.push({ id, name: baseName, group: '', cap: { D: 20, N: 16, P: 36 } });
       renderZoneEditor();
       renderZoneSelect(true);
     }
