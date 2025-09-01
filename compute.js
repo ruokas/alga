@@ -1,17 +1,17 @@
-const THRESHOLDS = Object.freeze({
-  V_BONUS: Object.freeze([
-    Object.freeze({ limit: 0.80, value: 0.00 }),
-    Object.freeze({ limit: 1.00, value: 0.05 }),
-    Object.freeze({ limit: 1.25, value: 0.10 }),
-    Object.freeze({ limit: Infinity, value: 0.15 }),
-  ]),
-  A_BONUS: Object.freeze([
-    Object.freeze({ limit: 0.10, value: 0.00 }),
-    Object.freeze({ limit: 0.20, value: 0.05 }),
-    Object.freeze({ limit: 0.30, value: 0.10 }),
-    Object.freeze({ limit: Infinity, value: 0.15 }),
-  ]),
-});
+const THRESHOLDS = {
+  V_BONUS: [
+    { limit: 0.80, value: 0.00 },
+    { limit: 1.00, value: 0.05 },
+    { limit: 1.25, value: 0.10 },
+    { limit: Infinity, value: 0.15 },
+  ],
+  A_BONUS: [
+    { limit: 0.10, value: 0.00 },
+    { limit: 0.20, value: 0.05 },
+    { limit: 0.30, value: 0.10 },
+    { limit: Infinity, value: 0.15 },
+  ],
+};
 
 function getBonus(metric, table) {
   for (const { limit, value } of table) {
@@ -104,7 +104,7 @@ function compute({
   };
 }
 
-const exported = Object.freeze({ THRESHOLDS, getBonus, compute });
+const exported = { THRESHOLDS, getBonus, compute };
 
 if (typeof module !== 'undefined') {
   module.exports = exported;
