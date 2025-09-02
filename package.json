@@ -4,7 +4,8 @@
   "description": "This project is a web-based tool for calculating salary rates in an emergency department. It computes a zone coefficient based on patient load and triage levels, then applies it to base hourly wages for doctors, nurses and assistants to produce final pay rates.",
   "main": "ui.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:e2e": "playwright test"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@babel/preset-env": "^7.28.3",
+    "@playwright/test": "^1.55.0",
     "jest": "^30.1.1",
     "jest-environment-jsdom": "^30.1.2"
   },
