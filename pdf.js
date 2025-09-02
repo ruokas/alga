@@ -1,12 +1,16 @@
 let jsPDFLib;
 if (typeof window !== 'undefined') {
   // jsPDF v2 UMD exposes window.jspdf.jsPDF, but some builds expose window.jsPDF.
-  jsPDFLib = window.jspdf?.jsPDF || window.jsPDF;
+  if (window.jspdf && window.jspdf.jsPDF) {
+    jsPDFLib = window.jspdf.jsPDF;
+  } else if (window.jsPDF) {
+    jsPDFLib = window.jsPDF;
+  }
 }
 if (!jsPDFLib) {
   try {
     const jspdf = require('jspdf');
-    jsPDFLib = jspdf.jsPDF || jspdf.default;
+    jsPDFLib = jspdf.jsPDF || (jspdf.default && jspdf.default.jsPDF) || jspdf.default || jspdf;
   } catch (err) {
     console.error('jsPDF library not found', err);
   }
