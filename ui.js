@@ -1,0 +1,267 @@
+import { initThemeToggle } from './theme.js';
+import { initZones } from './zones.js';
+import { downloadCsv, downloadPdf } from './downloads.js';
+
+const LS_RATE_KEY = 'ED_RATE_TEMPLATE_V2';
+
+const els = {
+  date: document.getElementById('date'),
+  shift: document.getElementById('shift'),
+  zone: document.getElementById('zone'),
+  zoneCapacity: document.getElementById('zoneCapacity') || document.getElementById('capacity'),
+  patientCount: document.getElementById('patientCount') || document.getElementById('N'),
+  maxCoefficient: document.getElementById('maxCoefficient') || document.getElementById('kmax'),
+  shiftHours: document.getElementById('shiftHours'),
+  monthHours: document.getElementById('monthHours'),
+  baseRateDoc: document.getElementById('baseRateDoc'),
+  baseRateNurse: document.getElementById('baseRateNurse'),
+  baseRateAssist: document.getElementById('baseRateAssist'),
+  linkPatientCount: document.getElementById('linkPatientCount') || document.getElementById('linkN'),
+  esi1: document.getElementById('esi1'),
+  esi2: document.getElementById('esi2'),
+  esi3: document.getElementById('esi3'),
+  esi4: document.getElementById('esi4'),
+  esi5: document.getElementById('esi5'),
+  ratio: document.getElementById('ratio'),
+  sShare: document.getElementById('sShare'),
+  ratioCanvas: document.getElementById('ratioChart'),
+  sCanvas: document.getElementById('sChart'),
+  vBonus: document.getElementById('vBonus'),
+  aBonus: document.getElementById('aBonus'),
+  maxCoefficientCell: document.getElementById('maxCoefficientCell') || document.getElementById('kMaxCell'),
+  kZona: document.getElementById('kZona'),
+  baseDocCell: document.getElementById('baseDocCell'),
+  kDocCell: document.getElementById('kDocCell'),
+  finalDocCell: document.getElementById('finalDocCell'),
+  shiftDocCell: document.getElementById('shiftDocCell'),
+  monthDocCell: document.getElementById('monthDocCell'),
+  baseNurseCell: document.getElementById('baseNurseCell'),
+  kNurseCell: document.getElementById('kNurseCell'),
+  finalNurseCell: document.getElementById('finalNurseCell'),
+  shiftNurseCell: document.getElementById('shiftNurseCell'),
+  monthNurseCell: document.getElementById('monthNurseCell'),
+  baseAssistCell: document.getElementById('baseAssistCell'),
+  kAssistCell: document.getElementById('kAssistCell'),
+  finalAssistCell: document.getElementById('finalAssistCell'),
+  shiftAssistCell: document.getElementById('shiftAssistCell'),
+  monthAssistCell: document.getElementById('monthAssistCell'),
+  reset: document.getElementById('reset'),
+  copy: document.getElementById('copy'),
+  downloadCsv: document.getElementById('downloadCsv'),
+  downloadPdf: document.getElementById('downloadPdf'),
+  manageZones: document.getElementById('manageZones'),
+  zoneModal: document.getElementById('zoneModal'),
+  zoneTbody: document.getElementById('zoneTbody'),
+  addZone: document.getElementById('addZone'),
+  saveZonesBtn: document.getElementById('saveZonesBtn'),
+  defaultsZones: document.getElementById('defaultsZones'),
+  closeZoneModal: document.getElementById('closeZoneModal'),
+  saveRateTemplate: document.getElementById('saveRateTemplate'),
+  loadRateTemplate: document.getElementById('loadRateTemplate')
+};
+
+// Legacy aliases
+els.capacity = els.zoneCapacity;
+els.N = els.patientCount;
+els.kmax = els.maxCoefficient;
+els.linkN = els.linkPatientCount;
+els.kMaxCell = els.maxCoefficientCell;
+
+initThemeToggle();
+
+const zoneApi = initZones(els);
+const { renderZoneSelect, setDefaultCapacity, openZoneModal, closeZoneModal, addZone, saveZonesAndClose, resetToDefaults, getZones } = zoneApi;
+
+const style = getComputedStyle(document.documentElement);
+const accent = style.getPropertyValue('--accent').trim();
+const borderColor = style.getPropertyValue('--border').trim();
+const danger = style.getPropertyValue('--danger').trim();
+const accent2 = style.getPropertyValue('--accent-2').trim();
+const muted = style.getPropertyValue('--muted').trim();
+
+const charts = {};
+if (els.ratioCanvas) {
+  charts.ratio = new Chart(els.ratioCanvas, {
+    type: 'doughnut',
+    data: {
+      labels: ['Pacientų skaičius', 'Likutis'],
+      datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
+    },
+    options: {
+      rotation: -90,
+      circumference: 180,
+      cutout: '70%',
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      maintainAspectRatio: false
+    }
+  });
+}
+if (els.sCanvas) {
+  charts.s = new Chart(els.sCanvas, {
+    type: 'bar',
+    data: {
+      labels: ['ESI1', 'ESI2', 'ESI3', 'ESI4', 'ESI5'],
+      datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: [danger, accent2, muted, muted, muted] }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { x: { display: false }, y: { display: false } },
+      maintainAspectRatio: false
+    }
+  });
+}
+
+function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
+function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
+function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${fmt(n)}`; } }
+
+function compute(){
+  const zoneCapacity = Math.max(0, toNum(els.zoneCapacity.value));
+  const maxCoefficient = Math.min(2, Math.max(1, toNum(els.maxCoefficient.value)));
+  const baseDoc = Math.max(0, toNum(els.baseRateDoc.value));
+  const baseNurse = Math.max(0, toNum(els.baseRateNurse.value));
+  const baseAssist = Math.max(0, toNum(els.baseRateAssist.value));
+  const shiftH = Math.max(0, toNum(els.shiftHours.value));
+  const monthH = Math.max(0, toNum(els.monthHours.value));
+  let n1 = Math.max(0, toNum(els.esi1.value));
+  let n2 = Math.max(0, toNum(els.esi2.value));
+  let n3 = Math.max(0, toNum(els.esi3.value));
+  let n4 = Math.max(0, toNum(els.esi4.value));
+  let n5 = Math.max(0, toNum(els.esi5.value));
+
+  let patientCount = Math.max(0, toNum(els.patientCount.value));
+  if (els.linkPatientCount.checked){ patientCount = n1 + n2 + n3 + n4 + n5; els.patientCount.value = patientCount; els.patientCount.disabled = true; } else els.patientCount.disabled = false;
+
+  const data = computeCore.compute({
+    zoneCapacity,
+    maxCoefficient,
+    baseDoc,
+    baseNurse,
+    baseAssist,
+    shiftH,
+    monthH,
+    n1,
+    n2,
+    n3,
+    n4,
+    n5,
+    patientCount,
+  });
+
+  els.ratio.textContent = fmt(data.ratio);
+  els.sShare.textContent = fmt(data.S);
+  els.vBonus.textContent = `+${data.V_bonus.toFixed(2)}`;
+  els.aBonus.textContent = `+${data.A_bonus.toFixed(2)}`;
+  els.maxCoefficientCell.textContent = data.maxCoefficient.toFixed(2);
+  els.kZona.textContent = data.K_zona.toFixed(2);
+
+  if (charts.ratio) {
+    charts.ratio.data.datasets[0].data = [Math.min(data.patientCount, zoneCapacity), Math.max(zoneCapacity - Math.min(data.patientCount, zoneCapacity), 0)];
+    charts.ratio.update();
+  }
+  if (charts.s) {
+    charts.s.data.datasets[0].data = [n1, n2, n3, n4, n5];
+    charts.s.update();
+  }
+
+  els.baseDocCell.textContent = money(data.base_rates.doctor);
+  els.kDocCell.textContent = data.K_zona.toFixed(2);
+  els.finalDocCell.textContent = money(data.final_rates.doctor);
+  els.shiftDocCell.textContent = money(data.shift_salary.doctor);
+  els.monthDocCell.textContent = money(data.month_salary.doctor);
+
+  els.baseNurseCell.textContent = money(data.base_rates.nurse);
+  els.kNurseCell.textContent = data.K_zona.toFixed(2);
+  els.finalNurseCell.textContent = money(data.final_rates.nurse);
+  els.shiftNurseCell.textContent = money(data.shift_salary.nurse);
+  els.monthNurseCell.textContent = money(data.month_salary.nurse);
+
+  els.baseAssistCell.textContent = money(data.base_rates.assistant);
+  els.kAssistCell.textContent = data.K_zona.toFixed(2);
+  els.finalAssistCell.textContent = money(data.final_rates.assistant);
+  els.shiftAssistCell.textContent = money(data.shift_salary.assistant);
+  els.monthAssistCell.textContent = money(data.month_salary.assistant);
+
+  return {
+    date: els.date.value || null,
+    shift: els.shift.value,
+    zone: els.zone.value,
+    zone_label: (getZones().find(z=>z.id===els.zone.value)?.name) || els.zone.value,
+    zoneCapacity,
+    ...data,
+  };
+}
+
+function handleShiftChange(){
+  setDefaultCapacity();
+  if (els.shift.value === 'P') {
+    els.shiftHours.value = 24;
+  } else if (toNum(els.shiftHours.value) === 24) {
+    els.shiftHours.value = 12;
+  }
+  compute();
+}
+
+function saveRateTemplate(){
+  const payload = {
+    doc: toNum(els.baseRateDoc.value),
+    nurse: toNum(els.baseRateNurse.value),
+    assist: toNum(els.baseRateAssist.value)
+  };
+  try { localStorage.setItem(LS_RATE_KEY, JSON.stringify(payload)); alert('Tarifų šablonas įsimintas.'); } catch {}
+}
+function loadRateTemplate(){
+  try { const j = localStorage.getItem(LS_RATE_KEY); if (j){ const t = JSON.parse(j); if (t){ els.baseRateDoc.value = t.doc ?? 0; els.baseRateNurse.value = t.nurse ?? 0; els.baseRateAssist.value = t.assist ?? 0; compute(); return; } } } catch {}
+  alert('Nerasta išsaugoto šablono.');
+}
+
+function resetAll(){
+  els.date.value = ''; els.shift.value = 'D';
+  renderZoneSelect(false);
+  els.patientCount.value = 0; els.maxCoefficient.value = 1.30; els.linkPatientCount.checked = true;
+  els.shiftHours.value = 12; els.monthHours.value = 0;
+  els.esi1.value = 0; els.esi2.value = 0; els.esi3.value = 0; els.esi4.value = 0; els.esi5.value = 0;
+  try { const j = localStorage.getItem(LS_RATE_KEY); if (j){ const t = JSON.parse(j); els.baseRateDoc.value = t.doc ?? 0; els.baseRateNurse.value = t.nurse ?? 0; els.baseRateAssist.value = t.assist ?? 0; } else { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; } } catch { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; }
+  compute();
+}
+
+// Events
+['input','change'].forEach(evt => {
+  ['date','zone','zoneCapacity','patientCount','maxCoefficient','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkPatientCount','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
+    const el = els[id];
+    if (el) el.addEventListener(evt, compute);
+  });
+});
+els.shift.addEventListener('change', handleShiftChange);
+els.zone.addEventListener('change', setDefaultCapacity);
+els.reset.addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
+els.copy.addEventListener('click', (e)=>{
+  e.preventDefault();
+  const payload = compute();
+  const txt = JSON.stringify(payload, null, 2);
+  navigator.clipboard.writeText(txt).then(()=>{
+    els.copy.textContent = 'Nukopijuota ✓';
+    setTimeout(()=> els.copy.textContent = 'Kopijuoti rezultatą (JSON)', 1400);
+  }).catch(()=>{
+    alert('Nepavyko nukopijuoti. Pažymėkite ir kopijuokite rankiniu būdu.');
+  });
+});
+els.downloadCsv.addEventListener('click', (e)=>{ e.preventDefault(); downloadCsv(compute()); });
+els.downloadPdf.addEventListener('click', (e)=>{ e.preventDefault(); downloadPdf(compute()); });
+
+els.manageZones.addEventListener('click', openZoneModal);
+els.addZone.addEventListener('click', addZone);
+els.saveZonesBtn.addEventListener('click', saveZonesAndClose);
+els.defaultsZones.addEventListener('click', resetToDefaults);
+els.closeZoneModal.addEventListener('click', closeZoneModal);
+
+els.saveRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); saveRateTemplate(); });
+els.loadRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); loadRateTemplate(); });
+
+renderZoneSelect(false);
+resetAll();
+
+// CommonJS support for tests (none)
+if (typeof module !== 'undefined') {
+  module.exports = { compute, resetAll };
+}
