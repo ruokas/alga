@@ -4,8 +4,8 @@ const { generatePdf } = require('../pdf.js');
 describe('PDF generation', () => {
   test('runs without errors', () => {
     const data = compute({
-      C: 10,
-      kMax: 1.3,
+      zoneCapacity: 10,
+      maxCoefficient: 1.3,
       baseDoc: 20,
       baseNurse: 10,
       baseAssist: 5,
@@ -16,14 +16,14 @@ describe('PDF generation', () => {
       n3: 3,
       n4: 4,
       n5: 5,
-      N: undefined,
+      patientCount: undefined,
     });
     const doc = generatePdf({
       date: '2024-01-01',
       shift: 'D',
       zone: 'Z',
       zone_label: 'Zone Z',
-      capacity: 10,
+      zoneCapacity: 10,
       ...data,
     });
     expect(doc).toBeDefined();

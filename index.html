@@ -44,20 +44,23 @@
             </div>
           </div>
           <div>
-            <label for="capacity">Talpa C (pac./pam.)</label>
-            <input id="capacity" type="number" min="0" step="1" placeholder="pvz. 16" />
+            <label for="zoneCapacity">Zonos talpa (pac./pam.)</label>
+            <input id="zoneCapacity" type="number" min="0" step="1" placeholder="pvz. 16" />
             <div class="help">Keičiant zoną/pamainą įstatoma numatytoji talpa (galite perrašyti).</div>
+            <!-- formerly id="capacity" representing C -->
           </div>
         </div>
 
         <div class="row">
           <div>
-            <label for="N">Pacientų N (zonoje per pamainą)</label>
-            <input id="N" type="number" min="0" step="1" value="0" />
+            <label for="patientCount">Pacientų skaičius (zonoje per pamainą)</label>
+            <input id="patientCount" type="number" min="0" step="1" value="0" />
+            <!-- formerly id="N" -->
           </div>
           <div>
-            <label for="kmax">K<sub>max</sub> (lubos)</label>
-            <input id="kmax" type="number" min="1" max="2" step="0.01" value="1.30" />
+            <label for="maxCoefficient">Maksimalus koeficientas</label>
+            <input id="maxCoefficient" type="number" min="1" max="2" step="0.01" value="1.30" />
+            <!-- formerly id="kmax" -->
           </div>
         </div>
 
@@ -99,8 +102,9 @@
 
         <div class="switch-block">
           <label class="switch">
-            <input id="linkN" type="checkbox" checked />
-            <span>Naudoti N = ESI1+ESI2+ESI3+ESI4+ESI5</span>
+            <input id="linkPatientCount" type="checkbox" checked />
+            <span>Naudoti Pacientų skaičių = ESI1+ESI2+ESI3+ESI4+ESI5</span>
+            <!-- formerly id="linkN" -->
           </label>
         </div>
 
@@ -146,13 +150,13 @@
         <h2>Rezultatai</h2>
         <div class="kpi">
           <div class="item">
-            <div class="label">Santykis N/C</div>
+            <div class="label">Santykis Pacientų skaičius/Zonos talpa</div>
             <div class="val" id="ratio">0.00</div>
             <canvas id="ratioChart"></canvas>
             <div class="help">Apkrovos intervalas lemia V<sub>priedas</sub></div>
           </div>
           <div class="item">
-            <div class="label">Aukštos skubos dalis S = (ESI1+ESI2)/N</div>
+            <div class="label">Aukštos skubos dalis S = (ESI1+ESI2)/Pacientų skaičius</div>
             <div class="val" id="sShare">0.00</div>
             <canvas id="sChart"></canvas>
             <div class="help">Lemia A<sub>priedas</sub></div>
@@ -179,14 +183,14 @@
               </td>
             </tr>
             <tr>
-              <td>K<sub>max</sub> (lubos)</td>
-              <td id="kMaxCell">1.30</td>
+              <td>Maksimalus koeficientas</td>
+              <td id="maxCoefficientCell">1.30</td>
               <td>Galinio koeficiento riba</td>
             </tr>
             <tr>
               <td class="accent">K<sub>zona</sub></td>
               <td class="accent" id="kZona">1.00</td>
-              <td>min(1 + V + A, K<sub>max</sub>)</td>
+              <td>min(1 + V + A, Maksimalus koeficientas)</td>
             </tr>
           </tbody>
         </table>
@@ -204,7 +208,7 @@
         </table>
 
         <div class="footer">
-          Patarimas: jei dažnai pasiekiate lubas, padidinkite talpą C arba sumažinkite priedų laiptelius.
+          Patarimas: jei dažnai pasiekiate lubas, padidinkite zonos talpą arba sumažinkite priedų laiptelius.
         </div>
       </div>
     </div>

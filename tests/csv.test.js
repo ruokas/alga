@@ -38,14 +38,14 @@ test('handles commas in zone_label', () => {
     shift: 'D',
     zone: 'RED',
     zone_label: 'Critical, Red Zone',
-    capacity: 20,
-    N: 10,
+    zoneCapacity: 20,
+    patientCount: 10,
     ESI: { n1: 1, n2: 2, n3: 3, n4: 4, n5: 0 },
     ratio: 0.5,
     S: 0.3,
     V_bonus: 0.1,
     A_bonus: 0.05,
-    K_max: 1.3,
+    maxCoefficient: 1.3,
     K_zona: 1.15,
     shift_hours: 8,
     month_hours: 160,
@@ -60,8 +60,8 @@ test('handles commas in zone_label', () => {
     ['shift', data.shift],
     ['zone', data.zone],
     ['zone_label', data.zone_label],
-    ['capacity', data.capacity],
-    ['N', data.N],
+    ['zoneCapacity', data.zoneCapacity],
+    ['patientCount', data.patientCount],
     ['ESI1', data.ESI.n1],
     ['ESI2', data.ESI.n2],
     ['ESI3', data.ESI.n3],
@@ -71,7 +71,7 @@ test('handles commas in zone_label', () => {
     ['S', data.S],
     ['V_bonus', data.V_bonus],
     ['A_bonus', data.A_bonus],
-    ['K_max', data.K_max],
+    ['maxCoefficient', data.maxCoefficient],
     ['K_zona', data.K_zona],
     ['shift_hours', data.shift_hours],
     ['month_hours', data.month_hours],
@@ -98,7 +98,7 @@ test('handles commas in zone_label', () => {
 test('csv remains valid when zone_label has commas and quotes', () => {
   const rows = [
     ['zone_label', 'Critical, "Red" Zone'],
-    ['capacity', 20],
+    ['zoneCapacity', 20],
   ];
   const csv = rowsToCsv(rows);
   const values = parseCsvLine(csv.split('\n')[1]);

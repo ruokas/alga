@@ -25,8 +25,8 @@ function sanitize(value) {
 }
 
 function compute({
-  C,
-  kMax,
+  zoneCapacity,
+  maxCoefficient,
   baseDoc,
   baseNurse,
   baseAssist,
@@ -37,10 +37,14 @@ function compute({
   n3,
   n4,
   n5,
+  patientCount,
+  // Legacy support
+  C,
+  kMax,
   N,
 }) {
-  const c = sanitize(C);
-  const k = sanitize(kMax);
+  const c = sanitize(zoneCapacity ?? C);
+  const k = sanitize(maxCoefficient ?? kMax);
   const sh = sanitize(shiftH);
   const mh = sanitize(monthH);
   const sN1 = sanitize(n1);
@@ -48,8 +52,8 @@ function compute({
   const sN3 = sanitize(n3);
   const sN4 = sanitize(n4);
   const sN5 = sanitize(n5);
-  const totalN = Number.isFinite(N)
-    ? Math.max(0, N)
+  const totalN = Number.isFinite(patientCount ?? N)
+    ? Math.max(0, patientCount ?? N)
     : sN1 + sN2 + sN3 + sN4 + sN5;
   const ratio = c > 0 ? totalN / c : 0;
   const V = getBonus(ratio, THRESHOLDS.V_BONUS);
@@ -71,12 +75,14 @@ function compute({
   const monthAssist = finalAssist * mh;
 
   return {
+    patientCount: totalN,
     N: totalN,
     ESI: { n1: sN1, n2: sN2, n3: sN3, n4: sN4, n5: sN5 },
     ratio,
     S,
     V_bonus: V,
     A_bonus: A,
+    maxCoefficient: k,
     K_max: k,
     K_zona: K,
     shift_hours: sh,
