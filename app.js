@@ -63,15 +63,15 @@ if (toggle) {
       date: document.getElementById('date'),
       shift: document.getElementById('shift'),
       zone: document.getElementById('zone'),
-      capacity: document.getElementById('capacity'),
-      N: document.getElementById('N'),
-      kmax: document.getElementById('kmax'),
+      zoneCapacity: document.getElementById('zoneCapacity') || document.getElementById('capacity'),
+      patientCount: document.getElementById('patientCount') || document.getElementById('N'),
+      maxCoefficient: document.getElementById('maxCoefficient') || document.getElementById('kmax'),
       shiftHours: document.getElementById('shiftHours'),
       monthHours: document.getElementById('monthHours'),
       baseRateDoc: document.getElementById('baseRateDoc'),
       baseRateNurse: document.getElementById('baseRateNurse'),
       baseRateAssist: document.getElementById('baseRateAssist'),
-      linkN: document.getElementById('linkN'),
+      linkPatientCount: document.getElementById('linkPatientCount') || document.getElementById('linkN'),
       esi1: document.getElementById('esi1'),
       esi2: document.getElementById('esi2'),
       esi3: document.getElementById('esi3'),
@@ -83,7 +83,7 @@ if (toggle) {
       sCanvas: document.getElementById('sChart'),
       vBonus: document.getElementById('vBonus'),
       aBonus: document.getElementById('aBonus'),
-      kMaxCell: document.getElementById('kMaxCell'),
+      maxCoefficientCell: document.getElementById('maxCoefficientCell') || document.getElementById('kMaxCell'),
       kZona: document.getElementById('kZona'),
       baseDocCell: document.getElementById('baseDocCell'),
       kDocCell: document.getElementById('kDocCell'),
@@ -115,6 +115,13 @@ if (toggle) {
       loadRateTemplate: document.getElementById('loadRateTemplate')
     };
 
+    // Legacy aliases for backward compatibility
+    els.capacity = els.zoneCapacity;
+    els.N = els.patientCount;
+    els.kmax = els.maxCoefficient;
+    els.linkN = els.linkPatientCount;
+    els.kMaxCell = els.maxCoefficientCell;
+
     const style = getComputedStyle(document.documentElement);
     const accent = style.getPropertyValue('--accent').trim();
     const borderColor = style.getPropertyValue('--border').trim();
@@ -127,7 +134,7 @@ if (toggle) {
       charts.ratio = new Chart(els.ratioCanvas, {
         type: 'doughnut',
         data: {
-          labels: ['N', 'Likutis'],
+          labels: ['Pacientų skaičius', 'Likutis'],
           datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
         },
         options: {
@@ -187,7 +194,7 @@ function setDefaultCapacity(){
     s === 'N' ? (z.cap?.N ?? 16) :
     (z.cap?.P ?? ((z.cap?.D ?? 20) + (z.cap?.N ?? 16)))
   ) : 20;
-  els.capacity.value = cap;
+  els.zoneCapacity.value = cap;
 }
 
 function handleShiftChange(){
@@ -301,8 +308,8 @@ function handleShiftChange(){
 
     // --- Skaičiavimai ---
     function compute(){
-      const C = Math.max(0, toNum(els.capacity.value));
-      const kMax = Math.min(2, Math.max(1, toNum(els.kmax.value)));
+      const zoneCapacity = Math.max(0, toNum(els.zoneCapacity.value));
+      const maxCoefficient = Math.min(2, Math.max(1, toNum(els.maxCoefficient.value)));
       const baseDoc = Math.max(0, toNum(els.baseRateDoc.value));
       const baseNurse = Math.max(0, toNum(els.baseRateNurse.value));
       const baseAssist = Math.max(0, toNum(els.baseRateAssist.value));
@@ -314,12 +321,12 @@ function handleShiftChange(){
       let n4 = Math.max(0, toNum(els.esi4.value));
       let n5 = Math.max(0, toNum(els.esi5.value));
 
-      let N = Math.max(0, toNum(els.N.value));
-      if (els.linkN.checked){ N = n1 + n2 + n3 + n4 + n5; els.N.value = N; els.N.disabled = true; } else els.N.disabled = false;
+      let patientCount = Math.max(0, toNum(els.patientCount.value));
+      if (els.linkPatientCount.checked){ patientCount = n1 + n2 + n3 + n4 + n5; els.patientCount.value = patientCount; els.patientCount.disabled = true; } else els.patientCount.disabled = false;
 
       const data = computeCore.compute({
-        C,
-        kMax,
+        zoneCapacity,
+        maxCoefficient,
         baseDoc,
         baseNurse,
         baseAssist,
@@ -330,18 +337,18 @@ function handleShiftChange(){
         n3,
         n4,
         n5,
-        N,
+        patientCount,
       });
 
       els.ratio.textContent = fmt(data.ratio);
       els.sShare.textContent = fmt(data.S);
       els.vBonus.textContent = `+${data.V_bonus.toFixed(2)}`;
       els.aBonus.textContent = `+${data.A_bonus.toFixed(2)}`;
-      els.kMaxCell.textContent = data.K_max.toFixed(2);
+      els.maxCoefficientCell.textContent = data.maxCoefficient.toFixed(2);
       els.kZona.textContent = data.K_zona.toFixed(2);
 
       if (charts.ratio) {
-        charts.ratio.data.datasets[0].data = [Math.min(data.N, C), Math.max(C - Math.min(data.N, C), 0)];
+        charts.ratio.data.datasets[0].data = [Math.min(data.patientCount, zoneCapacity), Math.max(zoneCapacity - Math.min(data.patientCount, zoneCapacity), 0)];
         charts.ratio.update();
       }
       if (charts.s) {
@@ -372,7 +379,7 @@ function handleShiftChange(){
         shift: els.shift.value,
         zone: els.zone.value,
         zone_label: (ZONES.find(z=>z.id===els.zone.value)?.name) || els.zone.value,
-        capacity: C,
+        zoneCapacity,
         ...data,
       };
     }
@@ -381,7 +388,7 @@ function resetAll(){
       els.date.value = ''; els.shift.value = 'D';
       if (!ZONES.length) ZONES = clone(DEFAULT_ZONES);
       renderZoneSelect(false);
-      els.N.value = 0; els.kmax.value = 1.30; els.linkN.checked = true;
+      els.patientCount.value = 0; els.maxCoefficient.value = 1.30; els.linkPatientCount.checked = true;
       els.shiftHours.value = 12; els.monthHours.value = 0;
       els.esi1.value = 0; els.esi2.value = 0; els.esi3.value = 0; els.esi4.value = 0; els.esi5.value = 0;
       // bandome užkrauti tarifų šabloną
@@ -396,8 +403,8 @@ function downloadCsv(){
     ['shift', data.shift],
     ['zone', data.zone],
     ['zone_label', data.zone_label],
-    ['capacity', data.capacity],
-    ['N', data.N],
+    ['zoneCapacity', data.zoneCapacity],
+    ['patientCount', data.patientCount],
     ['ESI1', data.ESI.n1],
     ['ESI2', data.ESI.n2],
     ['ESI3', data.ESI.n3],
@@ -407,7 +414,7 @@ function downloadCsv(){
     ['S', data.S],
     ['V_bonus', data.V_bonus],
     ['A_bonus', data.A_bonus],
-    ['K_max', data.K_max],
+    ['maxCoefficient', data.maxCoefficient],
     ['K_zona', data.K_zona],
     ['shift_hours', data.shift_hours],
     ['month_hours', data.month_hours],
@@ -449,7 +456,7 @@ function downloadPdf(){
 
 // --- Įvykiai ---
 ['input','change'].forEach(evt => {
-  ['date','zone','capacity','N','kmax','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkN','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
+  ['date','zone','zoneCapacity','patientCount','maxCoefficient','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkPatientCount','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
     const el = els[id];
     if (el) el.addEventListener(evt, compute);
   });

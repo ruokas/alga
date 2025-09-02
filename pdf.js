@@ -40,8 +40,8 @@ function generatePdf(data) {
     `Date: ${data.date || ''}`,
     `Shift: ${data.shift}`,
     `Zone: ${data.zone_label || data.zone}`,
-    `Capacity: ${data.capacity}`,
-    `N: ${data.N}`,
+    `Zonos talpa: ${data.zoneCapacity}`,
+    `Pacientų skaičius: ${data.patientCount}`,
     `ESI: ${data.ESI.n1}/${data.ESI.n2}/${data.ESI.n3}/${data.ESI.n4}/${data.ESI.n5}`
   ];
   inputs.forEach(line => { doc.text(line, margin, y); y += 5; });

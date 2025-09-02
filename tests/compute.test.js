@@ -3,9 +3,9 @@ const { compute } = require('../compute');
 describe('compute core logic', () => {
   test('low occupancy yields no V bonus', () => {
     const result = compute({
-      C: 100,
-      N: 50,
-      kMax: 1.3,
+      zoneCapacity: 100,
+      patientCount: 50,
+      maxCoefficient: 1.3,
       baseDoc: 10,
       baseNurse: 10,
       baseAssist: 10,
@@ -24,9 +24,9 @@ describe('compute core logic', () => {
 
   test('medium occupancy and acuity bonuses combine', () => {
     const result = compute({
-      C: 80,
-      N: 100,
-      kMax: 1.3,
+      zoneCapacity: 80,
+      patientCount: 100,
+      maxCoefficient: 1.3,
       baseDoc: 10,
       baseNurse: 10,
       baseAssist: 10,
@@ -45,9 +45,9 @@ describe('compute core logic', () => {
 
   test('bonuses capped by kMax', () => {
     const result = compute({
-      C: 80,
-      N: 120,
-      kMax: 1.3,
+      zoneCapacity: 80,
+      patientCount: 120,
+      maxCoefficient: 1.3,
       baseDoc: 10,
       baseNurse: 10,
       baseAssist: 10,
@@ -66,9 +66,9 @@ describe('compute core logic', () => {
 
   test('handles NaN inputs with safe defaults', () => {
     const result = compute({
-      C: NaN,
-      N: NaN,
-      kMax: NaN,
+      zoneCapacity: NaN,
+      patientCount: NaN,
+      maxCoefficient: NaN,
       baseDoc: 10,
       baseNurse: 10,
       baseAssist: 10,
@@ -80,7 +80,7 @@ describe('compute core logic', () => {
       n4: NaN,
       n5: NaN,
     });
-    expect(result.N).toBe(0);
+    expect(result.patientCount).toBe(0);
     expect(result.K_zona).toBe(0);
     expect(result.shift_salary.doctor).toBe(0);
     expect(result.month_salary.doctor).toBe(0);
@@ -88,9 +88,9 @@ describe('compute core logic', () => {
 
   test('clamps negative values to zero', () => {
     const result = compute({
-      C: -100,
-      N: -50,
-      kMax: -1,
+      zoneCapacity: -100,
+      patientCount: -50,
+      maxCoefficient: -1,
       baseDoc: 10,
       baseNurse: 10,
       baseAssist: 10,
@@ -102,7 +102,7 @@ describe('compute core logic', () => {
       n4: -5,
       n5: -5,
     });
-    expect(result.N).toBe(0);
+    expect(result.patientCount).toBe(0);
     expect(result.ratio).toBe(0);
     expect(result.shift_hours).toBe(0);
     expect(result.month_hours).toBe(0);
@@ -110,9 +110,9 @@ describe('compute core logic', () => {
 
   test('ignores infinite values', () => {
     const result = compute({
-      C: Infinity,
-      N: Infinity,
-      kMax: Infinity,
+      zoneCapacity: Infinity,
+      patientCount: Infinity,
+      maxCoefficient: Infinity,
       baseDoc: 10,
       baseNurse: 10,
       baseAssist: 10,
@@ -124,7 +124,7 @@ describe('compute core logic', () => {
       n4: Infinity,
       n5: Infinity,
     });
-    expect(result.N).toBe(0);
+    expect(result.patientCount).toBe(0);
     expect(result.K_zona).toBe(0);
     expect(result.shift_salary.doctor).toBe(0);
     expect(result.month_salary.doctor).toBe(0);
