@@ -95,15 +95,82 @@ export function initZones(els) {
       tr.addEventListener('dragover', onDragOver);
       tr.addEventListener('dragleave', onDragLeave);
       tr.addEventListener('drop', onDrop);
-      tr.innerHTML = `
-        <td><span class="drag-handle" title="Vilkite rikiavimui"></span></td>
-        <td><input type="text" value="${z.name}" data-idx="${idx}" data-field="name" /></td>
-        <td><input type="text" value="${z.id}" data-idx="${idx}" data-field="id" /></td>
-        <td><input type="text" value="${z.group || ''}" data-idx="${idx}" data-field="group" placeholder="pvz., Suaugusiųjų" /></td>
-        <td><input type="number" min="0" step="1" value="${z.cap?.D ?? 0}" data-idx="${idx}" data-field="capD" /></td>
-        <td><input type="number" min="0" step="1" value="${z.cap?.N ?? 0}" data-idx="${idx}" data-field="capN" /></td>
-        <td><input type="number" min="0" step="1" value="${z.cap?.P ?? 0}" data-idx="${idx}" data-field="capP" /></td>
-        <td><button data-action="del" data-idx="${idx}">Šalinti</button></td>`;
+      const tdDrag = document.createElement('td');
+      const spanDrag = document.createElement('span');
+      spanDrag.className = 'drag-handle';
+      spanDrag.title = 'Vilkite rikiavimui';
+      tdDrag.appendChild(spanDrag);
+      tr.appendChild(tdDrag);
+
+      const tdName = document.createElement('td');
+      const inpName = document.createElement('input');
+      inpName.type = 'text';
+      inpName.value = z.name;
+      inpName.dataset.idx = idx;
+      inpName.dataset.field = 'name';
+      tdName.appendChild(inpName);
+      tr.appendChild(tdName);
+
+      const tdId = document.createElement('td');
+      const inpId = document.createElement('input');
+      inpId.type = 'text';
+      inpId.value = z.id;
+      inpId.dataset.idx = idx;
+      inpId.dataset.field = 'id';
+      tdId.appendChild(inpId);
+      tr.appendChild(tdId);
+
+      const tdGroup = document.createElement('td');
+      const inpGroup = document.createElement('input');
+      inpGroup.type = 'text';
+      inpGroup.value = z.group || '';
+      inpGroup.dataset.idx = idx;
+      inpGroup.dataset.field = 'group';
+      inpGroup.placeholder = 'pvz., Suaugusiųjų';
+      tdGroup.appendChild(inpGroup);
+      tr.appendChild(tdGroup);
+
+      const tdCapD = document.createElement('td');
+      const inpCapD = document.createElement('input');
+      inpCapD.type = 'number';
+      inpCapD.min = '0';
+      inpCapD.step = '1';
+      inpCapD.value = z.cap?.D ?? 0;
+      inpCapD.dataset.idx = idx;
+      inpCapD.dataset.field = 'capD';
+      tdCapD.appendChild(inpCapD);
+      tr.appendChild(tdCapD);
+
+      const tdCapN = document.createElement('td');
+      const inpCapN = document.createElement('input');
+      inpCapN.type = 'number';
+      inpCapN.min = '0';
+      inpCapN.step = '1';
+      inpCapN.value = z.cap?.N ?? 0;
+      inpCapN.dataset.idx = idx;
+      inpCapN.dataset.field = 'capN';
+      tdCapN.appendChild(inpCapN);
+      tr.appendChild(tdCapN);
+
+      const tdCapP = document.createElement('td');
+      const inpCapP = document.createElement('input');
+      inpCapP.type = 'number';
+      inpCapP.min = '0';
+      inpCapP.step = '1';
+      inpCapP.value = z.cap?.P ?? 0;
+      inpCapP.dataset.idx = idx;
+      inpCapP.dataset.field = 'capP';
+      tdCapP.appendChild(inpCapP);
+      tr.appendChild(tdCapP);
+
+      const tdDel = document.createElement('td');
+      const btnDel = document.createElement('button');
+      btnDel.dataset.action = 'del';
+      btnDel.dataset.idx = idx;
+      btnDel.textContent = 'Šalinti';
+      tdDel.appendChild(btnDel);
+      tr.appendChild(tdDel);
+
       els.zoneTbody.appendChild(tr);
     });
 
