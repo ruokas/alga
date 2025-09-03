@@ -161,6 +161,11 @@ function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
 function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
 function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${fmt(n)}`; } }
 
+function updateChart(chart, updater){
+  if (!chart || chart._destroyed) return;
+  updater(chart);
+}
+
 function compute(){
   const zoneCapacity = Math.max(0, toNum(els.zoneCapacity.value));
   const maxCoefficient = Math.min(2, Math.max(1, toNum(els.maxCoefficient.value)));
@@ -201,27 +206,32 @@ function compute(){
   els.maxCoefficientCell.textContent = data.maxCoefficient.toFixed(2);
   els.kZona.textContent = data.K_zona.toFixed(2);
 
-  if (charts.ratio && !charts.ratio.destroyed) {
-    charts.ratio.data.datasets[0].data = [Math.min(data.patientCount, zoneCapacity), Math.max(zoneCapacity - Math.min(data.patientCount, zoneCapacity), 0)];
-    charts.ratio.update();
-  }
-  if (charts.s && !charts.s.destroyed) {
-    charts.s.data.datasets[0].data = [n1, n2, n3, n4, n5];
-    charts.s.update();
-  }
-  if (charts.pay && !charts.pay.destroyed) {
-    charts.pay.data.datasets[0].data = [
+  updateChart(charts.ratio, chart => {
+    chart.data.datasets[0].data = [
+      Math.min(data.patientCount, zoneCapacity),
+      Math.max(zoneCapacity - Math.min(data.patientCount, zoneCapacity), 0)
+    ];
+    chart.update();
+  });
+
+  updateChart(charts.s, chart => {
+    chart.data.datasets[0].data = [n1, n2, n3, n4, n5];
+    chart.update();
+  });
+
+  updateChart(charts.pay, chart => {
+    chart.data.datasets[0].data = [
       data.baseline_shift_salary.doctor,
       data.baseline_shift_salary.nurse,
       data.baseline_shift_salary.assistant
     ];
-    charts.pay.data.datasets[1].data = [
+    chart.data.datasets[1].data = [
       data.shift_salary.doctor,
       data.shift_salary.nurse,
       data.shift_salary.assistant
     ];
-    charts.pay.update();
-  }
+    chart.update();
+  });
 
   els.baseDocCell.textContent = money(data.base_rates.doctor);
   els.kDocCell.textContent = data.K_zona.toFixed(2);
