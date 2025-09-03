@@ -128,12 +128,4 @@ function compute({
   };
 }
 
-const exported = { THRESHOLDS, getBonus, compute };
-
-if (typeof module !== 'undefined') {
-  module.exports = exported;
-}
-
-if (typeof window !== 'undefined') {
-  window.computeCore = exported;
-}
+export { compute };
