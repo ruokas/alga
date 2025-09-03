@@ -85,51 +85,63 @@ const muted = style.getPropertyValue('--muted').trim();
 
 const charts = {};
 if (els.ratioCanvas) {
-  charts.ratio = new Chart(els.ratioCanvas, {
-    type: 'doughnut',
-    data: {
-      labels: ['Pacientų skaičius', 'Likutis'],
-      datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
-    },
-    options: {
-      rotation: -90,
-      circumference: 180,
-      cutout: '70%',
-      plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      maintainAspectRatio: false
-    }
-  });
+  if (typeof Chart !== 'undefined') {
+    charts.ratio = new Chart(els.ratioCanvas, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pacientų skaičius', 'Likutis'],
+        datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
+      },
+      options: {
+        rotation: -90,
+        circumference: 180,
+        cutout: '70%',
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        maintainAspectRatio: false
+      }
+    });
+  } else {
+    console.warn('Chart.js not available: ratio chart skipped');
+  }
 }
 if (els.sCanvas) {
-  charts.s = new Chart(els.sCanvas, {
-    type: 'bar',
-    data: {
-      labels: ['ESI1', 'ESI2', 'ESI3', 'ESI4', 'ESI5'],
-      datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: [danger, accent2, muted, muted, muted] }]
-    },
-    options: {
-      plugins: { legend: { display: false } },
-      scales: { x: { display: false }, y: { display: false } },
-      maintainAspectRatio: false
-    }
-  });
+  if (typeof Chart !== 'undefined') {
+    charts.s = new Chart(els.sCanvas, {
+      type: 'bar',
+      data: {
+        labels: ['ESI1', 'ESI2', 'ESI3', 'ESI4', 'ESI5'],
+        datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: [danger, accent2, muted, muted, muted] }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        maintainAspectRatio: false
+      }
+    });
+  } else {
+    console.warn('Chart.js not available: s chart skipped');
+  }
 }
 if (els.payCanvas) {
-  charts.pay = new Chart(els.payCanvas, {
-    type: 'bar',
-    data: {
-      labels: ['Doctor', 'Nurse', 'Assistant'],
-      datasets: [
-        { label: 'Baseline', data: [0, 0, 0], backgroundColor: borderColor },
-        { label: 'Adjusted', data: [0, 0, 0], backgroundColor: accent }
-      ]
-    },
-    options: {
-      plugins: { legend: { display: false } },
-      scales: { x: { display: false }, y: { display: false } },
-      maintainAspectRatio: false
-    }
-  });
+  if (typeof Chart !== 'undefined') {
+    charts.pay = new Chart(els.payCanvas, {
+      type: 'bar',
+      data: {
+        labels: ['Doctor', 'Nurse', 'Assistant'],
+        datasets: [
+          { label: 'Baseline', data: [0, 0, 0], backgroundColor: borderColor },
+          { label: 'Adjusted', data: [0, 0, 0], backgroundColor: accent }
+        ]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        maintainAspectRatio: false
+      }
+    });
+  } else {
+    console.warn('Chart.js not available: pay chart skipped');
+  }
 }
 
 function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
