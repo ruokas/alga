@@ -96,9 +96,7 @@
     .table th { color: var(--muted); font-weight: 600; }
 
     #payChart {
-      width: 100%;
-      max-width: 480px;
-      height: 240px;
+      max-width: 100%;
       margin: 16px auto 0;
       display: block;
     }
