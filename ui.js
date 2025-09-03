@@ -35,16 +35,19 @@ const els = {
   finalDocCell: document.getElementById('finalDocCell'),
   shiftDocCell: document.getElementById('shiftDocCell'),
   monthDocCell: document.getElementById('monthDocCell'),
+  deltaDocCell: document.getElementById('deltaDocCell'),
   baseNurseCell: document.getElementById('baseNurseCell'),
   kNurseCell: document.getElementById('kNurseCell'),
   finalNurseCell: document.getElementById('finalNurseCell'),
   shiftNurseCell: document.getElementById('shiftNurseCell'),
   monthNurseCell: document.getElementById('monthNurseCell'),
+  deltaNurseCell: document.getElementById('deltaNurseCell'),
   baseAssistCell: document.getElementById('baseAssistCell'),
   kAssistCell: document.getElementById('kAssistCell'),
   finalAssistCell: document.getElementById('finalAssistCell'),
   shiftAssistCell: document.getElementById('shiftAssistCell'),
   monthAssistCell: document.getElementById('monthAssistCell'),
+  deltaAssistCell: document.getElementById('deltaAssistCell'),
   reset: document.getElementById('reset'),
   copy: document.getElementById('copy'),
   downloadCsv: document.getElementById('downloadCsv'),
@@ -57,7 +60,8 @@ const els = {
   defaultsZones: document.getElementById('defaultsZones'),
   closeZoneModal: document.getElementById('closeZoneModal'),
   saveRateTemplate: document.getElementById('saveRateTemplate'),
-  loadRateTemplate: document.getElementById('loadRateTemplate')
+  loadRateTemplate: document.getElementById('loadRateTemplate'),
+  payCanvas: document.getElementById('payChart')
 };
 
 // Legacy aliases
@@ -102,6 +106,23 @@ if (els.sCanvas) {
     data: {
       labels: ['ESI1', 'ESI2', 'ESI3', 'ESI4', 'ESI5'],
       datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: [danger, accent2, muted, muted, muted] }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { x: { display: false }, y: { display: false } },
+      maintainAspectRatio: false
+    }
+  });
+}
+if (els.payCanvas) {
+  charts.pay = new Chart(els.payCanvas, {
+    type: 'bar',
+    data: {
+      labels: ['Doctor', 'Nurse', 'Assistant'],
+      datasets: [
+        { label: 'Baseline', data: [0, 0, 0], backgroundColor: borderColor },
+        { label: 'Adjusted', data: [0, 0, 0], backgroundColor: accent }
+      ]
     },
     options: {
       plugins: { legend: { display: false } },
@@ -163,24 +184,40 @@ function compute(){
     charts.s.data.datasets[0].data = [n1, n2, n3, n4, n5];
     charts.s.update();
   }
+  if (charts.pay) {
+    charts.pay.data.datasets[0].data = [
+      data.baseline_shift_salary.doctor,
+      data.baseline_shift_salary.nurse,
+      data.baseline_shift_salary.assistant
+    ];
+    charts.pay.data.datasets[1].data = [
+      data.shift_salary.doctor,
+      data.shift_salary.nurse,
+      data.shift_salary.assistant
+    ];
+    charts.pay.update();
+  }
 
   els.baseDocCell.textContent = money(data.base_rates.doctor);
   els.kDocCell.textContent = data.K_zona.toFixed(2);
   els.finalDocCell.textContent = money(data.final_rates.doctor);
   els.shiftDocCell.textContent = money(data.shift_salary.doctor);
   els.monthDocCell.textContent = money(data.month_salary.doctor);
+  els.deltaDocCell.textContent = `${money(data.shift_salary.doctor - data.baseline_shift_salary.doctor)} / ${money(data.month_salary.doctor - data.baseline_month_salary.doctor)}`;
 
   els.baseNurseCell.textContent = money(data.base_rates.nurse);
   els.kNurseCell.textContent = data.K_zona.toFixed(2);
   els.finalNurseCell.textContent = money(data.final_rates.nurse);
   els.shiftNurseCell.textContent = money(data.shift_salary.nurse);
   els.monthNurseCell.textContent = money(data.month_salary.nurse);
+  els.deltaNurseCell.textContent = `${money(data.shift_salary.nurse - data.baseline_shift_salary.nurse)} / ${money(data.month_salary.nurse - data.baseline_month_salary.nurse)}`;
 
   els.baseAssistCell.textContent = money(data.base_rates.assistant);
   els.kAssistCell.textContent = data.K_zona.toFixed(2);
   els.finalAssistCell.textContent = money(data.final_rates.assistant);
   els.shiftAssistCell.textContent = money(data.shift_salary.assistant);
   els.monthAssistCell.textContent = money(data.month_salary.assistant);
+  els.deltaAssistCell.textContent = `${money(data.shift_salary.assistant - data.baseline_shift_salary.assistant)} / ${money(data.month_salary.assistant - data.baseline_month_salary.assistant)}`;
 
   return {
     date: els.date.value || null,
