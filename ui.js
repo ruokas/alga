@@ -1,6 +1,7 @@
 import { initThemeToggle } from './theme.js';
 import { initZones } from './zones.js';
 import { downloadCsv, downloadPdf } from './downloads.js';
+import { compute as coreCompute } from './compute.js';
 
 const LS_RATE_KEY = 'ED_RATE_TEMPLATE_V2';
 
@@ -177,7 +178,7 @@ function compute(){
   let patientCount = Math.max(0, toNum(els.patientCount.value));
   if (els.linkPatientCount.checked){ patientCount = n1 + n2 + n3 + n4 + n5; els.patientCount.value = patientCount; els.patientCount.disabled = true; } else els.patientCount.disabled = false;
 
-  const data = computeCore.compute({
+  const data = coreCompute({
     zoneCapacity,
     maxCoefficient,
     baseDoc,
