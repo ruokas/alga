@@ -95,6 +95,14 @@
     .table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
     .table th { color: var(--muted); font-weight: 600; }
 
+    #payChart {
+      width: 100%;
+      max-width: 480px;
+      height: 240px;
+      margin: 16px auto 0;
+      display: block;
+    }
+
     .footer { margin-top: 18px; font-size: var(--font-xs); color: var(--muted); }
 
     /* Modal */
