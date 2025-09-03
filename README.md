@@ -10,6 +10,10 @@ You can also enter shift length and total monthly hours to see estimated earning
 2. Open `index.html` in a modern web browser.
 3. Fill in the form to see calculated coefficients and final rates.
 
+## Dependencies
+
+This project loads [Chart.js](https://www.chartjs.org/) from a CDN and pins it to version **4.4.0**. Update the version string deliberately when upgrading to avoid unexpected changes.
+
 ## Testing
 
 Install dependencies and run the Jest test suite:
