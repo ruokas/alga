@@ -64,6 +64,27 @@ describe('compute core logic', () => {
     expect(result.K_zona).toBeCloseTo(1.30);
   });
 
+  test('returns baseline salaries without bonuses', () => {
+    const result = compute({
+      zoneCapacity: 100,
+      patientCount: 100,
+      maxCoefficient: 1.5,
+      baseDoc: 10,
+      baseNurse: 8,
+      baseAssist: 6,
+      shiftH: 12,
+      monthH: 160,
+      n1: 20,
+      n2: 20,
+      n3: 60,
+      n4: 0,
+      n5: 0,
+    });
+    expect(result.baseline_shift_salary.doctor).toBeCloseTo(120);
+    expect(result.baseline_month_salary.nurse).toBeCloseTo(1280);
+    expect(result.shift_salary.doctor).toBeGreaterThan(result.baseline_shift_salary.doctor);
+  });
+
   test('handles NaN inputs with safe defaults', () => {
     const result = compute({
       zoneCapacity: NaN,

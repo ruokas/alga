@@ -198,14 +198,15 @@
         <h2 class="role-heading">Tarifai pagal rolę</h2>
         <table class="table">
           <thead>
-            <tr><th>Rolė</th><th>Bazė (€/val.)</th><th>Koef. K<sub>zona</sub></th><th>Galutinis (€/val.)</th><th>Pam. alga (€/pam.)</th><th>Mėn. alga (€/mėn.)</th></tr>
+            <tr><th>Rolė</th><th>Bazė (€/val.)</th><th>Koef. K<sub>zona</sub></th><th>Galutinis (€/val.)</th><th>Pam. alga (€/pam.)</th><th>Mėn. alga (€/mėn.)</th><th>Improvement</th></tr>
           </thead>
           <tbody>
-            <tr><td>Gydytojas</td><td id="baseDocCell">€0,00</td><td id="kDocCell">1,00</td><td class="accent" id="finalDocCell">€0,00</td><td id="shiftDocCell">€0,00</td><td id="monthDocCell">€0,00</td></tr>
-            <tr><td>Slaugytojas</td><td id="baseNurseCell">€0,00</td><td id="kNurseCell">1,00</td><td class="accent" id="finalNurseCell">€0,00</td><td id="shiftNurseCell">€0,00</td><td id="monthNurseCell">€0,00</td></tr>
-            <tr><td>Padėjėjas</td><td id="baseAssistCell">€0,00</td><td id="kAssistCell">1,00</td><td class="accent" id="finalAssistCell">€0,00</td><td id="shiftAssistCell">€0,00</td><td id="monthAssistCell">€0,00</td></tr>
+            <tr><td>Gydytojas</td><td id="baseDocCell">€0,00</td><td id="kDocCell">1,00</td><td class="accent" id="finalDocCell">€0,00</td><td id="shiftDocCell">€0,00</td><td id="monthDocCell">€0,00</td><td id="deltaDocCell">€0,00 / €0,00</td></tr>
+            <tr><td>Slaugytojas</td><td id="baseNurseCell">€0,00</td><td id="kNurseCell">1,00</td><td class="accent" id="finalNurseCell">€0,00</td><td id="shiftNurseCell">€0,00</td><td id="monthNurseCell">€0,00</td><td id="deltaNurseCell">€0,00 / €0,00</td></tr>
+            <tr><td>Padėjėjas</td><td id="baseAssistCell">€0,00</td><td id="kAssistCell">1,00</td><td class="accent" id="finalAssistCell">€0,00</td><td id="shiftAssistCell">€0,00</td><td id="monthAssistCell">€0,00</td><td id="deltaAssistCell">€0,00 / €0,00</td></tr>
           </tbody>
         </table>
+        <canvas id="payChart"></canvas>
 
         <div class="footer">
           Patarimas: jei dažnai pasiekiate lubas, padidinkite zonos talpą arba sumažinkite priedų laiptelius.

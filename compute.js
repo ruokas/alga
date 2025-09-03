@@ -66,6 +66,14 @@ function compute({
   const finalNurse = Math.max(0, baseNurse * K);
   const finalAssist = Math.max(0, baseAssist * K);
 
+  const baseShiftDoc = Math.max(0, baseDoc * sh);
+  const baseShiftNurse = Math.max(0, baseNurse * sh);
+  const baseShiftAssist = Math.max(0, baseAssist * sh);
+
+  const baseMonthDoc = Math.max(0, baseDoc * mh);
+  const baseMonthNurse = Math.max(0, baseNurse * mh);
+  const baseMonthAssist = Math.max(0, baseAssist * mh);
+
   const shiftDoc = finalDoc * sh;
   const shiftNurse = finalNurse * sh;
   const shiftAssist = finalAssist * sh;
@@ -91,6 +99,16 @@ function compute({
       doctor: baseDoc,
       nurse: baseNurse,
       assistant: baseAssist,
+    },
+    baseline_shift_salary: {
+      doctor: baseShiftDoc,
+      nurse: baseShiftNurse,
+      assistant: baseShiftAssist,
+    },
+    baseline_month_salary: {
+      doctor: baseMonthDoc,
+      nurse: baseMonthNurse,
+      assistant: baseMonthAssist,
     },
     final_rates: {
       doctor: finalDoc,
