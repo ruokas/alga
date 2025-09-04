@@ -16,7 +16,7 @@ if (!jsPDFLib) {
   }
 }
 
-function generatePdf(data) {
+function generatePdf(data, chartImages = {}) {
   if (!jsPDFLib) {
     throw new Error('jsPDF library is not loaded');
   }
@@ -71,6 +71,59 @@ function generatePdf(data) {
     );
     y += 5;
   });
+
+  y += 5;
+  doc.setFontSize(12);
+  doc.text('Summary', margin, y);
+  y += 6;
+  doc.setFontSize(10);
+  ['doctor','nurse','assistant'].forEach(role => {
+    const base = data.baseline_shift_salary[role];
+    const final = data.shift_salary[role];
+    const diff = final - base;
+    doc.text(
+      `${role}: baseline ${base.toFixed(2)} → adjusted ${final.toFixed(2)} (Δ ${diff.toFixed(2)})`,
+      margin,
+      y
+    );
+    y += 5;
+  });
+  doc.text(
+    `Bonuses reward volume (V_bonus ${data.V_bonus.toFixed(2)}), acuity (A_bonus ${data.A_bonus.toFixed(2)}) and zone difficulty (K_zona ${data.K_zona.toFixed(2)}).`,
+    margin,
+    y
+  );
+  y += 10;
+
+  const chartIds = Object.keys(chartImages);
+  if (chartIds.length) {
+    const imgWidth = 60;
+    const imgHeight = 40;
+    chartIds.forEach((id, idx) => {
+      const img = chartImages[id];
+      const x = margin + (idx % 2) * (imgWidth + 10);
+      const yPos = y + Math.floor(idx / 2) * (imgHeight + 10);
+      try {
+        doc.addImage(img, 'PNG', x, yPos, imgWidth, imgHeight);
+      } catch (err) {
+        console.error('Failed to add image', id, err);
+      }
+    });
+    y += Math.ceil(chartIds.length / 2) * (imgHeight + 10);
+  }
+
+  doc.addPage();
+  y = margin;
+  doc.setFontSize(16);
+  doc.text("Director's Brief", margin, y);
+  y += 10;
+  doc.setFontSize(12);
+  const brief = [
+    'Aligns pay with workload and patient acuity.',
+    'Encourages efficiency and quality care.',
+    'Provides transparent, data-driven bonuses.',
+  ];
+  brief.forEach(line => { doc.text(`• ${line}`, margin, y); y += 8; });
 
   return doc;
 }

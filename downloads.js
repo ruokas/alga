@@ -49,7 +49,28 @@ export function downloadCsv(data) {
 }
 
 export function buildPdf(data) {
-  return pdfUtils.generatePdf(data);
+  const chartImages = {};
+  if (typeof document !== 'undefined' && typeof Chart !== 'undefined') {
+    ['ratioChart', 'sChart', 'payChart'].forEach(id => {
+      const canvas = document.getElementById(id);
+      if (canvas) {
+        let chart;
+        if (typeof Chart.getChart === 'function') {
+          chart = Chart.getChart(canvas);
+        } else if (canvas.chart) {
+          chart = canvas.chart;
+        }
+        if (chart && typeof chart.toBase64Image === 'function') {
+          try {
+            chartImages[id] = chart.toBase64Image();
+          } catch (err) {
+            console.error('Failed to capture chart', id, err);
+          }
+        }
+      }
+    });
+  }
+  return pdfUtils.generatePdf(data, chartImages);
 }
 
 export function downloadPdf(data) {
