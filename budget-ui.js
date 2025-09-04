@@ -61,9 +61,16 @@ function compute(){
 
   const data = computeBudget({
     counts: {
-      doctor: docDay + docNight,
-      nurse: nurseDay + nurseNight,
-      assistant: assistDay + assistNight,
+      day: {
+        doctor: docDay,
+        nurse: nurseDay,
+        assistant: assistDay,
+      },
+      night: {
+        doctor: docNight,
+        nurse: nurseNight,
+        assistant: assistNight,
+      },
     },
     rateInputs: {
       zoneCapacity: 1,

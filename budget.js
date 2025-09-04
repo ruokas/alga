@@ -4,7 +4,7 @@ function sanitizeCount(value) {
 
 import { compute } from './compute.js';
 
-export function computeBudget({ counts = {}, rateInputs = {} }) {
+export function computeBudget({ counts = {}, rateInputs = {}, nightMultiplier = 1.5 }) {
   const salaryData = compute(rateInputs);
   const roles = ['doctor', 'nurse', 'assistant'];
 
@@ -15,10 +15,20 @@ export function computeBudget({ counts = {}, rateInputs = {} }) {
   let month_total = 0;
 
   for (const role of roles) {
-    const count = sanitizeCount(counts[role]);
-    cleanCounts[role] = count;
-    const shift = (salaryData.shift_salary?.[role] || 0) * count;
-    const month = (salaryData.month_salary?.[role] || 0) * count;
+    // Support legacy flat counts or separated day/night counts
+    let day = 0;
+    let night = 0;
+    if (counts.day || counts.night) {
+      day = sanitizeCount(counts.day?.[role]);
+      night = sanitizeCount(counts.night?.[role]);
+    } else {
+      day = sanitizeCount(counts[role]);
+    }
+    const total = day + night;
+    cleanCounts[role] = total;
+    const factorCount = day + night * nightMultiplier;
+    const shift = (salaryData.shift_salary?.[role] || 0) * factorCount;
+    const month = (salaryData.month_salary?.[role] || 0) * factorCount;
     shift_budget[role] = shift;
     month_budget[role] = month;
     shift_total += shift;
