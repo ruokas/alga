@@ -24,15 +24,18 @@ function simulateEsiCounts(patientCount, zoneCapacity){
   return { total, counts };
 }
 
+const DAILY_PATIENT_COUNTS = [135, 126, 124, 122, 130, 117, 119];
+
 function simulatePeriod(days, zoneCapacity){
   const d = Math.max(0, Math.floor(Number(days)));
   const cap = Number(zoneCapacity);
   const results = [];
   for (let i=0; i<d; i++){
-    const { total, counts } = simulateEsiCounts(0, cap);
+    const dayTotal = DAILY_PATIENT_COUNTS[i % DAILY_PATIENT_COUNTS.length];
+    const { total, counts } = simulateEsiCounts(dayTotal, cap);
     results.push({ day: i + 1, total, counts });
   }
   return results;
 }
 
-export { simulateEsiCounts, simulatePeriod };
+export { simulateEsiCounts, simulatePeriod, DAILY_PATIENT_COUNTS };

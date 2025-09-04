@@ -20,12 +20,10 @@ describe('simulatePeriod', () => {
     const res = simulatePeriod(5, 0);
     expect(res).toHaveLength(5);
   });
-
-  test('uses zone capacity when provided', () => {
-    const orig = Math.random;
-    Math.random = () => 0; // deterministic
-    const res = simulatePeriod(1, 100);
-    Math.random = orig;
-    expect(res[0].total).toBe(80);
+  
+  test('follows real daily patient counts pattern', () => {
+    const res = simulatePeriod(7, 0);
+    const totals = res.map(r => r.total);
+    expect(totals).toEqual([135, 126, 124, 122, 130, 117, 119]);
   });
 });
