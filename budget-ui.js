@@ -3,7 +3,13 @@ import { computeBudget } from './budget.js';
 import { createBudgetChart, updateBudgetChart } from './chart-utils.js';
 
 function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
-function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${(n||0).toFixed(2)}`; } }
+function money(n){
+  try{
+    return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0);
+  }catch{
+    return `€${(n||0).toFixed(2)}`;
+  }
+}
 
 const els = {
   shiftHours: document.getElementById('shiftHours'),
@@ -11,12 +17,18 @@ const els = {
   baseRateDoc: document.getElementById('baseRateDoc'),
   baseRateNurse: document.getElementById('baseRateNurse'),
   baseRateAssist: document.getElementById('baseRateAssist'),
-  countDoc: document.getElementById('countDoc'),
-  countNurse: document.getElementById('countNurse'),
-  countAssist: document.getElementById('countAssist'),
-  countDocCell: document.getElementById('countDocCell'),
-  countNurseCell: document.getElementById('countNurseCell'),
-  countAssistCell: document.getElementById('countAssistCell'),
+  countDocDay: document.getElementById('countDocDay'),
+  countDocNight: document.getElementById('countDocNight'),
+  countNurseDay: document.getElementById('countNurseDay'),
+  countNurseNight: document.getElementById('countNurseNight'),
+  countAssistDay: document.getElementById('countAssistDay'),
+  countAssistNight: document.getElementById('countAssistNight'),
+  countDocDayCell: document.getElementById('countDocDayCell'),
+  countDocNightCell: document.getElementById('countDocNightCell'),
+  countNurseDayCell: document.getElementById('countNurseDayCell'),
+  countNurseNightCell: document.getElementById('countNurseNightCell'),
+  countAssistDayCell: document.getElementById('countAssistDayCell'),
+  countAssistNightCell: document.getElementById('countAssistNightCell'),
   rateDocCell: document.getElementById('rateDocCell'),
   rateNurseCell: document.getElementById('rateNurseCell'),
   rateAssistCell: document.getElementById('rateAssistCell'),
@@ -36,11 +48,18 @@ initThemeToggle();
 const budgetChart = createBudgetChart(els.budgetChart, 'doughnut');
 
 function compute(){
+  const docDay = toNum(els.countDocDay.value);
+  const docNight = toNum(els.countDocNight.value);
+  const nurseDay = toNum(els.countNurseDay.value);
+  const nurseNight = toNum(els.countNurseNight.value);
+  const assistDay = toNum(els.countAssistDay.value);
+  const assistNight = toNum(els.countAssistNight.value);
+
   const data = computeBudget({
     counts: {
-      doctor: toNum(els.countDoc.value),
-      nurse: toNum(els.countNurse.value),
-      assistant: toNum(els.countAssist.value),
+      doctor: docDay + docNight,
+      nurse: nurseDay + nurseNight,
+      assistant: assistDay + assistNight,
     },
     rateInputs: {
       zoneCapacity: 1,
@@ -59,9 +78,12 @@ function compute(){
     }
   });
 
-  els.countDocCell.textContent = data.counts.doctor;
-  els.countNurseCell.textContent = data.counts.nurse;
-  els.countAssistCell.textContent = data.counts.assistant;
+  els.countDocDayCell.textContent = docDay;
+  els.countDocNightCell.textContent = docNight;
+  els.countNurseDayCell.textContent = nurseDay;
+  els.countNurseNightCell.textContent = nurseNight;
+  els.countAssistDayCell.textContent = assistDay;
+  els.countAssistNightCell.textContent = assistNight;
 
   els.rateDocCell.textContent = money(data.final_rates.doctor);
   els.rateNurseCell.textContent = money(data.final_rates.nurse);
@@ -81,7 +103,10 @@ function compute(){
 }
 
 ['input','change'].forEach(evt => {
-  ['shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','countDoc','countNurse','countAssist'].forEach(id => {
+  [
+    'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
+    'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight'
+  ].forEach(id => {
     const el = els[id];
     if (el) el.addEventListener(evt, compute);
   });

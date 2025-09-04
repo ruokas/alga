@@ -2,7 +2,7 @@ function sanitizeCount(value) {
   return Number.isFinite(value) ? Math.max(0, value) : 0;
 }
 
-import { compute } from './compute';
+import { compute } from './compute.js';
 
 export function computeBudget({ counts = {}, rateInputs = {} }) {
   const salaryData = compute(rateInputs);
