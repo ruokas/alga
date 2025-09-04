@@ -45,9 +45,9 @@
     }
     .container {
       width: 100%;
-      max-width: none;
-      margin: 0;
-      padding: 16px;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 12px;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -57,11 +57,11 @@
     .title .switch { margin-left: auto; }
     .grid {
       display: grid;
-      gap: 14px;
+      gap: 10px;
       flex: 1;
       overflow: hidden;
     }
-    @media (min-width: 960px) { .grid-2 { grid-template-columns: 1.2fr 0.8fr; } }
+    @media (min-width: 960px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
     .card {
       background: radial-gradient(1200px 400px at 10% 0%, var(--panel), var(--card));
       border: 1px solid var(--border);
@@ -69,6 +69,15 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02);
       overflow: auto;
     }
+    .card-compact { padding: 10px; }
+    .card-compact .row, .card-compact .row-3 { gap: 6px; }
+    .card-compact input[type="number"],
+    .card-compact input[type="date"],
+    .card-compact input[type="text"],
+    .card-compact select { padding: 6px 8px; }
+    .card-compact .actions { gap: 6px; margin-top: 6px; }
+    .card-compact h2 { margin: 0 0 4px; }
+    .card-compact .switch-block { margin: 6px 0 4px; }
     h1 { font-size: var(--font-xl); margin: 6px 0 2px; letter-spacing: 0.2px; }
     h2 { font-size: var(--font-base); margin: 0 0 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.2px; }
     label { display: block; font-size: var(--font-sm); color: var(--muted); margin-bottom: 6px; }
@@ -90,6 +99,7 @@
     .switch-block { margin: 10px 0 6px; }
 
     .kpi { display: grid; gap: 12px; margin-top: 8px; }
+    .card-compact .kpi { gap: 8px; }
     @media (min-width: 960px) {
       .kpi { grid-template-columns: 1fr 1fr; }
       .kpi .ratio-item { grid-column: 1; grid-row: 1; }
@@ -98,6 +108,7 @@
     }
     .role-heading { margin-top: 14px; }
     .kpi .item { padding: 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel); }
+    .card-compact .kpi .item { padding: 8px; }
     .kpi .label { font-size: var(--font-xs); color: var(--muted); }
     .kpi .val { font-size: var(--font-lg); font-weight: 700; margin-top: 2px; }
     .kpi canvas { width: 100%; max-width: 120px; height: 60px !important; margin-top: 8px; }
@@ -113,6 +124,7 @@
     button:active { transform: translateY(1px); }
     .primary { border-color: var(--accent-2); background: var(--accent-2); color: #fff; }
     .warn { border-color: #b91c1c; }
+    .card-compact button { padding: 6px 10px; }
 
     .table { width:100%; border-collapse: collapse; margin-top: 12px; font-size: var(--font-sm); }
     .table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
