@@ -4,8 +4,6 @@ export const DEFAULT_ZONES = [
   { id: 'GRN',   name: 'Žalia (mažesnė skuba)',   group: 'Suaugusiųjų', cap: { D: 28, N: 20, P: 48 } },
   { id: 'TRIAGE',name: 'Triage/registracija',     group: 'Bendra',       cap: { D: 35, N: 24, P: 59 } },
   { id: 'OBS',   name: 'Stebėjimo zona',          group: 'Bendra',       cap: { D: 14, N: 10, P: 24 } },
-  { id: 'PROCS', name: 'Procedūrų zona',          group: 'Bendra',       cap: { D: 12, N: 10, P: 22 } },
-  { id: 'PED',   name: 'Vaikų zona',              group: 'Vaikų',        cap: { D: 20, N: 14, P: 34 } },
   { id: 'OTHER', name: 'Kita',                    group: 'Bendra',       cap: { D: 20, N: 16, P: 36 } }
 ];
 
