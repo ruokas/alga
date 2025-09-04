@@ -1,6 +1,6 @@
 import { initThemeToggle } from './theme.js';
 import { computeBudget } from './budget.js';
-import { createBudgetChart, updateBudgetChart } from './chart-utils.js';
+import { createBudgetChart, updateBudgetChart, createDayNightChart, updateDayNightChart } from './chart-utils.js';
 
 function toNum(v){
   if (typeof v === 'string') v = v.replace(',', '.');
@@ -61,11 +61,13 @@ const els = {
   monthNightTotalCell: document.getElementById('monthNightTotalCell'),
   monthTotalCell: document.getElementById('monthTotalCell'),
   budgetChart: document.getElementById('budgetChart'),
+  dayNightChart: document.getElementById('dayNightChart'),
 };
 
 initThemeToggle();
 
 const budgetChart = createBudgetChart(els.budgetChart, 'doughnut');
+const dayNightChart = createDayNightChart(els.dayNightChart);
 
 const INPUT_IDS = [
   'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
@@ -170,6 +172,7 @@ function compute(){
   els.monthTotalCell.textContent = money(data.month_budget.total);
 
   updateBudgetChart(budgetChart, data.month_budget);
+  updateDayNightChart(dayNightChart, data.shift_budget_day, data.shift_budget_night);
 }
 
 ['input','change'].forEach(evt => {
