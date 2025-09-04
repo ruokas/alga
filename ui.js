@@ -345,7 +345,7 @@ function simulateEsi(){
 function simulatePeriodUi(){
   const days = toNum(els.days.value);
   const zoneCapacity = toNum(els.zoneCapacity.value);
-  const results = simulatePeriodSim(days, zoneCapacity);
+  const results = simulatePeriodSim(days, zoneCapacity, {});
   updateFlowChart(charts.flow, results);
 }
 

@@ -26,12 +26,19 @@ function simulateEsiCounts(patientCount, zoneCapacity){
 
 const DAILY_PATIENT_COUNTS = [135, 126, 124, 122, 130, 117, 119];
 
-function simulatePeriod(days, zoneCapacity){
+function simulatePeriod(days, zoneCapacity, options = {}){
+  const {
+    patientCounts = DAILY_PATIENT_COUNTS,
+    variation = 0,
+    startIndex = 0
+  } = options;
   const d = Math.max(0, Math.floor(Number(days)));
   const cap = Number(zoneCapacity);
   const results = [];
-  for (let i=0; i<d; i++){
-    const dayTotal = DAILY_PATIENT_COUNTS[i % DAILY_PATIENT_COUNTS.length];
+  for (let i = 0; i < d; i++){
+    const base = patientCounts[(startIndex + i) % patientCounts.length];
+    const factor = 1 + (Math.random() * 2 - 1) * variation;
+    const dayTotal = base * factor;
     const { total, counts } = simulateEsiCounts(dayTotal, cap);
     results.push({ day: i + 1, total, counts });
   }
