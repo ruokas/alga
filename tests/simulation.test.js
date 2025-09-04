@@ -26,4 +26,18 @@ describe('simulatePeriod', () => {
     const totals = res.map(r => r.total);
     expect(totals).toEqual([135, 126, 124, 122, 130, 117, 119]);
   });
+
+  test('uses custom patientCounts and startIndex', () => {
+    const res = simulatePeriod(4, 0, { patientCounts: [10, 20], startIndex: 1 });
+    const totals = res.map(r => r.total);
+    expect(totals).toEqual([20, 10, 20, 10]);
+  });
+
+  test('applies variation within expected bounds', () => {
+    const res = simulatePeriod(5, 0, { patientCounts: [100], variation: 0.1 });
+    res.forEach(r => {
+      expect(r.total).toBeGreaterThanOrEqual(90);
+      expect(r.total).toBeLessThan(110);
+    });
+  });
 });
