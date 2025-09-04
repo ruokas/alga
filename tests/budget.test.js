@@ -55,6 +55,32 @@ describe('computeBudget', () => {
     expect(result.shift_budget.assistant).toBeCloseTo(72);
     expect(result.shift_budget.total).toBeCloseTo(72);
   });
+  test('applies night multiplier', () => {
+    const result = computeBudget({
+      counts: {
+        day: { doctor: 1, nurse: 0, assistant: 0 },
+        night: { doctor: 1, nurse: 0, assistant: 0 },
+      },
+      rateInputs: {
+        zoneCapacity: 1,
+        patientCount: 0,
+        maxCoefficient: 1,
+        baseDoc: 10,
+        baseNurse: 0,
+        baseAssist: 0,
+        shiftH: 1,
+        monthH: 1,
+        n1: 0,
+        n2: 0,
+        n3: 0,
+        n4: 0,
+        n5: 0,
+      },
+    });
+
+    expect(result.shift_budget.doctor).toBeCloseTo(25);
+    expect(result.month_budget.doctor).toBeCloseTo(25);
+  });
 });
 
 describe('CSV and PDF generation', () => {
@@ -175,7 +201,13 @@ describe('budget chart DOM integration', () => {
       n4: 0,
       n5: 0,
     };
-    const initial = computeBudget({ counts: { doctor: 2, nurse: 2, assistant: 2 }, rateInputs }).month_budget;
+    const initial = computeBudget({
+      counts: {
+        day: { doctor: 1, nurse: 1, assistant: 1 },
+        night: { doctor: 1, nurse: 1, assistant: 1 },
+      },
+      rateInputs,
+    }).month_budget;
     expect(global.Chart).toHaveBeenCalledTimes(1);
     expect(chartInstance.data.datasets[0].data).toEqual([
       initial.doctor,
@@ -186,7 +218,13 @@ describe('budget chart DOM integration', () => {
     chartInstance.update.mockClear();
     document.getElementById('countDocDay').value = '2';
     compute();
-    const updated = computeBudget({ counts: { doctor: 3, nurse: 2, assistant: 2 }, rateInputs }).month_budget;
+    const updated = computeBudget({
+      counts: {
+        day: { doctor: 2, nurse: 1, assistant: 1 },
+        night: { doctor: 1, nurse: 1, assistant: 1 },
+      },
+      rateInputs,
+    }).month_budget;
     expect(chartInstance.data.datasets[0].data).toEqual([
       updated.doctor,
       updated.nurse,
