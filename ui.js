@@ -189,7 +189,8 @@ if (els.payCanvas) {
             plugins: { legend: { display: false }, tooltip: { enabled: false } },
             scales: { x: { display: false }, y: { display: false } },
             maintainAspectRatio: false,
-            responsive: true
+            responsive: true,
+            datasets: { barPercentage: 0.6, categoryPercentage: 0.5 }
           },
           plugins: [barValuePlugin]
         });
