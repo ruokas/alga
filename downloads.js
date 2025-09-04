@@ -62,7 +62,27 @@ export function buildPdf(data) {
         }
         if (chart && typeof chart.toBase64Image === 'function') {
           try {
-            chartImages[id] = chart.toBase64Image();
+            const SAFE_LIMIT = 16384;
+            const { width, height } = canvas;
+            if (width > SAFE_LIMIT || height > SAFE_LIMIT) {
+              const scale = Math.min(SAFE_LIMIT / width, SAFE_LIMIT / height);
+              const tmp = document.createElement('canvas');
+              tmp.width = Math.floor(width * scale);
+              tmp.height = Math.floor(height * scale);
+              const ctx = tmp.getContext('2d');
+              if (
+                ctx &&
+                typeof ctx.drawImage === 'function' &&
+                typeof tmp.toDataURL === 'function'
+              ) {
+                ctx.drawImage(canvas, 0, 0, tmp.width, tmp.height);
+                chartImages[id] = tmp.toDataURL();
+              } else {
+                chartImages[id] = chart.toBase64Image();
+              }
+            } else {
+              chartImages[id] = chart.toBase64Image();
+            }
           } catch (err) {
             console.error('Failed to capture chart', id, err);
           }
