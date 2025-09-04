@@ -69,6 +69,7 @@ const els = {
   loadRateTemplate: document.getElementById('loadRateTemplate'),
   payCanvas: document.getElementById('payChart'),
   flowCanvas: document.getElementById('flowChart'),
+  budgetPlanner: document.getElementById('budgetPlanner'),
 };
 
 // Legacy aliases
@@ -418,6 +419,10 @@ els.closeZoneModal.addEventListener('click', closeZoneModal);
 
 els.saveRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); saveRateTemplate(); });
 els.loadRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); loadRateTemplate(); });
+
+if (els.budgetPlanner) {
+  els.budgetPlanner.addEventListener('click', (e)=>{ e.preventDefault(); window.location.href = 'budget.html'; });
+}
 
 renderZoneSelect(false);
 resetAll();

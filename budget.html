@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Biudžeto Planavimo Skaičiuoklė</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="title">
+      <h1>Biudžeto Planavimo Skaičiuoklė</h1>
+      <label class="switch">
+        <input id="themeToggle" type="checkbox" />
+        <span>Šviesi tema</span>
+      </label>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h2>Įvestis</h2>
+        <div class="row">
+          <div>
+            <label for="shiftHours">Pamainos trukmė (val.)</label>
+            <input id="shiftHours" type="number" min="0" step="0.5" value="12" />
+          </div>
+          <div>
+            <label for="monthHours">Mėnesio valandos</label>
+            <input id="monthHours" type="number" min="0" step="0.5" value="160" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="baseRateDoc">Bazinis gydytojo tarifas (€ / val.)</label>
+            <input id="baseRateDoc" type="number" min="0" step="0.01" value="0" placeholder="pvz. 25.00" />
+          </div>
+          <div>
+            <label for="countDoc">Gydytojų skaičius</label>
+            <input id="countDoc" type="number" min="0" step="1" value="0" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="baseRateNurse">Bazinis slaugytojo tarifas (€ / val.)</label>
+            <input id="baseRateNurse" type="number" min="0" step="0.01" value="0" placeholder="pvz. 14.00" />
+          </div>
+          <div>
+            <label for="countNurse">Slaugytojų skaičius</label>
+            <input id="countNurse" type="number" min="0" step="1" value="0" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="baseRateAssist">Bazinis padėjėjo tarifas (€ / val.)</label>
+            <input id="baseRateAssist" type="number" min="0" step="0.01" value="0" placeholder="pvz. 9.00" />
+          </div>
+          <div>
+            <label for="countAssist">Padėjėjų skaičius</label>
+            <input id="countAssist" type="number" min="0" step="1" value="0" />
+          </div>
+        </div>
+        <div class="actions">
+          <a href="index.html">Grįžti</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Rezultatai</h2>
+        <table class="table">
+          <thead>
+            <tr><th>Rolė</th><th>Kiekis</th><th>Tarifas (€/val.)</th><th>Pamainos biudžetas</th><th>Mėnesio biudžetas</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Gydytojas</td><td id="countDocCell">0</td><td id="rateDocCell">€0,00</td><td id="shiftDocCell">€0,00</td><td id="monthDocCell">€0,00</td></tr>
+            <tr><td>Slaugytojas</td><td id="countNurseCell">0</td><td id="rateNurseCell">€0,00</td><td id="shiftNurseCell">€0,00</td><td id="monthNurseCell">€0,00</td></tr>
+            <tr><td>Padėjėjas</td><td id="countAssistCell">0</td><td id="rateAssistCell">€0,00</td><td id="shiftAssistCell">€0,00</td><td id="monthAssistCell">€0,00</td></tr>
+            <tr><td class="accent">Iš viso</td><td></td><td></td><td class="accent" id="shiftTotalCell">€0,00</td><td class="accent" id="monthTotalCell">€0,00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="budget-ui.js"></script>
+</body>
+</html>
