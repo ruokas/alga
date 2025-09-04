@@ -2,8 +2,8 @@ import { initThemeToggle } from './theme.js';
 import { initZones } from './zones.js';
 import { downloadCsv, downloadPdf } from './downloads.js';
 import { compute as coreCompute } from './compute.js';
-import { updateChart } from './chart-utils.js';
-import { simulateEsiCounts } from './simulation.js';
+import { updateChart, createFlowChart, updateFlowChart } from './chart-utils.js';
+import { simulateEsiCounts, simulatePeriod as simulatePeriodSim } from './simulation.js';
 
 const LS_RATE_KEY = 'ED_RATE_TEMPLATE_V2';
 
@@ -52,6 +52,8 @@ const els = {
   monthAssistCell: document.getElementById('monthAssistCell'),
   deltaAssistCell: document.getElementById('deltaAssistCell'),
   simulateEsi: document.getElementById('simulateEsi'),
+  days: document.getElementById('days'),
+  simulatePeriod: document.getElementById('simulatePeriod'),
   reset: document.getElementById('reset'),
   copy: document.getElementById('copy'),
   downloadCsv: document.getElementById('downloadCsv'),
@@ -65,7 +67,8 @@ const els = {
   closeZoneModal: document.getElementById('closeZoneModal'),
   saveRateTemplate: document.getElementById('saveRateTemplate'),
   loadRateTemplate: document.getElementById('loadRateTemplate'),
-  payCanvas: document.getElementById('payChart')
+  payCanvas: document.getElementById('payChart'),
+  flowCanvas: document.getElementById('flowChart'),
 };
 
 // Legacy aliases
@@ -211,6 +214,18 @@ if (els.payCanvas) {
   }
 }
 
+if (els.flowCanvas) {
+  if (typeof Chart !== 'undefined') {
+    try {
+      charts.flow = createFlowChart(els.flowCanvas, accent);
+    } catch (err) {
+      handleChartError(els.flowCanvas, 'flow', err);
+    }
+  } else {
+    console.warn('Chart.js not available: flow chart skipped');
+  }
+}
+
 function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
 function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
 function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${fmt(n)}`; } }
@@ -327,6 +342,13 @@ function simulateEsi(){
   compute();
 }
 
+function simulatePeriodUi(){
+  const days = toNum(els.days.value);
+  const zoneCapacity = toNum(els.zoneCapacity.value);
+  const results = simulatePeriodSim(days, zoneCapacity);
+  updateFlowChart(charts.flow, results);
+}
+
 function handleShiftChange(){
   setDefaultCapacity();
   if (els.shift.value === 'P') {
@@ -370,6 +392,9 @@ function resetAll(){
 els.shift.addEventListener('change', handleShiftChange);
 els.zone.addEventListener('change', setDefaultCapacity);
 els.simulateEsi.addEventListener('click', (e)=>{ e.preventDefault(); simulateEsi(); });
+if (els.simulatePeriod) {
+  els.simulatePeriod.addEventListener('click', (e)=>{ e.preventDefault(); simulatePeriodUi(); });
+}
 els.reset.addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
 els.copy.addEventListener('click', (e)=>{
   e.preventDefault();
@@ -399,5 +424,5 @@ resetAll();
 
 // CommonJS support for tests (none)
 if (typeof module !== 'undefined') {
-  module.exports = { compute, resetAll, simulateEsi };
+  module.exports = { compute, resetAll, simulateEsi, simulatePeriodUi };
 }

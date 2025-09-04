@@ -24,4 +24,15 @@ function simulateEsiCounts(patientCount, zoneCapacity){
   return { total, counts };
 }
 
-export { simulateEsiCounts };
+function simulatePeriod(days, zoneCapacity){
+  const d = Math.max(0, Math.floor(Number(days)));
+  const cap = Number(zoneCapacity);
+  const results = [];
+  for (let i=0; i<d; i++){
+    const { total, counts } = simulateEsiCounts(0, cap);
+    results.push({ day: i + 1, total, counts });
+  }
+  return results;
+}
+
+export { simulateEsiCounts, simulatePeriod };

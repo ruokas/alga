@@ -133,8 +133,19 @@
             <label>&nbsp;</label>
             <div class="help">Jei nėra triažo – palikite visur nulį.</div>
           </div>
-        </div>
+          </div>
 
+
+        <div class="row">
+          <div>
+            <label for="days">Dienų skaičius</label>
+            <input id="days" type="number" min="1" step="1" value="7" />
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button id="simulatePeriod">Simuliuoti periodą</button>
+          </div>
+        </div>
 
           <div class="actions">
             <button id="simulateEsi">Simuliuoti pamainą</button>
@@ -160,11 +171,15 @@
             <canvas id="sChart" width="480" height="240"></canvas>
             <div class="help">Lemia A<sub>priedas</sub></div>
           </div>
-          <div class="item pay-chart">
-            <div class="label">Tarifų grafikas</div>
-            <canvas id="payChart" width="480" height="160"></canvas>
+            <div class="item pay-chart">
+              <div class="label">Tarifų grafikas</div>
+              <canvas id="payChart" width="480" height="160"></canvas>
+            </div>
+            <div class="item">
+              <div class="label">Pacientų srautas laike</div>
+              <canvas id="flowChart" width="480" height="240"></canvas>
+            </div>
           </div>
-        </div>
 
         <table class="table">
           <thead>
