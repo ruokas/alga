@@ -67,6 +67,33 @@ initThemeToggle();
 
 const budgetChart = createBudgetChart(els.budgetChart, 'doughnut');
 
+const INPUT_IDS = [
+  'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
+  'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight'
+];
+const STORAGE_KEY = 'budgetInputs';
+
+function loadInputs(){
+  if (typeof localStorage === 'undefined') return;
+  try{
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    INPUT_IDS.forEach(id => {
+      if (els[id] && saved[id] !== undefined) els[id].value = saved[id];
+    });
+  }catch{}
+}
+
+function saveInputs(){
+  if (typeof localStorage === 'undefined') return;
+  const data = {};
+  INPUT_IDS.forEach(id => {
+    if (els[id]) data[id] = els[id].value;
+  });
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }catch{}
+}
+
 function compute(){
   const docDay = toNum(els.countDocDay.value);
   const docNight = toNum(els.countDocNight.value);
@@ -146,17 +173,18 @@ function compute(){
 }
 
 ['input','change'].forEach(evt => {
-  [
-    'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
-    'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight'
-  ].forEach(id => {
+  INPUT_IDS.forEach(id => {
     const el = els[id];
-    if (el) el.addEventListener(evt, compute);
+    if (el) el.addEventListener(evt, () => {
+      saveInputs();
+      compute();
+    });
   });
 });
 
+loadInputs();
 compute();
 
 if (typeof module !== 'undefined') {
-  module.exports = { compute };
+  module.exports = { compute, loadInputs, saveInputs };
 }
