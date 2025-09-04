@@ -1,10 +1,8 @@
 export const DEFAULT_ZONES = [
-  { id: 'RED',   name: 'Raudona (kritinė)',       group: 'Suaugusiųjų', cap: { D: 16, N: 12, P: 28 } },
-  { id: 'YEL',   name: 'Geltona (vidutinė)',      group: 'Suaugusiųjų', cap: { D: 22, N: 15, P: 37 } },
-  { id: 'GRN',   name: 'Žalia (mažesnė skuba)',   group: 'Suaugusiųjų', cap: { D: 28, N: 20, P: 48 } },
-  { id: 'TRIAGE',name: 'Triage/registracija',     group: 'Bendra',       cap: { D: 35, N: 24, P: 59 } },
-  { id: 'OBS',   name: 'Stebėjimo zona',          group: 'Bendra',       cap: { D: 14, N: 10, P: 24 } },
-  { id: 'OTHER', name: 'Kita',                    group: 'Bendra',       cap: { D: 20, N: 16, P: 36 } }
+  { id: 'A',    name: 'A',           group: 'Suaugusiųjų', cap: { D: 16, N: 12, P: 28 } },
+  { id: 'B',    name: 'B',           group: 'Suaugusiųjų', cap: { D: 22, N: 15, P: 37 } },
+  { id: 'FAST', name: 'Fasttrack',   group: 'Suaugusiųjų', cap: { D: 28, N: 20, P: 48 } },
+  { id: 'OBS',  name: 'Stebėjimo zona', group: 'Bendra', cap: { D: 14, N: 10, P: 24 } }
 ];
 
 const LS_KEY = 'ED_ZONES_V2';

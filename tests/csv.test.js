@@ -36,8 +36,8 @@ test('handles commas in zone_label', () => {
   const data = {
     date: '2024-01-01',
     shift: 'D',
-    zone: 'RED',
-    zone_label: 'Critical, Red Zone',
+    zone: 'A',
+    zone_label: 'Zona A, test zone',
     zoneCapacity: 20,
     patientCount: 10,
     ESI: { n1: 1, n2: 2, n3: 3, n4: 4, n5: 0 },
