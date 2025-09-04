@@ -41,7 +41,7 @@
       background: linear-gradient(135deg, var(--bg), #f1f5f9 60%, #e2e8f0);
       color: var(--text);
     }
-    .container { max-width: 1140px; margin: 24px auto; padding: 16px; }
+    .container { width: 100%; max-width: none; margin: 24px 0; padding: 16px; }
     .header { display: flex; justify-content: flex-end; margin: 8px auto; padding: 8px 16px; }
     .header + .container { margin-top: 0; }
     .title { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -73,12 +73,14 @@
     .switch input:checked::after { transform: translateX(16px); }
     .switch-block { margin: 10px 0 6px; }
 
-    .kpi { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-top: 8px; }
+    .kpi { display: grid; gap: 12px; margin-top: 8px; }
+    @media (min-width: 960px) { .kpi { grid-template-columns: repeat(3, minmax(0,1fr)); } }
     .role-heading { margin-top: 14px; }
     .kpi .item { padding: 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel); }
     .kpi .label { font-size: var(--font-xs); color: var(--muted); }
     .kpi .val { font-size: var(--font-lg); font-weight: 700; margin-top: 2px; }
     .kpi canvas { width: 100%; max-width: 120px; height: 60px !important; margin-top: 8px; }
+    .kpi .pay-chart canvas { max-width: none; height: 200px !important; }
     .pill { display:inline-block; padding: 4px 8px; border-radius: 999px; font-size: var(--font-xs); border:1px solid var(--border); background:var(--panel); }
     .accent { color: var(--accent); }
     .muted { color: var(--muted); }
@@ -95,11 +97,7 @@
     .table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
     .table th { color: var(--muted); font-weight: 600; }
 
-#payChart {
-  max-width: 100%;
-  margin: 16px auto 0;
-  display: block;
-}
+
 
 .chart-error {
   color: var(--danger);
