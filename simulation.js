@@ -35,14 +35,19 @@ function simulatePeriod(days, zoneCapacity, options = {}){
   const d = Math.max(0, Math.floor(Number(days)));
   const cap = Number(zoneCapacity);
   const results = [];
+  const summary = { totalPatients: 0, esiTotals: [0,0,0,0,0] };
   for (let i = 0; i < d; i++){
     const base = patientCounts[(startIndex + i) % patientCounts.length];
     const factor = 1 + (Math.random() * 2 - 1) * variation;
     const dayTotal = base * factor;
     const { total, counts } = simulateEsiCounts(dayTotal, cap);
     results.push({ day: i + 1, total, counts });
+    summary.totalPatients += total;
+    for (let j = 0; j < counts.length; j++){
+      summary.esiTotals[j] += counts[j];
+    }
   }
-  return results;
+  return { days: results, summary };
 }
 
 export { simulateEsiCounts, simulatePeriod, DAILY_PATIENT_COUNTS };
