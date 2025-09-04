@@ -315,8 +315,9 @@ function compute(){
 }
 
 function simulateEsi(){
+  const patientCount = els.linkPatientCount.checked ? 0 : toNum(els.patientCount.value);
   const { total, counts } = simulateEsiCounts(
-    toNum(els.patientCount.value),
+    patientCount,
     toNum(els.zoneCapacity.value)
   );
   [els.esi1.value, els.esi2.value, els.esi3.value, els.esi4.value, els.esi5.value] = counts;
