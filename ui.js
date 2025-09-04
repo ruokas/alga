@@ -84,6 +84,7 @@ const borderColor = style.getPropertyValue('--border').trim();
 const danger = style.getPropertyValue('--danger').trim();
 const accent2 = style.getPropertyValue('--accent-2').trim();
 const muted = style.getPropertyValue('--muted').trim();
+const textColor = style.getPropertyValue('--text').trim();
 
 function handleChartError(canvas, name, err) {
   const id = canvas && canvas.id ? `#${canvas.id}` : '';
@@ -156,6 +157,25 @@ if (els.payCanvas) {
     try {
       const ctx = els.payCanvas.getContext && els.payCanvas.getContext('2d');
       if (ctx) {
+        const barValuePlugin = {
+          id: 'barValue',
+          afterDatasetsDraw(chart) {
+            const { ctx: c } = chart;
+            c.save();
+            chart.data.datasets.forEach((dataset, i) => {
+              const meta = chart.getDatasetMeta(i);
+              meta.data.forEach((bar, idx) => {
+                const val = dataset.data[idx];
+                c.fillStyle = textColor;
+                c.textAlign = 'center';
+                c.textBaseline = 'bottom';
+                c.font = '12px sans-serif';
+                c.fillText(money(val), bar.x, bar.y - 4);
+              });
+            });
+            c.restore();
+          }
+        };
         charts.pay = new Chart(ctx, {
           type: 'bar',
           data: {
@@ -166,11 +186,12 @@ if (els.payCanvas) {
             ]
           },
           options: {
-            plugins: { legend: { display: false } },
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
             scales: { x: { display: false }, y: { display: false } },
             maintainAspectRatio: false,
-            responsive: false
-          }
+            responsive: true
+          },
+          plugins: [barValuePlugin]
         });
       }
     } catch (err) {
