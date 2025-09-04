@@ -95,6 +95,42 @@ export function updateDayNightChart(chart, day = {}, night = {}) {
   });
 }
 
+export function createStaffChart(canvas) {
+  if (!canvas || typeof Chart === 'undefined') return null;
+  const ctx = canvas.getContext && canvas.getContext('2d');
+  if (!ctx) return null;
+  const colors = ['#007bff', '#28a745', '#ffc107'];
+  return new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Gydytojas', 'Slaugytojas', 'Padėjėjas'],
+      datasets: [{
+        label: 'Personalas',
+        data: [0, 0, 0],
+        backgroundColor: colors,
+        borderColor: colors,
+      }]
+    },
+    options: {
+      plugins: { legend: { display: true } },
+      maintainAspectRatio: false,
+      responsive: true,
+    }
+  });
+}
+
+export function updateStaffChart(chart, counts = { day: {}, night: {} }) {
+  const roles = ['doctor', 'nurse', 'assistant'];
+  updateChart(chart, c => {
+    c.data.datasets[0].data = roles.map(r => {
+      const day = Number((counts.day && counts.day[r]) || 0);
+      const night = Number((counts.night && counts.night[r]) || 0);
+      return day + night;
+    });
+    c.update();
+  });
+}
+
 // CommonJS support for tests
 if (typeof module !== 'undefined') {
   module.exports = {
@@ -105,5 +141,7 @@ if (typeof module !== 'undefined') {
     updateBudgetChart,
     createDayNightChart,
     updateDayNightChart,
+    createStaffChart,
+    updateStaffChart,
   };
 }

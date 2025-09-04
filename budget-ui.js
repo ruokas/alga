@@ -1,6 +1,6 @@
 import { initThemeToggle } from './theme.js';
 import { computeBudget } from './budget.js';
-import { createBudgetChart, updateBudgetChart, createDayNightChart, updateDayNightChart } from './chart-utils.js';
+import { createBudgetChart, updateBudgetChart, createDayNightChart, updateDayNightChart, createStaffChart, updateStaffChart } from './chart-utils.js';
 
 function toNum(v){
   if (typeof v === 'string') v = v.replace(',', '.');
@@ -62,12 +62,14 @@ const els = {
   monthTotalCell: document.getElementById('monthTotalCell'),
   budgetChart: document.getElementById('budgetChart'),
   dayNightChart: document.getElementById('dayNightChart'),
+  staffChart: document.getElementById('staffChart'),
 };
 
 initThemeToggle();
 
 const budgetChart = createBudgetChart(els.budgetChart, 'doughnut');
 const dayNightChart = createDayNightChart(els.dayNightChart);
+const staffChart = createStaffChart(els.staffChart);
 
 const INPUT_IDS = [
   'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
@@ -104,19 +106,21 @@ function compute(){
   const assistDay = toNum(els.countAssistDay.value);
   const assistNight = toNum(els.countAssistNight.value);
 
-  const data = computeBudget({
-    counts: {
-      day: {
-        doctor: docDay,
-        nurse: nurseDay,
-        assistant: assistDay,
-      },
-      night: {
-        doctor: docNight,
-        nurse: nurseNight,
-        assistant: assistNight,
-      },
+  const counts = {
+    day: {
+      doctor: docDay,
+      nurse: nurseDay,
+      assistant: assistDay,
     },
+    night: {
+      doctor: docNight,
+      nurse: nurseNight,
+      assistant: assistNight,
+    },
+  };
+
+  const data = computeBudget({
+    counts,
     rateInputs: {
       zoneCapacity: 1,
       patientCount: 0,
@@ -173,6 +177,7 @@ function compute(){
 
   updateBudgetChart(budgetChart, data.month_budget);
   updateDayNightChart(dayNightChart, data.shift_budget_day, data.shift_budget_night);
+  updateStaffChart(staffChart, counts);
 }
 
 ['input','change'].forEach(evt => {
