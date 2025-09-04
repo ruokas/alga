@@ -1,4 +1,10 @@
-import { updateChart, createFlowChart, updateFlowChart } from '../chart-utils.js';
+import {
+  updateChart,
+  createFlowChart,
+  updateFlowChart,
+  createBudgetChart,
+  updateBudgetChart,
+} from '../chart-utils.js';
 
 describe('updateChart', () => {
   test('calls updater when chart is valid', () => {
@@ -46,6 +52,32 @@ describe('updateFlowChart', () => {
     updateFlowChart(chart, [ { day: 1, total: 5 }, { day: 2, total: 10 } ]);
     expect(chart.data.labels).toEqual([1,2]);
     expect(chart.data.datasets[0].data).toEqual([5,10]);
+    expect(chart.update).toHaveBeenCalled();
+  });
+});
+
+describe('createBudgetChart', () => {
+  test('returns null without canvas', () => {
+    expect(createBudgetChart(null)).toBeNull();
+  });
+
+  test('creates chart when Chart is available', () => {
+    const ctx = {};
+    const canvas = { getContext: jest.fn(() => ctx) };
+    global.Chart = jest.fn(() => ({ data: { labels: [], datasets: [{ data: [] }] }, update: jest.fn() }));
+    const chart = createBudgetChart(canvas, 'bar');
+    expect(canvas.getContext).toHaveBeenCalledWith('2d');
+    expect(global.Chart).toHaveBeenCalled();
+    expect(chart).toBeTruthy();
+    delete global.Chart;
+  });
+});
+
+describe('updateBudgetChart', () => {
+  test('updates chart data and calls update', () => {
+    const chart = { data: { datasets: [{ data: [] }] }, update: jest.fn() };
+    updateBudgetChart(chart, { doctor: 10, nurse: 20, assistant: 30 });
+    expect(chart.data.datasets[0].data).toEqual([10,20,30]);
     expect(chart.update).toHaveBeenCalled();
   });
 });

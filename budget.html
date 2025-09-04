@@ -77,9 +77,16 @@
             <tr><td class="accent">Iš viso</td><td></td><td></td><td class="accent" id="shiftTotalCell">€0,00</td><td class="accent" id="monthTotalCell">€0,00</td></tr>
           </tbody>
         </table>
+        <div class="kpi">
+          <div class="item budget-chart">
+            <div class="label">Biudžeto grafikas</div>
+            <canvas id="budgetChart" width="480" height="240"></canvas>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9?v=4.4.9"></script>
   <script type="module" src="budget-ui.js"></script>
 </body>
 </html>

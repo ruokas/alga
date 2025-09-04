@@ -1,5 +1,6 @@
 import { initThemeToggle } from './theme.js';
 import { computeBudget } from './budget.js';
+import { createBudgetChart, updateBudgetChart } from './chart-utils.js';
 
 function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
 function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${(n||0).toFixed(2)}`; } }
@@ -27,9 +28,12 @@ const els = {
   monthAssistCell: document.getElementById('monthAssistCell'),
   shiftTotalCell: document.getElementById('shiftTotalCell'),
   monthTotalCell: document.getElementById('monthTotalCell'),
+  budgetChart: document.getElementById('budgetChart'),
 };
 
 initThemeToggle();
+
+const budgetChart = createBudgetChart(els.budgetChart, 'doughnut');
 
 function compute(){
   const data = computeBudget({
@@ -72,6 +76,8 @@ function compute(){
   els.monthNurseCell.textContent = money(data.month_budget.nurse);
   els.monthAssistCell.textContent = money(data.month_budget.assistant);
   els.monthTotalCell.textContent = money(data.month_budget.total);
+
+  updateBudgetChart(budgetChart, data.month_budget);
 }
 
 ['input','change'].forEach(evt => {

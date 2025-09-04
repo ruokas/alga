@@ -28,7 +28,46 @@ export function updateFlowChart(chart, results) {
   });
 }
 
+export function createBudgetChart(canvas, type = 'bar') {
+  if (!canvas || typeof Chart === 'undefined') return null;
+  const ctx = canvas.getContext && canvas.getContext('2d');
+  if (!ctx) return null;
+  const colors = ['#007bff', '#28a745', '#ffc107'];
+  return new Chart(ctx, {
+    type,
+    data: {
+      labels: ['Gydytojas', 'Slaugytojas', 'Padėjėjas'],
+      datasets: [{
+        label: 'Biudžetas',
+        data: [0, 0, 0],
+        backgroundColor: colors,
+        borderColor: colors,
+      }]
+    },
+    options: {
+      plugins: { legend: { display: type !== 'bar' } },
+      scales: type === 'bar' ? { y: { beginAtZero: true } } : {},
+      maintainAspectRatio: false,
+      responsive: true,
+    }
+  });
+}
+
+export function updateBudgetChart(chart, budgets = {}) {
+  const roles = ['doctor', 'nurse', 'assistant'];
+  updateChart(chart, c => {
+    c.data.datasets[0].data = roles.map(r => Number(budgets[r]) || 0);
+    c.update();
+  });
+}
+
 // CommonJS support for tests
 if (typeof module !== 'undefined') {
-  module.exports = { updateChart, createFlowChart, updateFlowChart };
+  module.exports = {
+    updateChart,
+    createFlowChart,
+    updateFlowChart,
+    createBudgetChart,
+    updateBudgetChart,
+  };
 }
