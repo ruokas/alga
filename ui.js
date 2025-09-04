@@ -168,9 +168,15 @@ if (els.payCanvas) {
                 const val = dataset.data[idx];
                 c.fillStyle = textColor;
                 c.textAlign = 'center';
-                c.textBaseline = 'bottom';
                 c.font = '12px sans-serif';
-                c.fillText(money(val), bar.x, bar.y - 4);
+                let y = bar.y - 4;
+                let baseline = 'bottom';
+                if (y < 12) {
+                  y = bar.y + 12;
+                  baseline = 'top';
+                }
+                c.textBaseline = baseline;
+                c.fillText(money(val), bar.x, y);
               });
             });
             c.restore();
