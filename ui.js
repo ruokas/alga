@@ -2,6 +2,7 @@ import { initThemeToggle } from './theme.js';
 import { initZones } from './zones.js';
 import { downloadCsv, downloadPdf } from './downloads.js';
 import { compute as coreCompute } from './compute.js';
+import { updateChart } from './chart-utils.js';
 
 const LS_RATE_KEY = 'ED_RATE_TEMPLATE_V2';
 
@@ -161,10 +162,6 @@ function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
 function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
 function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${fmt(n)}`; } }
 
-function updateChart(chart, updater){
-  if (!chart || chart._destroyed) return;
-  updater(chart);
-}
 
 function compute(){
   const zoneCapacity = Math.max(0, toNum(els.zoneCapacity.value));
