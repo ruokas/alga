@@ -13,6 +13,13 @@ describe('simulateEsiCounts', () => {
     expect(total).toBe(15);
     expect(counts.reduce((a, b) => a + b, 0)).toBe(15);
   });
+
+  test('produces consistent results with seed', () => {
+    const seed = 123;
+    const res1 = simulateEsiCounts(0, 0, seed);
+    const res2 = simulateEsiCounts(0, 0, seed);
+    expect(res1).toEqual(res2);
+  });
 });
 
 describe('simulatePeriod', () => {
@@ -47,5 +54,13 @@ describe('simulatePeriod', () => {
     const sumCounts = res.days.reduce((acc, d) => acc.map((v, i) => v + d.counts[i]), [0,0,0,0,0]);
     expect(res.summary.totalPatients).toBe(sumTotals);
     expect(res.summary.esiTotals).toEqual(sumCounts);
+  });
+
+  test('produces consistent results with seed', () => {
+    const seed = 456;
+    const opts = { patientCounts: [100], variation: 0.2 };
+    const res1 = simulatePeriod(3, 0, opts, seed);
+    const res2 = simulatePeriod(3, 0, opts, seed);
+    expect(res1).toEqual(res2);
   });
 });
