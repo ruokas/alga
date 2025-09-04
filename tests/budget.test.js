@@ -118,12 +118,18 @@ describe('budget chart DOM integration', () => {
       <input id="baseRateDoc" value="10" />
       <input id="baseRateNurse" value="8" />
       <input id="baseRateAssist" value="6" />
-      <input id="countDoc" value="1" />
-      <input id="countNurse" value="1" />
-      <input id="countAssist" value="1" />
-      <span id="countDocCell"></span>
-      <span id="countNurseCell"></span>
-      <span id="countAssistCell"></span>
+      <input id="countDocDay" value="1" />
+      <input id="countDocNight" value="1" />
+      <input id="countNurseDay" value="1" />
+      <input id="countNurseNight" value="1" />
+      <input id="countAssistDay" value="1" />
+      <input id="countAssistNight" value="1" />
+      <span id="countDocDayCell"></span>
+      <span id="countDocNightCell"></span>
+      <span id="countNurseDayCell"></span>
+      <span id="countNurseNightCell"></span>
+      <span id="countAssistDayCell"></span>
+      <span id="countAssistNightCell"></span>
       <span id="rateDocCell"></span>
       <span id="rateNurseCell"></span>
       <span id="rateAssistCell"></span>
@@ -169,7 +175,7 @@ describe('budget chart DOM integration', () => {
       n4: 0,
       n5: 0,
     };
-    const initial = computeBudget({ counts: { doctor: 1, nurse: 1, assistant: 1 }, rateInputs }).month_budget;
+    const initial = computeBudget({ counts: { doctor: 2, nurse: 2, assistant: 2 }, rateInputs }).month_budget;
     expect(global.Chart).toHaveBeenCalledTimes(1);
     expect(chartInstance.data.datasets[0].data).toEqual([
       initial.doctor,
@@ -178,9 +184,9 @@ describe('budget chart DOM integration', () => {
     ]);
 
     chartInstance.update.mockClear();
-    document.getElementById('countDoc').value = '2';
+    document.getElementById('countDocDay').value = '2';
     compute();
-    const updated = computeBudget({ counts: { doctor: 2, nurse: 1, assistant: 1 }, rateInputs }).month_budget;
+    const updated = computeBudget({ counts: { doctor: 3, nurse: 2, assistant: 2 }, rateInputs }).month_budget;
     expect(chartInstance.data.datasets[0].data).toEqual([
       updated.doctor,
       updated.nurse,
