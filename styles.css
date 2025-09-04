@@ -100,6 +100,8 @@
     @media (min-width: 960px) { .kpi .pay-chart { grid-column: 1 / -1; } }
     .kpi .flow-chart canvas { max-width: none; height: 240px !important; }
     @media (min-width: 960px) { .kpi .flow-chart { grid-column: 1 / -1; } }
+    .kpi .budget-chart canvas { max-width: none; height: 240px !important; }
+    @media (min-width: 960px) { .kpi .budget-chart { grid-column: 1 / -1; } }
     .pill { display:inline-block; padding: 4px 8px; border-radius: 999px; font-size: var(--font-xs); border:1px solid var(--border); background:var(--panel); }
     .accent { color: var(--accent); }
     .muted { color: var(--muted); }
