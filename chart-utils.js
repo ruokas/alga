@@ -61,6 +61,40 @@ export function updateBudgetChart(chart, budgets = {}) {
   });
 }
 
+export function createDayNightChart(canvas) {
+  if (!canvas || typeof Chart === 'undefined') return null;
+  const ctx = canvas.getContext && canvas.getContext('2d');
+  if (!ctx) return null;
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Gydytojas', 'Slaugytojas', 'Padėjėjas'],
+      datasets: [
+        { label: 'Diena', data: [0, 0, 0], backgroundColor: '#007bff' },
+        { label: 'Naktis', data: [0, 0, 0], backgroundColor: '#6c757d' },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: true } },
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true }
+      }
+    }
+  });
+}
+
+export function updateDayNightChart(chart, day = {}, night = {}) {
+  const roles = ['doctor', 'nurse', 'assistant'];
+  updateChart(chart, c => {
+    c.data.datasets[0].data = roles.map(r => Number(day[r]) || 0);
+    c.data.datasets[1].data = roles.map(r => Number(night[r]) || 0);
+    c.update();
+  });
+}
+
 // CommonJS support for tests
 if (typeof module !== 'undefined') {
   module.exports = {
@@ -69,5 +103,7 @@ if (typeof module !== 'undefined') {
     updateFlowChart,
     createBudgetChart,
     updateBudgetChart,
+    createDayNightChart,
+    updateDayNightChart,
   };
 }
