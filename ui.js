@@ -50,6 +50,7 @@ const els = {
   shiftAssistCell: document.getElementById('shiftAssistCell'),
   monthAssistCell: document.getElementById('monthAssistCell'),
   deltaAssistCell: document.getElementById('deltaAssistCell'),
+  simulateEsi: document.getElementById('simulateEsi'),
   reset: document.getElementById('reset'),
   copy: document.getElementById('copy'),
   downloadCsv: document.getElementById('downloadCsv'),
@@ -312,6 +313,29 @@ function compute(){
   };
 }
 
+function simulateEsi(){
+  let total = Math.floor(toNum(els.patientCount.value));
+  if (total <= 0) {
+    const cap = Math.floor(toNum(els.zoneCapacity.value));
+    total = cap > 0 ? Math.round(cap * (0.8 + Math.random() * 0.4)) : Math.round(20 + Math.random() * 80);
+  }
+  const probs = [0.05, 0.15, 0.4, 0.3, 0.1];
+  const counts = [0, 0, 0, 0, 0];
+  for (let i = 0; i < total; i++) {
+    const r = Math.random();
+    let acc = 0;
+    for (let j = 0; j < probs.length; j++) {
+      acc += probs[j];
+      if (r < acc) { counts[j]++; break; }
+    }
+  }
+  [els.esi1.value, els.esi2.value, els.esi3.value, els.esi4.value, els.esi5.value] = counts;
+  if (!els.linkPatientCount.checked) {
+    els.patientCount.value = total;
+  }
+  compute();
+}
+
 function handleShiftChange(){
   setDefaultCapacity();
   if (els.shift.value === 'P') {
@@ -354,6 +378,7 @@ function resetAll(){
 });
 els.shift.addEventListener('change', handleShiftChange);
 els.zone.addEventListener('change', setDefaultCapacity);
+els.simulateEsi.addEventListener('click', (e)=>{ e.preventDefault(); simulateEsi(); });
 els.reset.addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
 els.copy.addEventListener('click', (e)=>{
   e.preventDefault();
@@ -383,5 +408,5 @@ resetAll();
 
 // CommonJS support for tests (none)
 if (typeof module !== 'undefined') {
-  module.exports = { compute, resetAll };
+  module.exports = { compute, resetAll, simulateEsi };
 }
