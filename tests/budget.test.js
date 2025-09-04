@@ -23,10 +23,12 @@ describe('computeBudget', () => {
       },
     });
 
-    expect(result.shift_budget.doctor).toBeCloseTo(240);
-    expect(result.shift_budget.nurse).toBeCloseTo(288);
-    expect(result.shift_budget.assistant).toBeCloseTo(72);
+    expect(result.shift_budget_day.doctor).toBeCloseTo(240);
+    expect(result.shift_budget_day.nurse).toBeCloseTo(288);
+    expect(result.shift_budget_day.assistant).toBeCloseTo(72);
+    expect(result.shift_budget_night.total).toBeCloseTo(0);
     expect(result.shift_budget.total).toBeCloseTo(600);
+    expect(result.month_budget_day.total).toBeCloseTo(8000);
     expect(result.month_budget.total).toBeCloseTo(8000);
   });
 
@@ -50,9 +52,9 @@ describe('computeBudget', () => {
       },
     });
 
-    expect(result.shift_budget.doctor).toBe(0);
-    expect(result.shift_budget.nurse).toBe(0);
-    expect(result.shift_budget.assistant).toBeCloseTo(72);
+    expect(result.shift_budget_day.doctor).toBe(0);
+    expect(result.shift_budget_day.nurse).toBe(0);
+    expect(result.shift_budget_day.assistant).toBeCloseTo(72);
     expect(result.shift_budget.total).toBeCloseTo(72);
   });
   test('applies night multiplier', () => {
@@ -78,7 +80,11 @@ describe('computeBudget', () => {
       },
     });
 
+    expect(result.shift_budget_day.doctor).toBeCloseTo(10);
+    expect(result.shift_budget_night.doctor).toBeCloseTo(15);
     expect(result.shift_budget.doctor).toBeCloseTo(25);
+    expect(result.month_budget_day.doctor).toBeCloseTo(10);
+    expect(result.month_budget_night.doctor).toBeCloseTo(15);
     expect(result.month_budget.doctor).toBeCloseTo(25);
   });
 });
@@ -159,13 +165,29 @@ describe('budget chart DOM integration', () => {
       <span id="rateDocCell"></span>
       <span id="rateNurseCell"></span>
       <span id="rateAssistCell"></span>
+      <span id="shiftDocDayCell"></span>
+      <span id="shiftDocNightCell"></span>
       <span id="shiftDocCell"></span>
+      <span id="shiftNurseDayCell"></span>
+      <span id="shiftNurseNightCell"></span>
       <span id="shiftNurseCell"></span>
+      <span id="shiftAssistDayCell"></span>
+      <span id="shiftAssistNightCell"></span>
       <span id="shiftAssistCell"></span>
+      <span id="monthDocDayCell"></span>
+      <span id="monthDocNightCell"></span>
       <span id="monthDocCell"></span>
+      <span id="monthNurseDayCell"></span>
+      <span id="monthNurseNightCell"></span>
       <span id="monthNurseCell"></span>
+      <span id="monthAssistDayCell"></span>
+      <span id="monthAssistNightCell"></span>
       <span id="monthAssistCell"></span>
+      <span id="shiftDayTotalCell"></span>
+      <span id="shiftNightTotalCell"></span>
       <span id="shiftTotalCell"></span>
+      <span id="monthDayTotalCell"></span>
+      <span id="monthNightTotalCell"></span>
       <span id="monthTotalCell"></span>
       <canvas id="budgetChart"></canvas>
     `;
