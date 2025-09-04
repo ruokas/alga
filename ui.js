@@ -102,7 +102,8 @@ if (els.ratioCanvas) {
             circumference: 180,
             cutout: '70%',
             plugins: { legend: { display: false }, tooltip: { enabled: false } },
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            responsive: false
           }
         });
       }
@@ -127,7 +128,8 @@ if (els.sCanvas) {
           options: {
             plugins: { legend: { display: false } },
             scales: { x: { display: false }, y: { display: false } },
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            responsive: false
           }
         });
       }
@@ -155,7 +157,8 @@ if (els.payCanvas) {
           options: {
             plugins: { legend: { display: false } },
             scales: { x: { display: false }, y: { display: false } },
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            responsive: false
           }
         });
       }
