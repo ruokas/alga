@@ -20,9 +20,10 @@ export function createFlowChart(canvas, color = '#007bff') {
 }
 
 export function updateFlowChart(chart, results) {
+  const days = Array.isArray(results) ? results : (results && results.days) || [];
   updateChart(chart, c => {
-    c.data.labels = results.map(r => r.day);
-    c.data.datasets[0].data = results.map(r => r.total);
+    c.data.labels = days.map(r => r.day);
+    c.data.datasets[0].data = days.map(r => r.total);
     c.update();
   });
 }
