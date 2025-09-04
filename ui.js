@@ -89,20 +89,23 @@ const charts = {};
 if (els.ratioCanvas) {
   if (typeof Chart !== 'undefined') {
     try {
-      charts.ratio = new Chart(els.ratioCanvas, {
-        type: 'doughnut',
-        data: {
-          labels: ['Pacientų skaičius', 'Likutis'],
-          datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
-        },
-        options: {
-          rotation: -90,
-          circumference: 180,
-          cutout: '70%',
-          plugins: { legend: { display: false }, tooltip: { enabled: false } },
-          maintainAspectRatio: false
-        }
-      });
+      const ctx = els.ratioCanvas.getContext && els.ratioCanvas.getContext('2d');
+      if (ctx) {
+        charts.ratio = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Pacientų skaičius', 'Likutis'],
+            datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
+          },
+          options: {
+            rotation: -90,
+            circumference: 180,
+            cutout: '70%',
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            maintainAspectRatio: false
+          }
+        });
+      }
     } catch (err) {
       console.error('Failed to create ratio chart:', err);
     }
@@ -113,18 +116,21 @@ if (els.ratioCanvas) {
 if (els.sCanvas) {
   if (typeof Chart !== 'undefined') {
     try {
-      charts.s = new Chart(els.sCanvas, {
-        type: 'bar',
-        data: {
-          labels: ['ESI1', 'ESI2', 'ESI3', 'ESI4', 'ESI5'],
-          datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: [danger, accent2, muted, muted, muted] }]
-        },
-        options: {
-          plugins: { legend: { display: false } },
-          scales: { x: { display: false }, y: { display: false } },
-          maintainAspectRatio: false
-        }
-      });
+      const ctx = els.sCanvas.getContext && els.sCanvas.getContext('2d');
+      if (ctx) {
+        charts.s = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['ESI1', 'ESI2', 'ESI3', 'ESI4', 'ESI5'],
+            datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: [danger, accent2, muted, muted, muted] }]
+          },
+          options: {
+            plugins: { legend: { display: false } },
+            scales: { x: { display: false }, y: { display: false } },
+            maintainAspectRatio: false
+          }
+        });
+      }
     } catch (err) {
       console.error('Failed to create s chart:', err);
     }
@@ -135,21 +141,24 @@ if (els.sCanvas) {
 if (els.payCanvas) {
   if (typeof Chart !== 'undefined') {
     try {
-      charts.pay = new Chart(els.payCanvas, {
-        type: 'bar',
-        data: {
-          labels: ['Doctor', 'Nurse', 'Assistant'],
-          datasets: [
-            { label: 'Baseline', data: [0, 0, 0], backgroundColor: borderColor },
-            { label: 'Adjusted', data: [0, 0, 0], backgroundColor: accent }
-          ]
-        },
-        options: {
-          plugins: { legend: { display: false } },
-          scales: { x: { display: false }, y: { display: false } },
-          maintainAspectRatio: false
-        }
-      });
+      const ctx = els.payCanvas.getContext && els.payCanvas.getContext('2d');
+      if (ctx) {
+        charts.pay = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Doctor', 'Nurse', 'Assistant'],
+            datasets: [
+              { label: 'Baseline', data: [0, 0, 0], backgroundColor: borderColor },
+              { label: 'Adjusted', data: [0, 0, 0], backgroundColor: accent }
+            ]
+          },
+          options: {
+            plugins: { legend: { display: false } },
+            scales: { x: { display: false }, y: { display: false } },
+            maintainAspectRatio: false
+          }
+        });
+      }
     } catch (err) {
       console.error('Failed to create pay chart:', err);
     }
