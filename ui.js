@@ -85,6 +85,17 @@ const danger = style.getPropertyValue('--danger').trim();
 const accent2 = style.getPropertyValue('--accent-2').trim();
 const muted = style.getPropertyValue('--muted').trim();
 
+function handleChartError(canvas, name, err) {
+  const id = canvas && canvas.id ? `#${canvas.id}` : '';
+  console.error(`Failed to create ${name} chart (${id})`, err?.stack || err);
+  if (canvas) {
+    const msg = document.createElement('div');
+    msg.className = 'chart-error';
+    msg.textContent = `Unable to render ${name} chart`;
+    canvas.replaceWith(msg);
+  }
+}
+
 const charts = {};
 if (els.ratioCanvas) {
   if (typeof Chart !== 'undefined') {
@@ -108,7 +119,7 @@ if (els.ratioCanvas) {
         });
       }
     } catch (err) {
-      console.error('Failed to create ratio chart:', err);
+      handleChartError(els.ratioCanvas, 'ratio', err);
     }
   } else {
     console.warn('Chart.js not available: ratio chart skipped');
@@ -134,7 +145,7 @@ if (els.sCanvas) {
         });
       }
     } catch (err) {
-      console.error('Failed to create s chart:', err);
+      handleChartError(els.sCanvas, 's', err);
     }
   } else {
     console.warn('Chart.js not available: s chart skipped');
@@ -163,7 +174,7 @@ if (els.payCanvas) {
         });
       }
     } catch (err) {
-      console.error('Failed to create pay chart:', err);
+      handleChartError(els.payCanvas, 'pay', err);
     }
   } else {
     console.warn('Chart.js not available: pay chart skipped');
