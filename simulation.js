@@ -1,0 +1,27 @@
+function simulateEsiCounts(patientCount, zoneCapacity){
+  let total = Math.floor(Number(patientCount));
+  if (!Number.isFinite(total) || total <= 0){
+    const cap = Math.floor(Number(zoneCapacity));
+    if (cap > 0){
+      total = Math.round(cap * (0.8 + Math.random() * 0.4));
+    } else {
+      total = Math.floor(Math.random() * 21) + 10; // between 10 and 30
+    }
+  }
+  const probs = [0.05, 0.15, 0.4, 0.3, 0.1];
+  const counts = probs.map(()=>0);
+  for (let i=0; i<total; i++){
+    const r = Math.random();
+    let acc = 0;
+    for (let j=0; j<probs.length; j++){
+      acc += probs[j];
+      if (r < acc){
+        counts[j]++;
+        break;
+      }
+    }
+  }
+  return { total, counts };
+}
+
+export { simulateEsiCounts };
