@@ -36,13 +36,29 @@ const els = {
   rateDocCell: document.getElementById('rateDocCell'),
   rateNurseCell: document.getElementById('rateNurseCell'),
   rateAssistCell: document.getElementById('rateAssistCell'),
+  shiftDocDayCell: document.getElementById('shiftDocDayCell'),
+  shiftDocNightCell: document.getElementById('shiftDocNightCell'),
   shiftDocCell: document.getElementById('shiftDocCell'),
+  shiftNurseDayCell: document.getElementById('shiftNurseDayCell'),
+  shiftNurseNightCell: document.getElementById('shiftNurseNightCell'),
   shiftNurseCell: document.getElementById('shiftNurseCell'),
+  shiftAssistDayCell: document.getElementById('shiftAssistDayCell'),
+  shiftAssistNightCell: document.getElementById('shiftAssistNightCell'),
   shiftAssistCell: document.getElementById('shiftAssistCell'),
+  monthDocDayCell: document.getElementById('monthDocDayCell'),
+  monthDocNightCell: document.getElementById('monthDocNightCell'),
   monthDocCell: document.getElementById('monthDocCell'),
+  monthNurseDayCell: document.getElementById('monthNurseDayCell'),
+  monthNurseNightCell: document.getElementById('monthNurseNightCell'),
   monthNurseCell: document.getElementById('monthNurseCell'),
+  monthAssistDayCell: document.getElementById('monthAssistDayCell'),
+  monthAssistNightCell: document.getElementById('monthAssistNightCell'),
   monthAssistCell: document.getElementById('monthAssistCell'),
+  shiftDayTotalCell: document.getElementById('shiftDayTotalCell'),
+  shiftNightTotalCell: document.getElementById('shiftNightTotalCell'),
   shiftTotalCell: document.getElementById('shiftTotalCell'),
+  monthDayTotalCell: document.getElementById('monthDayTotalCell'),
+  monthNightTotalCell: document.getElementById('monthNightTotalCell'),
   monthTotalCell: document.getElementById('monthTotalCell'),
   budgetChart: document.getElementById('budgetChart'),
 };
@@ -100,14 +116,30 @@ function compute(){
   els.rateNurseCell.textContent = money(data.final_rates.nurse);
   els.rateAssistCell.textContent = money(data.final_rates.assistant);
 
+  if (els.shiftDocDayCell) els.shiftDocDayCell.textContent = money(data.shift_budget_day.doctor);
+  if (els.shiftDocNightCell) els.shiftDocNightCell.textContent = money(data.shift_budget_night.doctor);
   els.shiftDocCell.textContent = money(data.shift_budget.doctor);
+  if (els.shiftNurseDayCell) els.shiftNurseDayCell.textContent = money(data.shift_budget_day.nurse);
+  if (els.shiftNurseNightCell) els.shiftNurseNightCell.textContent = money(data.shift_budget_night.nurse);
   els.shiftNurseCell.textContent = money(data.shift_budget.nurse);
+  if (els.shiftAssistDayCell) els.shiftAssistDayCell.textContent = money(data.shift_budget_day.assistant);
+  if (els.shiftAssistNightCell) els.shiftAssistNightCell.textContent = money(data.shift_budget_night.assistant);
   els.shiftAssistCell.textContent = money(data.shift_budget.assistant);
+  if (els.shiftDayTotalCell) els.shiftDayTotalCell.textContent = money(data.shift_budget_day.total);
+  if (els.shiftNightTotalCell) els.shiftNightTotalCell.textContent = money(data.shift_budget_night.total);
   els.shiftTotalCell.textContent = money(data.shift_budget.total);
 
+  if (els.monthDocDayCell) els.monthDocDayCell.textContent = money(data.month_budget_day.doctor);
+  if (els.monthDocNightCell) els.monthDocNightCell.textContent = money(data.month_budget_night.doctor);
   els.monthDocCell.textContent = money(data.month_budget.doctor);
+  if (els.monthNurseDayCell) els.monthNurseDayCell.textContent = money(data.month_budget_day.nurse);
+  if (els.monthNurseNightCell) els.monthNurseNightCell.textContent = money(data.month_budget_night.nurse);
   els.monthNurseCell.textContent = money(data.month_budget.nurse);
+  if (els.monthAssistDayCell) els.monthAssistDayCell.textContent = money(data.month_budget_day.assistant);
+  if (els.monthAssistNightCell) els.monthAssistNightCell.textContent = money(data.month_budget_night.assistant);
   els.monthAssistCell.textContent = money(data.month_budget.assistant);
+  if (els.monthDayTotalCell) els.monthDayTotalCell.textContent = money(data.month_budget_day.total);
+  if (els.monthNightTotalCell) els.monthNightTotalCell.textContent = money(data.month_budget_night.total);
   els.monthTotalCell.textContent = money(data.month_budget.total);
 
   updateBudgetChart(budgetChart, data.month_budget);
