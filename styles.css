@@ -90,18 +90,14 @@
     .switch-block { margin: 10px 0 6px; }
 
     .kpi { display: grid; gap: 12px; margin-top: 8px; }
-    @media (min-width: 960px) {
-      .kpi { grid-template-columns: 1fr 1fr; }
-      .kpi .ratio-item { grid-column: 1; grid-row: 1; }
-      .kpi .s-item { grid-column: 1; grid-row: 2; }
-      .kpi .pay-chart { grid-column: 2; grid-row: 1 / span 2; }
-    }
+    @media (min-width: 960px) { .kpi { grid-template-columns: repeat(3, minmax(0,1fr)); } }
     .role-heading { margin-top: 14px; }
     .kpi .item { padding: 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel); }
     .kpi .label { font-size: var(--font-xs); color: var(--muted); }
     .kpi .val { font-size: var(--font-lg); font-weight: 700; margin-top: 2px; }
     .kpi canvas { width: 100%; max-width: 120px; height: 60px !important; margin-top: 8px; }
     .kpi .pay-chart canvas { max-width: none; height: 240px !important; }
+    @media (min-width: 960px) { .kpi .pay-chart { grid-column: 1 / -1; } }
     .pill { display:inline-block; padding: 4px 8px; border-radius: 999px; font-size: var(--font-xs); border:1px solid var(--border); background:var(--panel); }
     .accent { color: var(--accent); }
     .muted { color: var(--muted); }
