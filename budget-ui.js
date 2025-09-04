@@ -2,7 +2,11 @@ import { initThemeToggle } from './theme.js';
 import { computeBudget } from './budget.js';
 import { createBudgetChart, updateBudgetChart } from './chart-utils.js';
 
-function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
+function toNum(v){
+  if (typeof v === 'string') v = v.replace(',', '.');
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
 function money(n){
   try{
     return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0);
