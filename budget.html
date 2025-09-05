@@ -78,72 +78,95 @@
 
       <div class="card">
         <h2>Rezultatai</h2>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Rolė</th>
-              <th>Diena</th>
-              <th>Naktis</th>
-              <th>Tarifas (€/val.)</th>
-              <th>Pamainos biudžetas (dieną)</th>
-              <th>Pamainos biudžetas (naktį)</th>
-              <th>Pamainos biudžetas (viso)</th>
-              <th>Mėnesio biudžetas (dieną)</th>
-              <th>Mėnesio biudžetas (naktį)</th>
-              <th>Mėnesio biudžetas (viso)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Gydytojas</td>
-              <td id="countDocDayCell">0</td>
-              <td id="countDocNightCell">0</td>
-              <td id="rateDocCell">€0,00</td>
-              <td id="shiftDocDayCell">€0,00</td>
-              <td id="shiftDocNightCell">€0,00</td>
-              <td id="shiftDocCell">€0,00</td>
-              <td id="monthDocDayCell">€0,00</td>
-              <td id="monthDocNightCell">€0,00</td>
-              <td id="monthDocCell">€0,00</td>
-            </tr>
-            <tr>
-              <td>Slaugytojas</td>
-              <td id="countNurseDayCell">0</td>
-              <td id="countNurseNightCell">0</td>
-              <td id="rateNurseCell">€0,00</td>
-              <td id="shiftNurseDayCell">€0,00</td>
-              <td id="shiftNurseNightCell">€0,00</td>
-              <td id="shiftNurseCell">€0,00</td>
-              <td id="monthNurseDayCell">€0,00</td>
-              <td id="monthNurseNightCell">€0,00</td>
-              <td id="monthNurseCell">€0,00</td>
-            </tr>
-            <tr>
-              <td>Padėjėjas</td>
-              <td id="countAssistDayCell">0</td>
-              <td id="countAssistNightCell">0</td>
-              <td id="rateAssistCell">€0,00</td>
-              <td id="shiftAssistDayCell">€0,00</td>
-              <td id="shiftAssistNightCell">€0,00</td>
-              <td id="shiftAssistCell">€0,00</td>
-              <td id="monthAssistDayCell">€0,00</td>
-              <td id="monthAssistNightCell">€0,00</td>
-              <td id="monthAssistCell">€0,00</td>
-            </tr>
-            <tr>
-              <td class="accent">Iš viso</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="accent" id="shiftDayTotalCell">€0,00</td>
-              <td class="accent" id="shiftNightTotalCell">€0,00</td>
-              <td class="accent" id="shiftTotalCell">€0,00</td>
-              <td class="accent" id="monthDayTotalCell">€0,00</td>
-              <td class="accent" id="monthNightTotalCell">€0,00</td>
-              <td class="accent" id="monthTotalCell">€0,00</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="results-grid">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Rolė</th>
+                <th>Diena</th>
+                <th>Naktis</th>
+                <th>Tarifas (€/val.)</th>
+                <th>Pamainos biudžetas (dieną)</th>
+                <th>Pamainos biudžetas (naktį)</th>
+                <th>Pamainos biudžetas (viso)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Gydytojas</td>
+                <td id="docDayCount">0</td>
+                <td id="docNightCount">0</td>
+                <td id="docRate">€0,00</td>
+                <td id="docShiftDay">€0,00</td>
+                <td id="docShiftNight">€0,00</td>
+                <td id="docShiftTotal">€0,00</td>
+              </tr>
+              <tr>
+                <td>Slaugytojas</td>
+                <td id="nurseDayCount">0</td>
+                <td id="nurseNightCount">0</td>
+                <td id="nurseRate">€0,00</td>
+                <td id="nurseShiftDay">€0,00</td>
+                <td id="nurseShiftNight">€0,00</td>
+                <td id="nurseShiftTotal">€0,00</td>
+              </tr>
+              <tr>
+                <td>Padėjėjas</td>
+                <td id="assistDayCount">0</td>
+                <td id="assistNightCount">0</td>
+                <td id="assistRate">€0,00</td>
+                <td id="assistShiftDay">€0,00</td>
+                <td id="assistShiftNight">€0,00</td>
+                <td id="assistShiftTotal">€0,00</td>
+              </tr>
+              <tr>
+                <td class="accent">Iš viso</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="accent" id="shiftDayTotal">€0,00</td>
+                <td class="accent" id="shiftNightTotal">€0,00</td>
+                <td class="accent" id="shiftTotal">€0,00</td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Rolė</th>
+                <th>Mėnesio biudžetas (dieną)</th>
+                <th>Mėnesio biudžetas (naktį)</th>
+                <th>Mėnesio biudžetas (viso)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Gydytojas</td>
+                <td id="docMonthDay">€0,00</td>
+                <td id="docMonthNight">€0,00</td>
+                <td id="docMonthTotal">€0,00</td>
+              </tr>
+              <tr>
+                <td>Slaugytojas</td>
+                <td id="nurseMonthDay">€0,00</td>
+                <td id="nurseMonthNight">€0,00</td>
+                <td id="nurseMonthTotal">€0,00</td>
+              </tr>
+              <tr>
+                <td>Padėjėjas</td>
+                <td id="assistMonthDay">€0,00</td>
+                <td id="assistMonthNight">€0,00</td>
+                <td id="assistMonthTotal">€0,00</td>
+              </tr>
+              <tr>
+                <td class="accent">Iš viso</td>
+                <td class="accent" id="monthDayTotal">€0,00</td>
+                <td class="accent" id="monthNightTotal">€0,00</td>
+                <td class="accent" id="monthTotal">€0,00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div class="kpi">
           <div class="item">
             <div class="label">Biudžeto grafikas</div>
