@@ -121,7 +121,7 @@ if (els.ratioCanvas) {
             cutout: '70%',
             plugins: { legend: { display: false }, tooltip: { enabled: false } },
             maintainAspectRatio: false,
-            responsive: false
+            responsive: true
           }
         });
       }
@@ -147,7 +147,7 @@ if (els.sCanvas) {
             plugins: { legend: { display: false } },
             scales: { x: { display: false }, y: { display: false } },
             maintainAspectRatio: false,
-            responsive: false
+            responsive: true
           }
         });
       }
