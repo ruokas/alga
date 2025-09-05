@@ -13,15 +13,22 @@ jest.mock('../chart-utils.js', () => {
 
 const inputIds = [
   'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
-  'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight'
+  'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight',
+  'zoneCapacity','patientCount','maxCoefficient','n1','n2','n3','n4','n5'
 ];
 const cellIds = [
   'docDayCount','docNightCount','nurseDayCount','nurseNightCount','assistDayCount','assistNightCount',
-  'docRate','nurseRate','assistRate','docShiftDay','docShiftNight','docShiftTotal','nurseShiftDay',
-  'nurseShiftNight','nurseShiftTotal','assistShiftDay','assistShiftNight','assistShiftTotal','docMonthDay',
-  'docMonthNight','docMonthTotal','nurseMonthDay','nurseMonthNight','nurseMonthTotal','assistMonthDay',
-  'assistMonthNight','assistMonthTotal','shiftDayTotal','shiftNightTotal','shiftTotal','monthDayTotal',
-  'monthNightTotal','monthTotal'
+  'docRate','nurseRate','assistRate','docShiftDay','docShiftNight','docShiftTotal',
+  'docShiftBonusDay','docShiftBonusNight','docShiftBonusTotal',
+  'nurseShiftDay','nurseShiftNight','nurseShiftTotal',
+  'nurseShiftBonusDay','nurseShiftBonusNight','nurseShiftBonusTotal',
+  'assistShiftDay','assistShiftNight','assistShiftTotal',
+  'assistShiftBonusDay','assistShiftBonusNight','assistShiftBonusTotal',
+  'docMonthDay','docMonthNight','docMonthTotal','docMonthBonusDay','docMonthBonusNight','docMonthBonusTotal',
+  'nurseMonthDay','nurseMonthNight','nurseMonthTotal','nurseMonthBonusDay','nurseMonthBonusNight','nurseMonthBonusTotal',
+  'assistMonthDay','assistMonthNight','assistMonthTotal','assistMonthBonusDay','assistMonthBonusNight','assistMonthBonusTotal',
+  'shiftDayTotal','shiftNightTotal','shiftTotal','shiftBonusDayTotal','shiftBonusNightTotal','shiftBonusTotal',
+  'monthDayTotal','monthNightTotal','monthTotal','monthBonusDayTotal','monthBonusNightTotal','monthBonusTotal'
 ];
 
 function setupDOM(){
@@ -42,20 +49,20 @@ beforeEach(() => {
 
 test('loads saved values from localStorage', () => {
   setupDOM();
-  localStorage.setItem('budgetInputs', JSON.stringify({ shiftHours: '8', monthHours: '160' }));
+  localStorage.setItem('budgetInputs', JSON.stringify({ shiftHours: '8', zoneCapacity: '3' }));
   require('../budget-ui.js');
   expect(document.getElementById('shiftHours').value).toBe('8');
-  expect(document.getElementById('monthHours').value).toBe('160');
+  expect(document.getElementById('zoneCapacity').value).toBe('3');
 });
 
 test('saves inputs to localStorage on input', () => {
   setupDOM();
   require('../budget-ui.js');
-  const shift = document.getElementById('shiftHours');
-  shift.value = '12';
-  shift.dispatchEvent(new Event('input'));
+  const zone = document.getElementById('zoneCapacity');
+  zone.value = '5';
+  zone.dispatchEvent(new Event('input'));
   const saved = JSON.parse(localStorage.getItem('budgetInputs'));
-  expect(saved.shiftHours).toBe('12');
+  expect(saved.zoneCapacity).toBe('5');
 });
 
 test('computes and updates staff chart with counts', () => {
@@ -76,4 +83,56 @@ test('computes and updates staff chart with counts', () => {
     day: { doctor: 1, nurse: 3, assistant: 5 },
     night: { doctor: 2, nurse: 4, assistant: 6 },
   });
+});
+
+test('updates bonus fields with computed values', () => {
+  setupDOM();
+  const { compute } = require('../budget-ui.js');
+  const { computeBudget } = require('../budget.js');
+
+  document.getElementById('shiftHours').value = '12';
+  document.getElementById('monthHours').value = '160';
+  document.getElementById('baseRateDoc').value = '10';
+  document.getElementById('baseRateNurse').value = '8';
+  document.getElementById('baseRateAssist').value = '6';
+  document.getElementById('countDocDay').value = '1';
+  document.getElementById('countNurseDay').value = '1';
+  document.getElementById('countAssistDay').value = '1';
+  document.getElementById('zoneCapacity').value = '1';
+  document.getElementById('patientCount').value = '2';
+  document.getElementById('maxCoefficient').value = '2';
+  document.getElementById('n1').value = '1';
+  document.getElementById('n2').value = '1';
+  document.getElementById('n3').value = '0';
+  document.getElementById('n4').value = '0';
+  document.getElementById('n5').value = '0';
+
+  compute();
+
+  const expected = computeBudget({
+    counts: {
+      day: { doctor: 1, nurse: 1, assistant: 1 },
+      night: { doctor: 0, nurse: 0, assistant: 0 },
+    },
+    rateInputs: {
+      zoneCapacity: 1,
+      patientCount: 2,
+      maxCoefficient: 2,
+      baseDoc: 10,
+      baseNurse: 8,
+      baseAssist: 6,
+      shiftH: 12,
+      monthH: 160,
+      n1: 1,
+      n2: 1,
+      n3: 0,
+      n4: 0,
+      n5: 0,
+    }
+  });
+
+  const parse = s => Number(s.replace(/[^0-9,-]/g, '').replace(',', '.'));
+  expect(parse(document.getElementById('docShiftBonusDay').textContent)).toBeCloseTo(expected.shift_bonus_day.doctor);
+  expect(parse(document.getElementById('shiftBonusTotal').textContent)).toBeCloseTo(expected.shift_bonus.total);
+  expect(parse(document.getElementById('monthBonusTotal').textContent)).toBeCloseTo(expected.month_bonus.total);
 });

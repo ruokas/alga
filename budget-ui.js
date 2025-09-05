@@ -53,6 +53,15 @@ const els = {
   assistShiftDay: document.getElementById('assistShiftDay'),
   assistShiftNight: document.getElementById('assistShiftNight'),
   assistShiftTotal: document.getElementById('assistShiftTotal'),
+  docShiftBonusDay: document.getElementById('docShiftBonusDay'),
+  docShiftBonusNight: document.getElementById('docShiftBonusNight'),
+  docShiftBonusTotal: document.getElementById('docShiftBonusTotal'),
+  nurseShiftBonusDay: document.getElementById('nurseShiftBonusDay'),
+  nurseShiftBonusNight: document.getElementById('nurseShiftBonusNight'),
+  nurseShiftBonusTotal: document.getElementById('nurseShiftBonusTotal'),
+  assistShiftBonusDay: document.getElementById('assistShiftBonusDay'),
+  assistShiftBonusNight: document.getElementById('assistShiftBonusNight'),
+  assistShiftBonusTotal: document.getElementById('assistShiftBonusTotal'),
   docMonthDay: document.getElementById('docMonthDay'),
   docMonthNight: document.getElementById('docMonthNight'),
   docMonthTotal: document.getElementById('docMonthTotal'),
@@ -62,12 +71,27 @@ const els = {
   assistMonthDay: document.getElementById('assistMonthDay'),
   assistMonthNight: document.getElementById('assistMonthNight'),
   assistMonthTotal: document.getElementById('assistMonthTotal'),
+  docMonthBonusDay: document.getElementById('docMonthBonusDay'),
+  docMonthBonusNight: document.getElementById('docMonthBonusNight'),
+  docMonthBonusTotal: document.getElementById('docMonthBonusTotal'),
+  nurseMonthBonusDay: document.getElementById('nurseMonthBonusDay'),
+  nurseMonthBonusNight: document.getElementById('nurseMonthBonusNight'),
+  nurseMonthBonusTotal: document.getElementById('nurseMonthBonusTotal'),
+  assistMonthBonusDay: document.getElementById('assistMonthBonusDay'),
+  assistMonthBonusNight: document.getElementById('assistMonthBonusNight'),
+  assistMonthBonusTotal: document.getElementById('assistMonthBonusTotal'),
   shiftDayTotal: document.getElementById('shiftDayTotal'),
   shiftNightTotal: document.getElementById('shiftNightTotal'),
   shiftTotal: document.getElementById('shiftTotal'),
+  shiftBonusDayTotal: document.getElementById('shiftBonusDayTotal'),
+  shiftBonusNightTotal: document.getElementById('shiftBonusNightTotal'),
+  shiftBonusTotal: document.getElementById('shiftBonusTotal'),
   monthDayTotal: document.getElementById('monthDayTotal'),
   monthNightTotal: document.getElementById('monthNightTotal'),
   monthTotal: document.getElementById('monthTotal'),
+  monthBonusDayTotal: document.getElementById('monthBonusDayTotal'),
+  monthBonusNightTotal: document.getElementById('monthBonusNightTotal'),
+  monthBonusTotal: document.getElementById('monthBonusTotal'),
   budgetChart: document.getElementById('budgetChart'),
   dayNightChart: document.getElementById('dayNightChart'),
   staffChart: document.getElementById('staffChart'),
@@ -175,9 +199,21 @@ function compute(){
   els.assistShiftDay.textContent = money(data.shift_budget_day.assistant);
   els.assistShiftNight.textContent = money(data.shift_budget_night.assistant);
   els.assistShiftTotal.textContent = money(data.shift_budget.assistant);
+  els.docShiftBonusDay.textContent = money(data.shift_bonus_day.doctor);
+  els.docShiftBonusNight.textContent = money(data.shift_bonus_night.doctor);
+  els.docShiftBonusTotal.textContent = money(data.shift_bonus.doctor);
+  els.nurseShiftBonusDay.textContent = money(data.shift_bonus_day.nurse);
+  els.nurseShiftBonusNight.textContent = money(data.shift_bonus_night.nurse);
+  els.nurseShiftBonusTotal.textContent = money(data.shift_bonus.nurse);
+  els.assistShiftBonusDay.textContent = money(data.shift_bonus_day.assistant);
+  els.assistShiftBonusNight.textContent = money(data.shift_bonus_night.assistant);
+  els.assistShiftBonusTotal.textContent = money(data.shift_bonus.assistant);
   els.shiftDayTotal.textContent = money(data.shift_budget_day.total);
   els.shiftNightTotal.textContent = money(data.shift_budget_night.total);
   els.shiftTotal.textContent = money(data.shift_budget.total);
+  els.shiftBonusDayTotal.textContent = money(data.shift_bonus_day.total);
+  els.shiftBonusNightTotal.textContent = money(data.shift_bonus_night.total);
+  els.shiftBonusTotal.textContent = money(data.shift_bonus.total);
 
   els.docMonthDay.textContent = money(data.month_budget_day.doctor);
   els.docMonthNight.textContent = money(data.month_budget_night.doctor);
@@ -188,11 +224,23 @@ function compute(){
   els.assistMonthDay.textContent = money(data.month_budget_day.assistant);
   els.assistMonthNight.textContent = money(data.month_budget_night.assistant);
   els.assistMonthTotal.textContent = money(data.month_budget.assistant);
+  els.docMonthBonusDay.textContent = money(data.month_bonus_day.doctor);
+  els.docMonthBonusNight.textContent = money(data.month_bonus_night.doctor);
+  els.docMonthBonusTotal.textContent = money(data.month_bonus.doctor);
+  els.nurseMonthBonusDay.textContent = money(data.month_bonus_day.nurse);
+  els.nurseMonthBonusNight.textContent = money(data.month_bonus_night.nurse);
+  els.nurseMonthBonusTotal.textContent = money(data.month_bonus.nurse);
+  els.assistMonthBonusDay.textContent = money(data.month_bonus_day.assistant);
+  els.assistMonthBonusNight.textContent = money(data.month_bonus_night.assistant);
+  els.assistMonthBonusTotal.textContent = money(data.month_bonus.assistant);
   els.monthDayTotal.textContent = money(data.month_budget_day.total);
   els.monthNightTotal.textContent = money(data.month_budget_night.total);
   els.monthTotal.textContent = money(data.month_budget.total);
+  els.monthBonusDayTotal.textContent = money(data.month_bonus_day.total);
+  els.monthBonusNightTotal.textContent = money(data.month_bonus_night.total);
+  els.monthBonusTotal.textContent = money(data.month_bonus.total);
 
-  updateBudgetChart(budgetChart, data.month_budget);
+  updateBudgetChart(budgetChart, data.baseline_month_budget, data.month_bonus);
   updateDayNightChart(dayNightChart, data.shift_budget_day, data.shift_budget_night);
   updateStaffChart(staffChart, counts);
 }

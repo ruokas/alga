@@ -32,31 +32,41 @@ export function createBudgetChart(canvas, type = 'bar') {
   if (!canvas || typeof Chart === 'undefined') return null;
   const ctx = canvas.getContext && canvas.getContext('2d');
   if (!ctx) return null;
-  const colors = ['#007bff', '#28a745', '#ffc107'];
+  const baseColors = ['#007bff', '#28a745', '#ffc107'];
+  const bonusColors = ['#80bdff', '#71dd8a', '#ffd966'];
   return new Chart(ctx, {
     type,
     data: {
       labels: ['Gydytojas', 'Slaugytojas', 'Padėjėjas'],
-      datasets: [{
-        label: 'Biudžetas',
-        data: [0, 0, 0],
-        backgroundColor: colors,
-        borderColor: colors,
-      }]
+      datasets: [
+        {
+          label: 'Bazinis',
+          data: [0, 0, 0],
+          backgroundColor: baseColors,
+          borderColor: baseColors,
+        },
+        {
+          label: 'Priedas',
+          data: [0, 0, 0],
+          backgroundColor: bonusColors,
+          borderColor: bonusColors,
+        }
+      ]
     },
     options: {
-      plugins: { legend: { display: type !== 'bar' } },
-      scales: type === 'bar' ? { y: { beginAtZero: true } } : {},
+      plugins: { legend: { display: true } },
+      scales: type === 'bar' ? { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } : {},
       maintainAspectRatio: false,
       responsive: true,
     }
   });
 }
 
-export function updateBudgetChart(chart, budgets = {}) {
+export function updateBudgetChart(chart, baseline = {}, bonus = {}) {
   const roles = ['doctor', 'nurse', 'assistant'];
   updateChart(chart, c => {
-    c.data.datasets[0].data = roles.map(r => Number(budgets[r]) || 0);
+    c.data.datasets[0].data = roles.map(r => Number(baseline[r]) || 0);
+    c.data.datasets[1].data = roles.map(r => Number(bonus[r]) || 0);
     c.update();
   });
 }
