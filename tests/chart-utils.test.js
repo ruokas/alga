@@ -79,9 +79,10 @@ describe('createBudgetChart', () => {
 
 describe('updateBudgetChart', () => {
   test('updates chart data and calls update', () => {
-    const chart = { data: { datasets: [{ data: [] }] }, update: jest.fn() };
-    updateBudgetChart(chart, { doctor: 10, nurse: 20, assistant: 30 });
+    const chart = { data: { datasets: [{ data: [] }, { data: [] }] }, update: jest.fn() };
+    updateBudgetChart(chart, { doctor: 10, nurse: 20, assistant: 30 }, { doctor: 1, nurse: 2, assistant: 3 });
     expect(chart.data.datasets[0].data).toEqual([10,20,30]);
+    expect(chart.data.datasets[1].data).toEqual([1,2,3]);
     expect(chart.update).toHaveBeenCalled();
   });
 });

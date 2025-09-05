@@ -202,6 +202,15 @@ describe('budget chart DOM integration', () => {
       <span id="assistShiftDay"></span>
       <span id="assistShiftNight"></span>
       <span id="assistShiftTotal"></span>
+      <span id="docShiftBonusDay"></span>
+      <span id="docShiftBonusNight"></span>
+      <span id="docShiftBonusTotal"></span>
+      <span id="nurseShiftBonusDay"></span>
+      <span id="nurseShiftBonusNight"></span>
+      <span id="nurseShiftBonusTotal"></span>
+      <span id="assistShiftBonusDay"></span>
+      <span id="assistShiftBonusNight"></span>
+      <span id="assistShiftBonusTotal"></span>
       <span id="docMonthDay"></span>
       <span id="docMonthNight"></span>
       <span id="docMonthTotal"></span>
@@ -211,18 +220,33 @@ describe('budget chart DOM integration', () => {
       <span id="assistMonthDay"></span>
       <span id="assistMonthNight"></span>
       <span id="assistMonthTotal"></span>
+      <span id="docMonthBonusDay"></span>
+      <span id="docMonthBonusNight"></span>
+      <span id="docMonthBonusTotal"></span>
+      <span id="nurseMonthBonusDay"></span>
+      <span id="nurseMonthBonusNight"></span>
+      <span id="nurseMonthBonusTotal"></span>
+      <span id="assistMonthBonusDay"></span>
+      <span id="assistMonthBonusNight"></span>
+      <span id="assistMonthBonusTotal"></span>
       <span id="shiftDayTotal"></span>
       <span id="shiftNightTotal"></span>
       <span id="shiftTotal"></span>
+      <span id="shiftBonusDayTotal"></span>
+      <span id="shiftBonusNightTotal"></span>
+      <span id="shiftBonusTotal"></span>
       <span id="monthDayTotal"></span>
       <span id="monthNightTotal"></span>
       <span id="monthTotal"></span>
+      <span id="monthBonusDayTotal"></span>
+      <span id="monthBonusNightTotal"></span>
+      <span id="monthBonusTotal"></span>
       <canvas id="budgetChart"></canvas>
     `;
 
     const canvas = document.getElementById('budgetChart');
     canvas.getContext = jest.fn(() => ({}));
-    chartInstance = { data: { datasets: [{ data: [] }] }, update: jest.fn() };
+    chartInstance = { data: { datasets: [{ data: [] }, { data: [] }] }, update: jest.fn() };
     global.Chart = jest.fn(() => chartInstance);
 
     jest.isolateModules(() => {
@@ -257,12 +281,17 @@ describe('budget chart DOM integration', () => {
         night: { doctor: 1, nurse: 1, assistant: 1 },
       },
       rateInputs,
-    }).month_budget;
+    });
     expect(global.Chart).toHaveBeenCalledTimes(1);
     expect(chartInstance.data.datasets[0].data).toEqual([
-      initial.doctor,
-      initial.nurse,
-      initial.assistant,
+      initial.baseline_month_budget.doctor,
+      initial.baseline_month_budget.nurse,
+      initial.baseline_month_budget.assistant,
+    ]);
+    expect(chartInstance.data.datasets[1].data).toEqual([
+      initial.month_bonus.doctor,
+      initial.month_bonus.nurse,
+      initial.month_bonus.assistant,
     ]);
 
     chartInstance.update.mockClear();
@@ -274,11 +303,16 @@ describe('budget chart DOM integration', () => {
         night: { doctor: 1, nurse: 1, assistant: 1 },
       },
       rateInputs,
-    }).month_budget;
+    });
     expect(chartInstance.data.datasets[0].data).toEqual([
-      updated.doctor,
-      updated.nurse,
-      updated.assistant,
+      updated.baseline_month_budget.doctor,
+      updated.baseline_month_budget.nurse,
+      updated.baseline_month_budget.assistant,
+    ]);
+    expect(chartInstance.data.datasets[1].data).toEqual([
+      updated.month_bonus.doctor,
+      updated.month_bonus.nurse,
+      updated.month_bonus.assistant,
     ]);
     expect(chartInstance.update).toHaveBeenCalled();
   });
