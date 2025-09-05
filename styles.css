@@ -120,7 +120,7 @@
     .table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
     .table th { color: var(--muted); font-weight: 600; }
 
-    .results-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); }
+    .results-grid { display: grid; gap: 12px; grid-template-columns: 1fr; overflow-x: auto; }
 
     .resizer { width: 5px; background: var(--drag); cursor: col-resize; }
 
