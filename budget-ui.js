@@ -27,39 +27,39 @@ const els = {
   countNurseNight: document.getElementById('countNurseNight'),
   countAssistDay: document.getElementById('countAssistDay'),
   countAssistNight: document.getElementById('countAssistNight'),
-  countDocDayCell: document.getElementById('countDocDayCell'),
-  countDocNightCell: document.getElementById('countDocNightCell'),
-  countNurseDayCell: document.getElementById('countNurseDayCell'),
-  countNurseNightCell: document.getElementById('countNurseNightCell'),
-  countAssistDayCell: document.getElementById('countAssistDayCell'),
-  countAssistNightCell: document.getElementById('countAssistNightCell'),
-  rateDocCell: document.getElementById('rateDocCell'),
-  rateNurseCell: document.getElementById('rateNurseCell'),
-  rateAssistCell: document.getElementById('rateAssistCell'),
-  shiftDocDayCell: document.getElementById('shiftDocDayCell'),
-  shiftDocNightCell: document.getElementById('shiftDocNightCell'),
-  shiftDocCell: document.getElementById('shiftDocCell'),
-  shiftNurseDayCell: document.getElementById('shiftNurseDayCell'),
-  shiftNurseNightCell: document.getElementById('shiftNurseNightCell'),
-  shiftNurseCell: document.getElementById('shiftNurseCell'),
-  shiftAssistDayCell: document.getElementById('shiftAssistDayCell'),
-  shiftAssistNightCell: document.getElementById('shiftAssistNightCell'),
-  shiftAssistCell: document.getElementById('shiftAssistCell'),
-  monthDocDayCell: document.getElementById('monthDocDayCell'),
-  monthDocNightCell: document.getElementById('monthDocNightCell'),
-  monthDocCell: document.getElementById('monthDocCell'),
-  monthNurseDayCell: document.getElementById('monthNurseDayCell'),
-  monthNurseNightCell: document.getElementById('monthNurseNightCell'),
-  monthNurseCell: document.getElementById('monthNurseCell'),
-  monthAssistDayCell: document.getElementById('monthAssistDayCell'),
-  monthAssistNightCell: document.getElementById('monthAssistNightCell'),
-  monthAssistCell: document.getElementById('monthAssistCell'),
-  shiftDayTotalCell: document.getElementById('shiftDayTotalCell'),
-  shiftNightTotalCell: document.getElementById('shiftNightTotalCell'),
-  shiftTotalCell: document.getElementById('shiftTotalCell'),
-  monthDayTotalCell: document.getElementById('monthDayTotalCell'),
-  monthNightTotalCell: document.getElementById('monthNightTotalCell'),
-  monthTotalCell: document.getElementById('monthTotalCell'),
+  docDayCount: document.getElementById('docDayCount'),
+  docNightCount: document.getElementById('docNightCount'),
+  nurseDayCount: document.getElementById('nurseDayCount'),
+  nurseNightCount: document.getElementById('nurseNightCount'),
+  assistDayCount: document.getElementById('assistDayCount'),
+  assistNightCount: document.getElementById('assistNightCount'),
+  docRate: document.getElementById('docRate'),
+  nurseRate: document.getElementById('nurseRate'),
+  assistRate: document.getElementById('assistRate'),
+  docShiftDay: document.getElementById('docShiftDay'),
+  docShiftNight: document.getElementById('docShiftNight'),
+  docShiftTotal: document.getElementById('docShiftTotal'),
+  nurseShiftDay: document.getElementById('nurseShiftDay'),
+  nurseShiftNight: document.getElementById('nurseShiftNight'),
+  nurseShiftTotal: document.getElementById('nurseShiftTotal'),
+  assistShiftDay: document.getElementById('assistShiftDay'),
+  assistShiftNight: document.getElementById('assistShiftNight'),
+  assistShiftTotal: document.getElementById('assistShiftTotal'),
+  docMonthDay: document.getElementById('docMonthDay'),
+  docMonthNight: document.getElementById('docMonthNight'),
+  docMonthTotal: document.getElementById('docMonthTotal'),
+  nurseMonthDay: document.getElementById('nurseMonthDay'),
+  nurseMonthNight: document.getElementById('nurseMonthNight'),
+  nurseMonthTotal: document.getElementById('nurseMonthTotal'),
+  assistMonthDay: document.getElementById('assistMonthDay'),
+  assistMonthNight: document.getElementById('assistMonthNight'),
+  assistMonthTotal: document.getElementById('assistMonthTotal'),
+  shiftDayTotal: document.getElementById('shiftDayTotal'),
+  shiftNightTotal: document.getElementById('shiftNightTotal'),
+  shiftTotal: document.getElementById('shiftTotal'),
+  monthDayTotal: document.getElementById('monthDayTotal'),
+  monthNightTotal: document.getElementById('monthNightTotal'),
+  monthTotal: document.getElementById('monthTotal'),
   budgetChart: document.getElementById('budgetChart'),
   dayNightChart: document.getElementById('dayNightChart'),
   staffChart: document.getElementById('staffChart'),
@@ -138,42 +138,42 @@ function compute(){
     }
   });
 
-  els.countDocDayCell.textContent = docDay;
-  els.countDocNightCell.textContent = docNight;
-  els.countNurseDayCell.textContent = nurseDay;
-  els.countNurseNightCell.textContent = nurseNight;
-  els.countAssistDayCell.textContent = assistDay;
-  els.countAssistNightCell.textContent = assistNight;
+  els.docDayCount.textContent = docDay;
+  els.docNightCount.textContent = docNight;
+  els.nurseDayCount.textContent = nurseDay;
+  els.nurseNightCount.textContent = nurseNight;
+  els.assistDayCount.textContent = assistDay;
+  els.assistNightCount.textContent = assistNight;
 
-  els.rateDocCell.textContent = money(data.final_rates.doctor);
-  els.rateNurseCell.textContent = money(data.final_rates.nurse);
-  els.rateAssistCell.textContent = money(data.final_rates.assistant);
+  els.docRate.textContent = money(data.final_rates.doctor);
+  els.nurseRate.textContent = money(data.final_rates.nurse);
+  els.assistRate.textContent = money(data.final_rates.assistant);
 
-  if (els.shiftDocDayCell) els.shiftDocDayCell.textContent = money(data.shift_budget_day.doctor);
-  if (els.shiftDocNightCell) els.shiftDocNightCell.textContent = money(data.shift_budget_night.doctor);
-  els.shiftDocCell.textContent = money(data.shift_budget.doctor);
-  if (els.shiftNurseDayCell) els.shiftNurseDayCell.textContent = money(data.shift_budget_day.nurse);
-  if (els.shiftNurseNightCell) els.shiftNurseNightCell.textContent = money(data.shift_budget_night.nurse);
-  els.shiftNurseCell.textContent = money(data.shift_budget.nurse);
-  if (els.shiftAssistDayCell) els.shiftAssistDayCell.textContent = money(data.shift_budget_day.assistant);
-  if (els.shiftAssistNightCell) els.shiftAssistNightCell.textContent = money(data.shift_budget_night.assistant);
-  els.shiftAssistCell.textContent = money(data.shift_budget.assistant);
-  if (els.shiftDayTotalCell) els.shiftDayTotalCell.textContent = money(data.shift_budget_day.total);
-  if (els.shiftNightTotalCell) els.shiftNightTotalCell.textContent = money(data.shift_budget_night.total);
-  els.shiftTotalCell.textContent = money(data.shift_budget.total);
+  els.docShiftDay.textContent = money(data.shift_budget_day.doctor);
+  els.docShiftNight.textContent = money(data.shift_budget_night.doctor);
+  els.docShiftTotal.textContent = money(data.shift_budget.doctor);
+  els.nurseShiftDay.textContent = money(data.shift_budget_day.nurse);
+  els.nurseShiftNight.textContent = money(data.shift_budget_night.nurse);
+  els.nurseShiftTotal.textContent = money(data.shift_budget.nurse);
+  els.assistShiftDay.textContent = money(data.shift_budget_day.assistant);
+  els.assistShiftNight.textContent = money(data.shift_budget_night.assistant);
+  els.assistShiftTotal.textContent = money(data.shift_budget.assistant);
+  els.shiftDayTotal.textContent = money(data.shift_budget_day.total);
+  els.shiftNightTotal.textContent = money(data.shift_budget_night.total);
+  els.shiftTotal.textContent = money(data.shift_budget.total);
 
-  if (els.monthDocDayCell) els.monthDocDayCell.textContent = money(data.month_budget_day.doctor);
-  if (els.monthDocNightCell) els.monthDocNightCell.textContent = money(data.month_budget_night.doctor);
-  els.monthDocCell.textContent = money(data.month_budget.doctor);
-  if (els.monthNurseDayCell) els.monthNurseDayCell.textContent = money(data.month_budget_day.nurse);
-  if (els.monthNurseNightCell) els.monthNurseNightCell.textContent = money(data.month_budget_night.nurse);
-  els.monthNurseCell.textContent = money(data.month_budget.nurse);
-  if (els.monthAssistDayCell) els.monthAssistDayCell.textContent = money(data.month_budget_day.assistant);
-  if (els.monthAssistNightCell) els.monthAssistNightCell.textContent = money(data.month_budget_night.assistant);
-  els.monthAssistCell.textContent = money(data.month_budget.assistant);
-  if (els.monthDayTotalCell) els.monthDayTotalCell.textContent = money(data.month_budget_day.total);
-  if (els.monthNightTotalCell) els.monthNightTotalCell.textContent = money(data.month_budget_night.total);
-  els.monthTotalCell.textContent = money(data.month_budget.total);
+  els.docMonthDay.textContent = money(data.month_budget_day.doctor);
+  els.docMonthNight.textContent = money(data.month_budget_night.doctor);
+  els.docMonthTotal.textContent = money(data.month_budget.doctor);
+  els.nurseMonthDay.textContent = money(data.month_budget_day.nurse);
+  els.nurseMonthNight.textContent = money(data.month_budget_night.nurse);
+  els.nurseMonthTotal.textContent = money(data.month_budget.nurse);
+  els.assistMonthDay.textContent = money(data.month_budget_day.assistant);
+  els.assistMonthNight.textContent = money(data.month_budget_night.assistant);
+  els.assistMonthTotal.textContent = money(data.month_budget.assistant);
+  els.monthDayTotal.textContent = money(data.month_budget_day.total);
+  els.monthNightTotal.textContent = money(data.month_budget_night.total);
+  els.monthTotal.textContent = money(data.month_budget.total);
 
   updateBudgetChart(budgetChart, data.month_budget);
   updateDayNightChart(dayNightChart, data.shift_budget_day, data.shift_budget_night);

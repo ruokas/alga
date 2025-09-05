@@ -16,12 +16,12 @@ const inputIds = [
   'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight'
 ];
 const cellIds = [
-  'countDocDayCell','countDocNightCell','countNurseDayCell','countNurseNightCell','countAssistDayCell','countAssistNightCell',
-  'rateDocCell','rateNurseCell','rateAssistCell','shiftDocDayCell','shiftDocNightCell','shiftDocCell','shiftNurseDayCell',
-  'shiftNurseNightCell','shiftNurseCell','shiftAssistDayCell','shiftAssistNightCell','shiftAssistCell','monthDocDayCell',
-  'monthDocNightCell','monthDocCell','monthNurseDayCell','monthNurseNightCell','monthNurseCell','monthAssistDayCell',
-  'monthAssistNightCell','monthAssistCell','shiftDayTotalCell','shiftNightTotalCell','shiftTotalCell','monthDayTotalCell',
-  'monthNightTotalCell','monthTotalCell'
+  'docDayCount','docNightCount','nurseDayCount','nurseNightCount','assistDayCount','assistNightCount',
+  'docRate','nurseRate','assistRate','docShiftDay','docShiftNight','docShiftTotal','nurseShiftDay',
+  'nurseShiftNight','nurseShiftTotal','assistShiftDay','assistShiftNight','assistShiftTotal','docMonthDay',
+  'docMonthNight','docMonthTotal','nurseMonthDay','nurseMonthNight','nurseMonthTotal','assistMonthDay',
+  'assistMonthNight','assistMonthTotal','shiftDayTotal','shiftNightTotal','shiftTotal','monthDayTotal',
+  'monthNightTotal','monthTotal'
 ];
 
 function setupDOM(){
