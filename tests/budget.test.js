@@ -87,6 +87,34 @@ describe('computeBudget', () => {
     expect(result.month_budget_night.doctor).toBeCloseTo(15);
     expect(result.month_budget.doctor).toBeCloseTo(25);
   });
+
+  test('computes baseline and bonus budgets when zone coefficient > 1', () => {
+    const result = computeBudget({
+      counts: { doctor: 1, nurse: 0, assistant: 0 },
+      rateInputs: {
+        zoneCapacity: 1,
+        patientCount: 2,
+        maxCoefficient: 1.5,
+        baseDoc: 10,
+        baseNurse: 0,
+        baseAssist: 0,
+        shiftH: 1,
+        monthH: 1,
+        n1: 0,
+        n2: 0,
+        n3: 0,
+        n4: 0,
+        n5: 0,
+      },
+    });
+
+    expect(result.baseline_shift_budget_day.doctor).toBeCloseTo(10);
+    expect(result.baseline_month_budget_day.doctor).toBeCloseTo(10);
+    expect(result.shift_bonus_day.doctor).toBeCloseTo(1.5);
+    expect(result.shift_bonus.total).toBeCloseTo(1.5);
+    expect(result.month_bonus_day.doctor).toBeCloseTo(1.5);
+    expect(result.month_bonus.total).toBeCloseTo(1.5);
+  });
 });
 
 describe('CSV and PDF generation', () => {
