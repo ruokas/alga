@@ -424,6 +424,38 @@ if (els.budgetPlanner) {
   els.budgetPlanner.addEventListener('click', (e)=>{ e.preventDefault(); window.location.href = 'budget.html'; });
 }
 
+const grid = document.querySelector('.calc-grid');
+const resizer = document.querySelector('.resizer');
+if (grid && resizer) {
+  const RESIZER_WIDTH = resizer.getBoundingClientRect().width || 5;
+  let startX = 0;
+  let startLeft = 0;
+
+  function onMouseMove(e){
+    const dx = e.clientX - startX;
+    const total = grid.getBoundingClientRect().width;
+    const newLeft = startLeft + dx;
+    const newRight = total - newLeft - RESIZER_WIDTH;
+    if (newLeft > 0 && newRight > 0){
+      grid.style.gridTemplateColumns = `${newLeft}px ${RESIZER_WIDTH}px ${newRight}px`;
+    }
+  }
+
+  function stop(){
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', stop);
+  }
+
+  resizer.addEventListener('mousedown', e => {
+    if (window.innerWidth < 960) return;
+    e.preventDefault();
+    startX = e.clientX;
+    startLeft = grid.children[0].getBoundingClientRect().width;
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', stop);
+  });
+}
+
 renderZoneSelect(false);
 resetAll();
 
