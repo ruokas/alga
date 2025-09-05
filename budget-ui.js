@@ -27,6 +27,14 @@ const els = {
   countNurseNight: document.getElementById('countNurseNight'),
   countAssistDay: document.getElementById('countAssistDay'),
   countAssistNight: document.getElementById('countAssistNight'),
+  zoneCapacity: document.getElementById('zoneCapacity'),
+  patientCount: document.getElementById('patientCount'),
+  maxCoefficient: document.getElementById('maxCoefficient'),
+  n1: document.getElementById('n1'),
+  n2: document.getElementById('n2'),
+  n3: document.getElementById('n3'),
+  n4: document.getElementById('n4'),
+  n5: document.getElementById('n5'),
   docDayCount: document.getElementById('docDayCount'),
   docNightCount: document.getElementById('docNightCount'),
   nurseDayCount: document.getElementById('nurseDayCount'),
@@ -73,7 +81,8 @@ const staffChart = createStaffChart(els.staffChart);
 
 const INPUT_IDS = [
   'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
-  'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight'
+  'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight',
+  'zoneCapacity','patientCount','maxCoefficient','n1','n2','n3','n4','n5'
 ];
 const STORAGE_KEY = 'budgetInputs';
 
@@ -105,6 +114,14 @@ function compute(){
   const nurseNight = toNum(els.countNurseNight.value);
   const assistDay = toNum(els.countAssistDay.value);
   const assistNight = toNum(els.countAssistNight.value);
+  const zoneCapacity = els.zoneCapacity ? toNum(els.zoneCapacity.value) : 1;
+  const patientCount = els.patientCount ? toNum(els.patientCount.value) : 0;
+  const maxCoefficient = els.maxCoefficient ? toNum(els.maxCoefficient.value) : 1;
+  const n1 = toNum(els.n1?.value);
+  const n2 = toNum(els.n2?.value);
+  const n3 = toNum(els.n3?.value);
+  const n4 = toNum(els.n4?.value);
+  const n5 = toNum(els.n5?.value);
 
   const counts = {
     day: {
@@ -122,19 +139,19 @@ function compute(){
   const data = computeBudget({
     counts,
     rateInputs: {
-      zoneCapacity: 1,
-      patientCount: 0,
-      maxCoefficient: 1,
+      zoneCapacity,
+      patientCount,
+      maxCoefficient,
       baseDoc: toNum(els.baseRateDoc.value),
       baseNurse: toNum(els.baseRateNurse.value),
       baseAssist: toNum(els.baseRateAssist.value),
       shiftH: toNum(els.shiftHours.value),
       monthH: toNum(els.monthHours.value),
-      n1: 0,
-      n2: 0,
-      n3: 0,
-      n4: 0,
-      n5: 0,
+      n1,
+      n2,
+      n3,
+      n4,
+      n5,
     }
   });
 
