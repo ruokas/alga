@@ -99,6 +99,11 @@ const els = {
 
 initThemeToggle();
 
+const goBack = document.getElementById("goBack");
+if (goBack) {
+  goBack.addEventListener("click", (e) => { e.preventDefault(); window.location.href = "index.html"; });
+}
+
 const budgetChart = createBudgetChart(els.budgetChart, 'doughnut');
 const dayNightChart = createDayNightChart(els.dayNightChart);
 const staffChart = createStaffChart(els.staffChart);
