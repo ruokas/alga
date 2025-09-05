@@ -2,19 +2,29 @@ export function initThemeToggle() {
   const THEME_KEY = 'ED_THEME';
   const root = document.documentElement;
   const body = document.body;
-  const savedTheme = localStorage.getItem(THEME_KEY);
-  if (savedTheme === 'light') {
-    root.classList.add('light-theme');
-    body.classList.add('light-theme');
+
+  let isLight = root.classList.contains('light-theme');
+  if (!isLight) {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme === 'light') {
+      root.classList.add('light-theme');
+      isLight = true;
+    }
   }
+  body.classList.toggle('light-theme', isLight);
+
+  // Preload color utilities without blocking init
+  import('@material/material-color-utilities').catch(() => {});
+
   const toggle = document.getElementById('themeToggle');
   if (toggle) {
-    toggle.checked = root.classList.contains('light-theme');
+    toggle.checked = isLight;
     toggle.addEventListener('change', () => {
-      const isLight = toggle.checked;
-      root.classList.toggle('light-theme', isLight);
-      body.classList.toggle('light-theme', isLight);
-      localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+      const isLightNow = toggle.checked;
+      root.classList.toggle('light-theme', isLightNow);
+      body.classList.toggle('light-theme', isLightNow);
+      localStorage.setItem(THEME_KEY, isLightNow ? 'light' : 'dark');
+      import('@material/material-color-utilities').catch(() => {});
     });
   }
 }
