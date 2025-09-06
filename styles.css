@@ -88,6 +88,8 @@
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
     .section { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
+    .staff-group { margin-top: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
+    .staff-group h3 { margin: 0 0 8px; font-size: var(--font-base); color: var(--accent-2); font-weight: 600; }
     legend { font-size: var(--font-base); font-weight: 600; color: var(--accent-2); padding: 0 6px; }
     details { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
     summary { cursor: pointer; font-size: var(--font-base); font-weight: 600; color: var(--accent-2); padding: 0 6px; }
