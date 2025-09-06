@@ -19,6 +19,22 @@ export function createFlowChart(canvas, color = '#007bff') {
   });
 }
 
+export function createForecastChart(canvas, color = '#28a745') {
+  if (!canvas || typeof Chart === 'undefined') return null;
+  const ctx = canvas.getContext && canvas.getContext('2d');
+  if (!ctx) return null;
+  return new Chart(ctx, {
+    type: 'line',
+    data: { labels: [], datasets: [{ label: 'Prognozė', data: [], borderColor: color, backgroundColor: 'transparent', tension: 0.3 }] },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { x: { title: { display: true, text: 'Diena' } }, y: { beginAtZero: true } },
+      maintainAspectRatio: false,
+      responsive: true,
+    }
+  });
+}
+
 export function updateFlowChart(chart, results) {
   const days = Array.isArray(results) ? results : (results && results.days) || [];
   updateChart(chart, c => {
@@ -147,6 +163,7 @@ if (typeof module !== 'undefined') {
     updateChart,
     createFlowChart,
     updateFlowChart,
+    createForecastChart,
     createBudgetChart,
     updateBudgetChart,
     createDayNightChart,

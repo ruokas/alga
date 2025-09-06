@@ -35,12 +35,26 @@ function simulateEsiCounts(patientCount, zoneCapacity, seed) {
 
 const DAILY_PATIENT_COUNTS = [135, 126, 124, 122, 130, 117, 119];
 
+// Lazy require to avoid circular dependencies in tests/bundlers
+let forecastPredict;
+try {
+  if (typeof require !== 'undefined') {
+    forecastPredict = require('./src/forecast.js').predictCounts;
+  }
+} catch {}
+
 function simulatePeriod(days, zoneCapacity, options = {}, seed) {
   const {
     patientCounts = DAILY_PATIENT_COUNTS,
     variation = 0,
-    startIndex = 0
+    startIndex = 0,
+    useForecast = false
   } = options;
+
+  if (useForecast && typeof forecastPredict === 'function') {
+    return forecastPredict(days, zoneCapacity);
+  }
+
   const rng = typeof seed === 'function' ? seed : seed !== undefined ? createRng(seed) : Math.random;
   const d = Math.max(0, Math.floor(Number(days)));
   const cap = Number(zoneCapacity);
