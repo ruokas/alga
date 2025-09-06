@@ -136,3 +136,52 @@ test('updates bonus fields with computed values', () => {
   expect(parse(document.getElementById('shiftBonusTotal').textContent)).toBeCloseTo(expected.shift_bonus.total);
   expect(parse(document.getElementById('monthBonusTotal').textContent)).toBeCloseTo(expected.month_bonus.total);
 });
+
+test('uses ESI counts when patientCount is zero', () => {
+  setupDOM();
+  const { compute } = require('../budget-ui.js');
+  const { computeBudget } = require('../budget.js');
+
+  document.getElementById('shiftHours').value = '12';
+  document.getElementById('monthHours').value = '160';
+  document.getElementById('baseRateDoc').value = '10';
+  document.getElementById('baseRateNurse').value = '8';
+  document.getElementById('baseRateAssist').value = '6';
+  document.getElementById('countDocDay').value = '1';
+  document.getElementById('zoneCapacity').value = '80';
+  document.getElementById('patientCount').value = '0';
+  document.getElementById('maxCoefficient').value = '1.3';
+  document.getElementById('n1').value = '10';
+  document.getElementById('n2').value = '20';
+  document.getElementById('n3').value = '70';
+  document.getElementById('n4').value = '0';
+  document.getElementById('n5').value = '0';
+
+  compute();
+
+  const expected = computeBudget({
+    counts: {
+      day: { doctor: 1, nurse: 0, assistant: 0 },
+      night: { doctor: 0, nurse: 0, assistant: 0 },
+    },
+    rateInputs: {
+      zoneCapacity: 80,
+      patientCount: 0,
+      maxCoefficient: 1.3,
+      baseDoc: 10,
+      baseNurse: 8,
+      baseAssist: 6,
+      shiftH: 12,
+      monthH: 160,
+      n1: 10,
+      n2: 20,
+      n3: 70,
+      n4: 0,
+      n5: 0,
+    }
+  });
+
+  const parse = s => Number(s.replace(/[^0-9,-]/g, '').replace(',', '.'));
+  expect(parse(document.getElementById('docRate').textContent)).toBeCloseTo(expected.final_rates.doctor);
+  expect(parse(document.getElementById('shiftBonusTotal').textContent)).toBeGreaterThan(0);
+});
