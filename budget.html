@@ -31,7 +31,13 @@
     <div class="grid grid-2 budget-grid">
       <div class="card">
         <h2>Įvestis</h2>
-        <fieldset class="section">
+        <nav class="nav-sections">
+          <a href="#shift-section">Pamainos parametrai</a>
+          <a href="#patients-section">Pacientų pasiskirstymas</a>
+          <a href="#staff-section">Darbuotojai</a>
+          <a href="#advanced-section">Išplėstinės parinktys</a>
+        </nav>
+        <fieldset id="shift-section" class="section">
           <legend>Pamainos parametrai</legend>
           <div class="row">
             <div>
@@ -44,7 +50,7 @@
             </div>
           </div>
         </fieldset>
-        <fieldset class="section">
+        <fieldset id="patients-section" class="section">
           <legend>Pacientų pasiskirstymas</legend>
           <div class="row">
             <div>
@@ -81,7 +87,7 @@
             </div>
           </div>
         </fieldset>
-          <fieldset class="section">
+          <fieldset id="staff-section" class="section">
             <legend>Darbuotojai</legend>
 
             <div class="staff-group">
@@ -142,7 +148,7 @@
               <button id="optimizeStaff" type="button">Optimize Staffing</button>
             </div>
           </fieldset>
-        <details class="section">
+        <details id="advanced-section" class="section">
           <summary>Išplėstinės parinktys</summary>
           <div class="row">
             <div>
@@ -313,5 +319,19 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9?v=4.4.9"></script>
   <script type="module" src="budget-ui.js"></script>
+  <script>
+    document.querySelectorAll('.nav-sections a').forEach(link => {
+      link.addEventListener('click', () => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target && target.tagName === 'DETAILS') {
+          target.setAttribute('open', '');
+        }
+      });
+    });
+    const hashTarget = document.querySelector(location.hash);
+    if (hashTarget && hashTarget.tagName === 'DETAILS') {
+      hashTarget.setAttribute('open', '');
+    }
+  </script>
 </body>
 </html>
