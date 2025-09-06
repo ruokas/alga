@@ -19,4 +19,15 @@ describe('suggestStaffing', () => {
     });
     expect(result.day).toEqual({ doctor: 3, nurse: 0, assistant: 0 });
   });
+
+  test('respects minimum staffing levels even if more expensive', () => {
+    const result = suggestStaffing({
+      zoneCapacity: 2,
+      budgetLimit: 1000,
+      rates: { doctor: 100, nurse: 50, assistant: 20 },
+      min: { doctor: 1, nurse: 1, assistant: 0 },
+    });
+    expect(result.day).toEqual({ doctor: 1, nurse: 1, assistant: 0 });
+    expect(result.night).toEqual({ doctor: 1, nurse: 1, assistant: 0 });
+  });
 });
