@@ -6,6 +6,7 @@
       --accent: #22c55e;    /* green-500 */
       --accent-2: #60a5fa;  /* blue-400 */
       --danger: #ef4444;    /* red-500 */
+      --warning: #eab308;   /* amber-500 */
       --card: #0b1220;      /* custom */
       --border: #1f2937;    /* gray-800 */
       --drag: #334155;      /* slate-600 */
@@ -25,6 +26,7 @@
       --accent: #16a34a;    /* green-600 */
       --accent-2: #2563eb;  /* blue-600 */
       --danger: #dc2626;    /* red-600 */
+      --warning: #d97706;   /* amber-600 */
       --card: #ffffff;      /* white */
       --border: #e2e8f0;    /* slate-200 */
       --drag: #cbd5e1;      /* slate-300 */
@@ -81,6 +83,8 @@
       background: var(--panel); color: var(--text); outline: none; transition: border-color .2s;
     }
     input[type="number"]:focus, input[type="date"]:focus, input[type="text"]:focus, select:focus { border-color: var(--accent-2); }
+    .input-error { border-color: var(--danger) !important; }
+    .input-warning { border-color: var(--warning) !important; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
     .zone-row { grid-template-columns: 1fr auto; gap: 8px; }
