@@ -41,6 +41,7 @@ const els = {
   nurseNightCount: document.getElementById('nurseNightCount'),
   assistDayCount: document.getElementById('assistDayCount'),
   assistNightCount: document.getElementById('assistNightCount'),
+  optimizeBtn: document.getElementById('optimizeStaff'),
   docRate: document.getElementById('docRate'),
   nurseRate: document.getElementById('nurseRate'),
   assistRate: document.getElementById('assistRate'),
@@ -156,7 +157,7 @@ function saveInputs(){
   }catch{}
 }
 
-function compute(){
+function compute(optimize = false){
   validateInputs();
   const docDay = toNum(els.countDocDay.value);
   const docNight = toNum(els.countDocNight.value);
@@ -202,15 +203,24 @@ function compute(){
       n3,
       n4,
       n5,
-    }
+    },
+    optimize,
   });
 
-  els.docDayCount.textContent = docDay;
-  els.docNightCount.textContent = docNight;
-  els.nurseDayCount.textContent = nurseDay;
-  els.nurseNightCount.textContent = nurseNight;
-  els.assistDayCount.textContent = assistDay;
-  els.assistNightCount.textContent = assistNight;
+  const usedCounts = optimize && data.recommendation ? data.recommendation : counts;
+  const uDocDay = usedCounts.day?.doctor || 0;
+  const uDocNight = usedCounts.night?.doctor || 0;
+  const uNurseDay = usedCounts.day?.nurse || 0;
+  const uNurseNight = usedCounts.night?.nurse || 0;
+  const uAssistDay = usedCounts.day?.assistant || 0;
+  const uAssistNight = usedCounts.night?.assistant || 0;
+
+  els.docDayCount.textContent = uDocDay;
+  els.docNightCount.textContent = uDocNight;
+  els.nurseDayCount.textContent = uNurseDay;
+  els.nurseNightCount.textContent = uNurseNight;
+  els.assistDayCount.textContent = uAssistDay;
+  els.assistNightCount.textContent = uAssistNight;
 
   els.docRate.textContent = money(data.final_rates.doctor);
   els.nurseRate.textContent = money(data.final_rates.nurse);
@@ -268,7 +278,7 @@ function compute(){
 
   updateBudgetChart(budgetChart, data.baseline_month_budget, data.month_bonus);
   updateDayNightChart(dayNightChart, data.shift_budget_day, data.shift_budget_night);
-  updateStaffChart(staffChart, counts);
+  updateStaffChart(staffChart, usedCounts);
 }
 
 ['input','change'].forEach(evt => {
@@ -315,6 +325,10 @@ if (grid && resizer) {
 
 loadInputs();
 compute();
+
+if (els.optimizeBtn) {
+  els.optimizeBtn.addEventListener('click', () => compute(true));
+}
 
 if (typeof module !== 'undefined') {
   module.exports = { compute, loadInputs, saveInputs };

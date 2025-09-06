@@ -3,10 +3,22 @@ function sanitizeCount(value) {
 }
 
 import { compute } from './compute.js';
+import { suggestStaffing } from './src/optimizer.js';
 
-export function computeBudget({ counts = {}, rateInputs = {}, nightMultiplier = 1.5 }) {
+export function computeBudget({ counts = {}, rateInputs = {}, nightMultiplier = 1.5, optimize = false }) {
   const salaryData = compute(rateInputs);
   const roles = ['doctor', 'nurse', 'assistant'];
+
+  let usedCounts = counts;
+  let recommendation = null;
+  if (optimize) {
+    recommendation = suggestStaffing({
+      zoneCapacity: rateInputs.zoneCapacity,
+      budgetLimit: rateInputs.budgetLimit,
+      rates: salaryData.shift_salary,
+    });
+    usedCounts = recommendation;
+  }
 
   const cleanCounts = {};
   const shift_budget_day = {};
@@ -44,11 +56,11 @@ export function computeBudget({ counts = {}, rateInputs = {}, nightMultiplier = 
     // Support legacy flat counts or separated day/night counts
     let day = 0;
     let night = 0;
-    if (counts.day || counts.night) {
-      day = sanitizeCount(counts.day?.[role]);
-      night = sanitizeCount(counts.night?.[role]);
+    if (usedCounts.day || usedCounts.night) {
+      day = sanitizeCount(usedCounts.day?.[role]);
+      night = sanitizeCount(usedCounts.night?.[role]);
     } else {
-      day = sanitizeCount(counts[role]);
+      day = sanitizeCount(usedCounts[role]);
     }
     const total = day + night;
     cleanCounts[role] = total;
@@ -123,6 +135,7 @@ export function computeBudget({ counts = {}, rateInputs = {}, nightMultiplier = 
   return {
     ...salaryData,
     counts: cleanCounts,
+    recommendation,
     shift_budget_day,
     shift_budget_night,
     shift_budget,
