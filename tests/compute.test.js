@@ -43,6 +43,28 @@ describe('compute core logic', () => {
     expect(result.K_zona).toBeCloseTo(1.20);
   });
 
+  test('falls back to ESI counts when patientCount is zero', () => {
+    const result = compute({
+      zoneCapacity: 80,
+      patientCount: 0,
+      maxCoefficient: 1.3,
+      baseDoc: 10,
+      baseNurse: 10,
+      baseAssist: 10,
+      shiftH: 0,
+      monthH: 0,
+      n1: 10,
+      n2: 20,
+      n3: 70,
+      n4: 0,
+      n5: 0,
+    });
+    expect(result.patientCount).toBe(100);
+    expect(result.V_bonus).toBeGreaterThan(0);
+    expect(result.A_bonus).toBeGreaterThan(0);
+    expect(result.K_zona).toBeGreaterThan(1);
+  });
+
   test('bonuses capped by kMax', () => {
     const result = compute({
       zoneCapacity: 80,

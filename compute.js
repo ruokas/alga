@@ -52,9 +52,8 @@ function compute({
   const sN3 = sanitize(n3);
   const sN4 = sanitize(n4);
   const sN5 = sanitize(n5);
-  const totalN = Number.isFinite(patientCount ?? N)
-    ? Math.max(0, patientCount ?? N)
-    : sN1 + sN2 + sN3 + sN4 + sN5;
+  const providedN = sanitize(patientCount ?? N);
+  const totalN = providedN > 0 ? providedN : sN1 + sN2 + sN3 + sN4 + sN5;
   const ratio = c > 0 ? totalN / c : 0;
   const V = getBonus(ratio, THRESHOLDS.V_BONUS);
   const high = sN1 + sN2;
