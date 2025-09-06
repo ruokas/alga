@@ -2,7 +2,7 @@ import { initThemeToggle } from './theme.js';
 import { initZones } from './zones.js';
 import { downloadCsv, downloadPdf } from './downloads.js';
 import { compute as coreCompute } from './compute.js';
-import { updateChart, createFlowChart, updateFlowChart } from './chart-utils.js';
+import { updateChart, createFlowChart, updateFlowChart, createForecastChart } from './chart-utils.js';
 import { simulateEsiCounts, simulatePeriod as simulatePeriodSim } from './simulation.js';
 
 const LS_RATE_KEY = 'ED_RATE_TEMPLATE_V2';
@@ -69,6 +69,8 @@ const els = {
   loadRateTemplate: document.getElementById('loadRateTemplate'),
   payCanvas: document.getElementById('payChart'),
   flowCanvas: document.getElementById('flowChart'),
+  forecastCanvas: document.getElementById('forecastChart'),
+  forecast: document.getElementById('forecast'),
   budgetPlanner: document.getElementById('budgetPlanner'),
 };
 
@@ -227,6 +229,18 @@ if (els.flowCanvas) {
   }
 }
 
+if (els.forecastCanvas) {
+  if (typeof Chart !== 'undefined') {
+    try {
+      charts.forecast = createForecastChart(els.forecastCanvas, accent2);
+    } catch (err) {
+      handleChartError(els.forecastCanvas, 'forecast', err);
+    }
+  } else {
+    console.warn('Chart.js not available: forecast chart skipped');
+  }
+}
+
 function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
 function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
 function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${fmt(n)}`; } }
@@ -370,6 +384,13 @@ function simulatePeriodUi(){
   updateFlowChart(charts.flow, results);
 }
 
+function forecastPeriodUi(){
+  const days = toNum(els.days.value);
+  const zoneCapacity = toNum(els.zoneCapacity.value);
+  const results = simulatePeriodSim(days, zoneCapacity, { useForecast: true });
+  updateFlowChart(charts.forecast, results);
+}
+
 function handleShiftChange(){
   setDefaultCapacity();
   if (els.shift.value === 'P') {
@@ -415,6 +436,9 @@ els.zone.addEventListener('change', setDefaultCapacity);
 els.simulateEsi.addEventListener('click', (e)=>{ e.preventDefault(); simulateEsi(); });
 if (els.simulatePeriod) {
   els.simulatePeriod.addEventListener('click', (e)=>{ e.preventDefault(); simulatePeriodUi(); });
+}
+if (els.forecast) {
+  els.forecast.addEventListener('click', (e)=>{ e.preventDefault(); forecastPeriodUi(); });
 }
 els.reset.addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });
 els.copy.addEventListener('click', (e)=>{
@@ -481,5 +505,5 @@ resetAll();
 
 // CommonJS support for tests (none)
 if (typeof module !== 'undefined') {
-  module.exports = { compute, resetAll, simulateEsi, simulatePeriodUi };
+  module.exports = { compute, resetAll, simulateEsi, simulatePeriodUi, forecastPeriodUi };
 }
