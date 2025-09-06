@@ -1,22 +1,22 @@
-# Salary Calculator
+# Atlyginimo Skaičiuoklė
 
-This project is a web-based tool for calculating salary rates in an emergency department. It computes a zone coefficient based on patient load and triage levels, then applies it to base hourly wages for doctors, nurses and assistants to produce final pay rates.
+Šis projektas – internetinis įrankis atlyginimo tarifams skaičiuoti skubios pagalbos skyriuje. Jis apskaičiuoja zonos koeficientą pagal pacientų skaičių ir triažo lygius, tuomet pritaiko jį baziniams gydytojų, slaugytojų ir padėjėjų valandiniams tarifams ir pateikia galutines sumas.
 
-You can also enter shift length and total monthly hours to see estimated earnings per shift or per month.
+Taip pat galite įvesti pamainos trukmę ir mėnesio valandų skaičių, kad pamatytumėte numatomą uždarbį už pamainą ar mėnesį.
 
-## Run Locally
+## Vykdymas vietoje
 
-1. Clone or download the repository.
-2. Open `index.html` in a modern web browser.
-3. Fill in the form to see calculated coefficients and final rates.
+1. Nuklonuokite arba atsisiųskite saugyklą.
+2. Atidarykite `index.html` modernioje naršyklėje.
+3. Užpildykite formą ir pamatysite apskaičiuotus koeficientus bei galutinius tarifus.
 
-## Dependencies
+## Priklausomybės
 
-This project loads [Chart.js](https://www.chartjs.org/) from a CDN and pins it to version **4.4.0**. Update the version string deliberately when upgrading to avoid unexpected changes.
+Projektas naudoja [Chart.js](https://www.chartjs.org/) iš CDN ir fiksuoja versiją **4.4.0**. Atnaujinkite versiją atsakingai, kad išvengtumėte netikėtų pokyčių.
 
-## Testing
+## Testavimas
 
-Install dependencies and run the Jest test suite:
+Įdiekite priklausomybes ir paleiskite Jest testų rinkinį:
 
 ```bash
 npm install
@@ -25,11 +25,11 @@ npm test
 
 ## GitHub Pages
 
-To deploy the calculator online using GitHub Pages:
+Norėdami paskelbti skaičiuoklę internete, naudodami GitHub Pages:
 
-1. Push the repository to GitHub.
-2. On GitHub, open **Settings → Pages**. Under **Build and deployment**, choose *Deploy from a branch*, then select the `main` branch and the `/` (root) folder.
-3. (Optional) The workflow in `.github/workflows/pages.yml` will publish the site automatically on each push to `main`.
-4. Access the live page at `https://<your-github-username>.github.io/Salary-calculator/`.
+1. Įkelkite saugyklą į GitHub.
+2. GitHub svetainėje atidarykite **Settings → Pages**. Dalyje **Build and deployment** pasirinkite *Deploy from a branch*, tada nurodykite šaką `main` ir katalogą `/` (root).
+3. (Pasirinktinai) `.github/workflows/pages.yml` darbo eiga paskelbs svetainę automatiškai su kiekvienu `main` šakos pakeitimu.
+4. Pasiekite svetainę adresu `https://<jūsų-github-vartotojo-vardas>.github.io/Salary-calculator/`.
 
-Replace `<your-github-username>` with your GitHub username.
+Pakeiskite `<jūsų-github-vartotojo-vardas>` į savo GitHub vartotojo vardą.
