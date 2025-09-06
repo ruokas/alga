@@ -231,8 +231,28 @@ function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
 function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
 function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${fmt(n)}`; } }
 
+function validateInputs(){
+  ['zoneCapacity','patientCount','maxCoefficient','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
+    const el = els[id];
+    if (!el) return;
+    const val = toNum(el.value);
+    if (val < 0) {
+      el.classList.add('input-error');
+      el.classList.remove('input-warning');
+      el.title = 'Reikšmė negali būti neigiama';
+    } else if (id === 'maxCoefficient' && (val < 1 || val > 2)) {
+      el.classList.add('input-warning');
+      el.classList.remove('input-error');
+      el.title = 'Leistinas intervalas 1–2';
+    } else {
+      el.classList.remove('input-error','input-warning');
+      el.removeAttribute('title');
+    }
+  });
+}
 
 function compute(){
+  validateInputs();
   const zoneCapacity = Math.max(0, toNum(els.zoneCapacity.value));
   const maxCoefficient = Math.min(2, Math.max(1, toNum(els.maxCoefficient.value)));
   const baseDoc = Math.max(0, toNum(els.baseRateDoc.value));

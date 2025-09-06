@@ -115,6 +115,26 @@ const INPUT_IDS = [
 ];
 const STORAGE_KEY = 'budgetInputs';
 
+function validateInputs(){
+  INPUT_IDS.forEach(id => {
+    const el = els[id];
+    if (!el) return;
+    const val = toNum(el.value);
+    if (val < 0) {
+      el.classList.add('input-error');
+      el.classList.remove('input-warning');
+      el.title = 'Reikšmė negali būti neigiama';
+    } else if (id === 'maxCoefficient' && (val < 1 || val > 2)) {
+      el.classList.add('input-warning');
+      el.classList.remove('input-error');
+      el.title = 'Leistinas intervalas 1–2';
+    } else {
+      el.classList.remove('input-error','input-warning');
+      el.removeAttribute('title');
+    }
+  });
+}
+
 function loadInputs(){
   if (typeof localStorage === 'undefined') return;
   try{
@@ -137,6 +157,7 @@ function saveInputs(){
 }
 
 function compute(){
+  validateInputs();
   const docDay = toNum(els.countDocDay.value);
   const docNight = toNum(els.countDocNight.value);
   const nurseDay = toNum(els.countNurseDay.value);
