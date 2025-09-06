@@ -7,8 +7,15 @@
   <script>
     (() => {
       try {
-        if (localStorage.getItem('ED_THEME') === 'light') {
-          document.documentElement.classList.add('light-theme');
+        const root = document.documentElement;
+        const prefersLight =
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: light)').matches;
+        const saved = localStorage.getItem('ED_THEME');
+        if (prefersLight && !saved) {
+          root.classList.add('light-theme');
+        } else if (saved === 'light') {
+          root.classList.add('light-theme');
         }
       } catch (e) {
         // localStorage might be unavailable

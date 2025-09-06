@@ -5,8 +5,14 @@ export function initThemeToggle() {
 
   let isLight = root.classList.contains('light-theme');
   if (!isLight) {
+    const prefersLight =
+      window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: light)').matches;
     const savedTheme = localStorage.getItem(THEME_KEY);
-    if (savedTheme === 'light') {
+    if (prefersLight && !savedTheme) {
+      root.classList.add('light-theme');
+      isLight = true;
+    } else if (savedTheme === 'light') {
       root.classList.add('light-theme');
       isLight = true;
     }
