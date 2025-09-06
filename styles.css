@@ -87,6 +87,8 @@
     .input-warning { border-color: var(--warning) !important; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .section { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
+    legend { font-size: var(--font-base); font-weight: 600; color: var(--accent-2); padding: 0 6px; }
     .zone-row { grid-template-columns: 1fr auto; gap: 8px; }
     .help { font-size: var(--font-xs); color: var(--muted); margin-top: 6px; }
     .switch { display: inline-flex; align-items: center; gap: 8px; user-select: none; cursor: pointer; font-size: var(--font-sm); color: var(--muted); }
