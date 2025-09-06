@@ -27,6 +27,9 @@ const els = {
   countNurseNight: document.getElementById('countNurseNight'),
   countAssistDay: document.getElementById('countAssistDay'),
   countAssistNight: document.getElementById('countAssistNight'),
+  minDoctor: document.getElementById('minDoctor'),
+  minNurse: document.getElementById('minNurse'),
+  minAssistant: document.getElementById('minAssistant'),
   zoneCapacity: document.getElementById('zoneCapacity'),
   patientCount: document.getElementById('patientCount'),
   maxCoefficient: document.getElementById('maxCoefficient'),
@@ -112,7 +115,8 @@ const staffChart = createStaffChart(els.staffChart);
 const INPUT_IDS = [
   'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
   'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight',
-  'zoneCapacity','patientCount','maxCoefficient','n1','n2','n3','n4','n5'
+  'zoneCapacity','patientCount','maxCoefficient','n1','n2','n3','n4','n5',
+  'minDoctor','minNurse','minAssistant'
 ];
 const STORAGE_KEY = 'budgetInputs';
 
@@ -173,6 +177,9 @@ function compute(optimize = false){
   const n3 = toNum(els.n3?.value);
   const n4 = toNum(els.n4?.value);
   const n5 = toNum(els.n5?.value);
+  const minDoc = toNum(els.minDoctor?.value);
+  const minNurse = toNum(els.minNurse?.value);
+  const minAssist = toNum(els.minAssistant?.value);
 
   const counts = {
     day: {
@@ -203,6 +210,7 @@ function compute(optimize = false){
       n3,
       n4,
       n5,
+      min: { doctor: minDoc, nurse: minNurse, assistant: minAssist },
     },
     optimize,
   });

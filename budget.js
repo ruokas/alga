@@ -16,6 +16,7 @@ export function computeBudget({ counts = {}, rateInputs = {}, nightMultiplier = 
       zoneCapacity: rateInputs.zoneCapacity,
       budgetLimit: rateInputs.budgetLimit,
       rates: salaryData.shift_salary,
+      min: rateInputs.min,
     });
     usedCounts = recommendation;
   }

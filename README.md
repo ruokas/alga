@@ -4,6 +4,8 @@
 
 Taip pat galite įvesti pamainos trukmę ir mėnesio valandų skaičių, kad pamatytumėte numatomą uždarbį už pamainą ar mėnesį.
 
+Biudžeto planavimo įrankyje galima nurodyti minimalų gydytojų, slaugytojų ir padėjėjų skaičių. Šios reikšmės (`minDoctor`, `minNurse`, `minAssistant`) naudojamos optimizacijos metu, kad siūlomas personalo skaičius niekada nenukristų žemiau nustatytų ribų.
+
 ## Vykdymas vietoje
 
 1. Nuklonuokite arba atsisiųskite saugyklą.
