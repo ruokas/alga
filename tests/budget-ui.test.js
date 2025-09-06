@@ -14,7 +14,8 @@ jest.mock('../chart-utils.js', () => {
 const inputIds = [
   'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
   'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight',
-  'zoneCapacity','patientCount','maxCoefficient','n1','n2','n3','n4','n5'
+  'zoneCapacity','patientCount','maxCoefficient','n1','n2','n3','n4','n5',
+  'minDoctor','minNurse','minAssistant'
 ];
 const cellIds = [
   'docDayCount','docNightCount','nurseDayCount','nurseNightCount','assistDayCount','assistNightCount',
