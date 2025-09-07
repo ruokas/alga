@@ -1,6 +1,7 @@
 import { initThemeToggle } from './theme.js';
 import { computeBudget } from './budget.js';
-import { createBudgetChart, updateBudgetChart, createDayNightChart, updateDayNightChart, createStaffChart, updateStaffChart } from './chart-utils.js';
+import { createBudgetChart, updateBudgetChart, createDayNightChart, updateDayNightChart, createStaffChart, updateStaffChart, createForecastChart, updateFlowChart } from './chart-utils.js';
+import { simulatePeriod as simulatePeriodSim } from './simulation.js';
 
 function toNum(v){
   if (typeof v === 'string') v = v.replace(',', '.');
@@ -99,6 +100,8 @@ const els = {
   budgetChart: document.getElementById('budgetChart'),
   dayNightChart: document.getElementById('dayNightChart'),
   staffChart: document.getElementById('staffChart'),
+  forecast: document.getElementById('forecast'),
+  forecastChart: document.getElementById('forecastChart'),
 };
 
 initThemeToggle();
@@ -111,6 +114,7 @@ if (goBack) {
 const budgetChart = createBudgetChart(els.budgetChart, 'doughnut');
 const dayNightChart = createDayNightChart(els.dayNightChart);
 const staffChart = createStaffChart(els.staffChart);
+const forecastChart = createForecastChart(els.forecastChart);
 
 const INPUT_IDS = [
   'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
@@ -287,6 +291,15 @@ function compute(optimize = false){
   updateBudgetChart(budgetChart, data.baseline_month_budget, data.month_bonus);
   updateDayNightChart(dayNightChart, data.shift_budget_day, data.shift_budget_night);
   updateStaffChart(staffChart, usedCounts);
+
+  if (forecastChart) {
+    const zoneCapacity = toNum(els.zoneCapacity.value);
+    const days = toNum(els.monthHours.value) > 0 && toNum(els.shiftHours.value) > 0
+      ? Math.round(toNum(els.monthHours.value) / toNum(els.shiftHours.value))
+      : 7;
+    const results = simulatePeriodSim(days, zoneCapacity, { useForecast: true });
+    updateFlowChart(forecastChart, results);
+  }
 }
 
 ['input','change'].forEach(evt => {
@@ -336,6 +349,10 @@ compute();
 
 if (els.optimizeBtn) {
   els.optimizeBtn.addEventListener('click', () => compute(true));
+}
+
+if (els.forecast) {
+  els.forecast.addEventListener('click', (e) => { e.preventDefault(); compute(); });
 }
 
 if (typeof module !== 'undefined') {
