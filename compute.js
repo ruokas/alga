@@ -24,6 +24,54 @@ function sanitize(value) {
   return Number.isFinite(value) ? Math.max(0, value) : 0;
 }
 
+/**
+ * @typedef {Object} RateSet
+ * @property {number} doctor   Hourly rate for doctors.
+ * @property {number} nurse    Hourly rate for nurses.
+ * @property {number} assistant Hourly rate for assistants.
+ */
+
+/**
+ * @typedef {Object} ComputeResult
+ * @property {number} patientCount Total number of patients.
+ * @property {{n1:number,n2:number,n3:number,n4:number,n5:number}} ESI Counts for each ESI level.
+ * @property {number} ratio Patient to capacity ratio.
+ * @property {number} S Proportion of high-acuity patients (ESI 1–2).
+ * @property {number} V_bonus Volume bonus coefficient.
+ * @property {number} A_bonus Acuity bonus coefficient.
+ * @property {number} maxCoefficient Maximum allowed coefficient.
+ * @property {number} K_zona Final zone coefficient.
+ * @property {number} shift_hours Hours in a shift.
+ * @property {number} month_hours Hours in a month.
+ * @property {RateSet} base_rates Base hourly wages.
+ * @property {RateSet} baseline_shift_salary Baseline salary per shift.
+ * @property {RateSet} baseline_month_salary Baseline salary per month.
+ * @property {RateSet} final_rates Adjusted hourly wages.
+ * @property {RateSet} shift_salary Adjusted salary per shift.
+ * @property {RateSet} month_salary Adjusted salary per month.
+ */
+
+/**
+ * Calculates adjusted salaries and related statistics for a zone.
+ * @param {Object} params Configuration parameters.
+ * @param {number} [params.zoneCapacity] Maximum number of patients the zone can handle.
+ * @param {number} [params.maxCoefficient] Upper limit for the zone coefficient.
+ * @param {number} params.baseDoc Base hourly wage for doctors.
+ * @param {number} params.baseNurse Base hourly wage for nurses.
+ * @param {number} params.baseAssist Base hourly wage for assistants.
+ * @param {number} params.shiftH Number of hours in a shift.
+ * @param {number} params.monthH Number of hours in a month.
+ * @param {number} params.n1 Number of ESI level 1 patients.
+ * @param {number} params.n2 Number of ESI level 2 patients.
+ * @param {number} params.n3 Number of ESI level 3 patients.
+ * @param {number} params.n4 Number of ESI level 4 patients.
+ * @param {number} params.n5 Number of ESI level 5 patients.
+ * @param {number} [params.patientCount] Total number of patients. If omitted, sum of ESI counts is used.
+ * @param {number} [params.C] Legacy zone capacity input.
+ * @param {number} [params.kMax] Legacy max coefficient input.
+ * @param {number} [params.N] Legacy patient count input.
+ * @returns {ComputeResult} Detailed computation results.
+ */
 function compute({
   zoneCapacity,
   maxCoefficient,
