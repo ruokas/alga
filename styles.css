@@ -69,9 +69,14 @@
       white-space: nowrap;
     }
     .nav-sections a:hover { background: var(--card); border-color: var(--accent-2); }
+    .nav-sections a.active { background: var(--accent); color: #fff; }
     @media (max-width: 600px) {
       .nav-sections { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
     }
+    .step { display: none; }
+    .step.active { display: block; }
+    .progress { height: 4px; background: var(--border); margin: 10px 0; }
+    .progress .bar { height: 100%; width: 0; background: var(--accent); transition: width 0.3s; }
     .grid {
       display: grid;
       gap: 14px;
