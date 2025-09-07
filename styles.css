@@ -90,6 +90,10 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02);
       height: inherit;
     }
+    @media (max-width: 600px) {
+      .grid { overflow: visible; }
+      .card { height: auto; }
+    }
     h1 { font-size: var(--font-xl); margin: 6px 0 2px; letter-spacing: 0.2px; }
     h2 { font-size: var(--font-base); margin: 0 0 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.2px; }
     label { display: block; font-size: var(--font-sm); color: var(--muted); margin-bottom: 6px; }
