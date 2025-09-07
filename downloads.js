@@ -1,3 +1,10 @@
+/** @typedef {import('./compute.js').ComputeResult} ComputeResult */
+
+/**
+ * Builds a CSV string summarizing computed salaries.
+ * @param {ComputeResult & {date:string,shift:string,zone:string,zone_label:string,zoneCapacity:number}} data Data to encode.
+ * @returns {string} CSV formatted string.
+ */
 export function buildCsv(data) {
   const rows = [
     ['date', data.date],
@@ -35,6 +42,10 @@ export function buildCsv(data) {
   return csvUtils.rowsToCsv(rows);
 }
 
+/**
+ * Initiates download of a CSV file containing computation results.
+ * @param {ComputeResult & {date:string,shift:string,zone:string,zone_label:string,zoneCapacity:number}} data Data to export.
+ */
 export function downloadCsv(data) {
   const csv = buildCsv(data);
   const blob = new Blob([csv], { type: 'text/csv' });
@@ -48,6 +59,11 @@ export function downloadCsv(data) {
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Builds a PDF document with optional charts.
+ * @param {ComputeResult & Record<string, any>} data Data for the report.
+ * @returns {import('jspdf').jsPDF} Generated PDF document.
+ */
 export function buildPdf(data) {
   const chartImages = {};
   if (typeof document !== 'undefined' && typeof Chart !== 'undefined') {
@@ -93,6 +109,10 @@ export function buildPdf(data) {
   return pdfUtils.generatePdf(data, chartImages);
 }
 
+/**
+ * Creates and downloads a PDF report.
+ * @param {ComputeResult & Record<string, any>} data Data for the report.
+ */
 export function downloadPdf(data) {
   try {
     const doc = buildPdf(data);

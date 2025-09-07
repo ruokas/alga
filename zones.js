@@ -7,12 +7,27 @@ export const DEFAULT_ZONES = [
 
 const LS_KEY = 'ED_ZONES_V2';
 
+/**
+ * Deep copies a value using JSON serialization.
+ * @param {any} obj Value to clone.
+ * @returns {any} Cloned value.
+ */
 export function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
+
+/**
+ * Normalizes arbitrary text into a safe zone identifier.
+ * @param {string} txt Raw text entered by the user.
+ * @returns {string} Sanitized identifier consisting of A-Z, 0-9 and underscores.
+ */
 export function sanitizeId(txt) {
   const s = (txt || '').toString().toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '');
   return s || 'ZONE_' + Math.random().toString(36).slice(2,6).toUpperCase();
 }
 
+/**
+ * Loads zone definitions from local storage.
+ * @returns {Array<object>} Array of zone objects.
+ */
 export function loadZones() {
   try {
     const j = localStorage.getItem(LS_KEY);
@@ -27,6 +42,10 @@ export function loadZones() {
   return clone(DEFAULT_ZONES);
 }
 
+/**
+ * Persists zone definitions to local storage.
+ * @param {Array<object>} zs Zones to save.
+ */
 export function saveZones(zs) {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(zs));
@@ -36,6 +55,11 @@ export function saveZones(zs) {
   }
 }
 
+/**
+ * Initializes zone management UI.
+ * @param {Object} els Map of DOM elements used for zone management.
+ * @returns {Object} Utilities for interacting with the zone UI.
+ */
 export function initZones(els) {
   let ZONES = loadZones();
 

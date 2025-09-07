@@ -6,6 +6,13 @@ function createRng(seed) {
   };
 }
 
+/**
+ * Generates a random distribution of patients among ESI levels.
+ * @param {number} patientCount Total number of patients. If non-positive, a value is generated from zone capacity.
+ * @param {number} zoneCapacity Capacity of the zone used when estimating patient count.
+ * @param {number|Function} [seed] Seed value or RNG function.
+ * @returns {{total:number, counts:number[]}} Total patients and counts for ESI levels 1-5.
+ */
 function simulateEsiCounts(patientCount, zoneCapacity, seed) {
   const rng = typeof seed === 'function' ? seed : seed !== undefined ? createRng(seed) : Math.random;
   let total = Math.floor(Number(patientCount));
@@ -43,6 +50,19 @@ try {
   }
 } catch {}
 
+/**
+ * Simulates patient flow over multiple days.
+ * @param {number} days Number of days to simulate.
+ * @param {number} zoneCapacity Capacity of the zone.
+ * @param {Object} [options] Simulation options.
+ * @param {number[]} [options.patientCounts=DAILY_PATIENT_COUNTS] Baseline patient counts for a week.
+ * @param {number} [options.variation=0] Random variation factor applied to counts.
+ * @param {number} [options.startIndex=0] Starting index within patientCounts.
+ * @param {boolean} [options.useForecast=false] Whether to use forecast model if available.
+ * @param {number|Function} [seed] Seed value or RNG function.
+ * @returns {{days:Array<{day:number,total:number,counts:number[]}>, summary:{totalPatients:number,esiTotals:number[]}}}
+ *          Simulated daily results and overall summary.
+ */
 function simulatePeriod(days, zoneCapacity, options = {}, seed) {
   const {
     patientCounts = DAILY_PATIENT_COUNTS,
