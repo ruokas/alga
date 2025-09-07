@@ -94,7 +94,9 @@
     h2 { font-size: var(--font-base); margin: 0 0 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.2px; }
     label { display: block; font-size: var(--font-sm); color: var(--muted); margin-bottom: 6px; }
     input[type="number"], input[type="date"], input[type="text"], select {
-      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
+      width: 100%;
+      max-width: 100%;
+      padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
       background: var(--panel); color: var(--text); outline: none; transition: border-color .2s;
     }
     input[type="number"]:focus, input[type="date"]:focus, input[type="text"]:focus, select:focus { border-color: var(--accent-2); }
@@ -102,6 +104,12 @@
     .input-warning { border-color: var(--warning) !important; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) {
+      .row,
+      .row-3 {
+        grid-template-columns: 1fr;
+      }
+    }
     .section { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
     .staff-group { margin-top: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
     .staff-group h3 { margin: 0 0 8px; font-size: var(--font-base); color: var(--accent-2); font-weight: 600; }
