@@ -2,7 +2,8 @@ import { initThemeToggle } from '../theme.js';
 import { initZones } from '../zones.js';
 import { downloadCsv, downloadPdf } from '../downloads.js';
 import { compute as coreCompute } from '../compute.js';
-import { updateChart, createFlowChart, updateFlowChart, createForecastChart } from './chart/index.js';
+import { updateChart, updateFlowChart } from './chart/index.js';
+import { safeCreateChart } from './chart/utils.js';
 import { simulateEsiCounts, simulatePeriod as simulatePeriodSim } from '../simulation.js';
 import { getElements, bindEvents } from './ui/dom.js';
 import { saveRateTemplate, loadRateTemplate } from './storage.js';
@@ -22,124 +23,92 @@ const accent2 = style.getPropertyValue('--accent-2').trim();
 const muted = style.getPropertyValue('--muted').trim();
 const textColor = style.getPropertyValue('--text').trim();
 
-function handleChartError(canvas, name, err) {
-  const id = canvas && canvas.id ? `#${canvas.id}` : '';
-  console.error(`Failed to create ${name} chart (${id})`, err?.stack || err);
-  if (canvas) {
-    const msg = document.createElement('div');
-    msg.className = 'chart-error';
-    msg.textContent = `Unable to render ${name} chart`;
-    canvas.replaceWith(msg);
-  }
-}
-
 const charts = {};
 if (els.ratioCanvas) {
   if (typeof Chart !== 'undefined') {
-    try {
-      const ctx = els.ratioCanvas.getContext && els.ratioCanvas.getContext('2d');
-      if (ctx) {
-        charts.ratio = new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['Pacientų skaičius', 'Likutis'],
-            datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
-          },
-          options: {
-            rotation: -90,
-            circumference: 180,
-            cutout: '70%',
-            plugins: { legend: { display: false }, tooltip: { enabled: false } },
-            maintainAspectRatio: false,
-            responsive: true
-          }
-        });
+    charts.ratio = safeCreateChart(els.ratioCanvas, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pacientų skaičius', 'Likutis'],
+        datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
+      },
+      options: {
+        rotation: -90,
+        circumference: 180,
+        cutout: '70%',
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        maintainAspectRatio: false,
+        responsive: true
       }
-    } catch (err) {
-      handleChartError(els.ratioCanvas, 'ratio', err);
-    }
+    }, 'ratio');
   } else {
     console.warn('Chart.js not available: ratio chart skipped');
   }
 }
 if (els.sCanvas) {
   if (typeof Chart !== 'undefined') {
-    try {
-      const ctx = els.sCanvas.getContext && els.sCanvas.getContext('2d');
-      if (ctx) {
-        charts.s = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['ESI1', 'ESI2', 'ESI3', 'ESI4', 'ESI5'],
-            datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: [danger, accent2, muted, muted, muted] }]
-          },
-          options: {
-            plugins: { legend: { display: false } },
-            scales: { x: { display: false }, y: { display: false } },
-            maintainAspectRatio: false,
-            responsive: true
-          }
-        });
+    charts.s = safeCreateChart(els.sCanvas, {
+      type: 'bar',
+      data: {
+        labels: ['ESI1', 'ESI2', 'ESI3', 'ESI4', 'ESI5'],
+        datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: [danger, accent2, muted, muted, muted] }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        maintainAspectRatio: false,
+        responsive: true
       }
-    } catch (err) {
-      handleChartError(els.sCanvas, 's', err);
-    }
+    }, 's');
   } else {
     console.warn('Chart.js not available: s chart skipped');
   }
 }
 if (els.payCanvas) {
   if (typeof Chart !== 'undefined') {
-    try {
-      const ctx = els.payCanvas.getContext && els.payCanvas.getContext('2d');
-      if (ctx) {
-        const barValuePlugin = {
-          id: 'barValue',
-          afterDatasetsDraw(chart) {
-            const { ctx: c } = chart;
-            c.save();
-            chart.data.datasets.forEach((dataset, i) => {
-              const meta = chart.getDatasetMeta(i);
-              meta.data.forEach((bar, idx) => {
-                const val = dataset.data[idx];
-                c.fillStyle = textColor;
-                c.textAlign = 'center';
-                c.font = '12px sans-serif';
-                let y = bar.y - 4;
-                let baseline = 'bottom';
-                if (y < 12) {
-                  y = bar.y + 12;
-                  baseline = 'top';
-                }
-                c.textBaseline = baseline;
-                c.fillText(money(val), bar.x, y);
-              });
-            });
-            c.restore();
-          }
-        };
-        charts.pay = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Doctor', 'Nurse', 'Assistant'],
-            datasets: [
-              { label: 'Baseline', data: [0, 0, 0], backgroundColor: borderColor },
-              { label: 'Adjusted', data: [0, 0, 0], backgroundColor: accent }
-            ]
-          },
-          options: {
-            plugins: { legend: { display: false }, tooltip: { enabled: false } },
-            scales: { x: { display: false }, y: { display: false } },
-            maintainAspectRatio: false,
-            responsive: true,
-            datasets: { barPercentage: 0.6, categoryPercentage: 0.5 }
-          },
-          plugins: [barValuePlugin]
+    const barValuePlugin = {
+      id: 'barValue',
+      afterDatasetsDraw(chart) {
+        const { ctx: c } = chart;
+        c.save();
+        chart.data.datasets.forEach((dataset, i) => {
+          const meta = chart.getDatasetMeta(i);
+          meta.data.forEach((bar, idx) => {
+            const val = dataset.data[idx];
+            c.fillStyle = textColor;
+            c.textAlign = 'center';
+            c.font = '12px sans-serif';
+            let y = bar.y - 4;
+            let baseline = 'bottom';
+            if (y < 12) {
+              y = bar.y + 12;
+              baseline = 'top';
+            }
+            c.textBaseline = baseline;
+            c.fillText(money(val), bar.x, y);
+          });
         });
+        c.restore();
       }
-    } catch (err) {
-      handleChartError(els.payCanvas, 'pay', err);
-    }
+    };
+    charts.pay = safeCreateChart(els.payCanvas, {
+      type: 'bar',
+      data: {
+        labels: ['Doctor', 'Nurse', 'Assistant'],
+        datasets: [
+          { label: 'Baseline', data: [0, 0, 0], backgroundColor: borderColor },
+          { label: 'Adjusted', data: [0, 0, 0], backgroundColor: accent }
+        ]
+      },
+      options: {
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        maintainAspectRatio: false,
+        responsive: true,
+        datasets: { barPercentage: 0.6, categoryPercentage: 0.5 }
+      },
+      plugins: [barValuePlugin]
+    }, 'pay');
   } else {
     console.warn('Chart.js not available: pay chart skipped');
   }
@@ -147,11 +116,25 @@ if (els.payCanvas) {
 
 if (els.flowCanvas) {
   if (typeof Chart !== 'undefined') {
-    try {
-      charts.flow = createFlowChart(els.flowCanvas, accent);
-    } catch (err) {
-      handleChartError(els.flowCanvas, 'flow', err);
-    }
+    charts.flow = safeCreateChart(els.flowCanvas, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Pacientų srautas laike',
+          data: [],
+          borderColor: accent,
+          backgroundColor: 'transparent',
+          tension: 0.3,
+        }],
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { x: { title: { display: true, text: 'Diena' } }, y: { beginAtZero: true } },
+        maintainAspectRatio: false,
+        responsive: true,
+      },
+    }, 'flow');
   } else {
     console.warn('Chart.js not available: flow chart skipped');
   }
@@ -159,11 +142,25 @@ if (els.flowCanvas) {
 
 if (els.forecastCanvas) {
   if (typeof Chart !== 'undefined') {
-    try {
-      charts.forecast = createForecastChart(els.forecastCanvas, accent2);
-    } catch (err) {
-      handleChartError(els.forecastCanvas, 'forecast', err);
-    }
+    charts.forecast = safeCreateChart(els.forecastCanvas, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Prognozė',
+          data: [],
+          borderColor: accent2,
+          backgroundColor: 'transparent',
+          tension: 0.3,
+        }],
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { x: { title: { display: true, text: 'Diena' } }, y: { beginAtZero: true } },
+        maintainAspectRatio: false,
+        responsive: true,
+      },
+    }, 'forecast');
   } else {
     console.warn('Chart.js not available: forecast chart skipped');
   }
