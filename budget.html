@@ -61,7 +61,7 @@
           </div>
         </fieldset>
         <div class="step-nav actions">
-          <button type="button" class="next-step">Next</button>
+          <button type="button" class="next-step">Toliau</button>
         </div>
         </div>
 
@@ -104,8 +104,8 @@
           </div>
         </fieldset>
         <div class="step-nav actions">
-          <button type="button" class="back-step">Back</button>
-          <button type="button" class="next-step">Next</button>
+          <button type="button" class="back-step">Atgal</button>
+          <button type="button" class="next-step">Toliau</button>
         </div>
         </div>
 
@@ -166,15 +166,19 @@
               </div>
             </div>
           </div>
+          <div id="extraRoles"></div>
+          <div class="actions">
+            <button id="addRole" type="button">+ Pridėti rolę</button>
+          </div>
 
           <div class="actions">
-            <button id="optimizeStaff" type="button">Optimize Staffing</button>
-            <button id="forecast">Forecast</button>
+            <button id="optimizeStaff" type="button">Optimizuoti personalą</button>
+            <button id="forecast">Prognozuoti</button>
           </div>
         </fieldset>
         <div class="step-nav actions">
-          <button type="button" class="back-step">Back</button>
-          <button type="button" class="next-step">Next</button>
+          <button type="button" class="back-step">Atgal</button>
+          <button type="button" class="next-step">Toliau</button>
         </div>
         </div>
 
@@ -203,7 +207,7 @@
           </div>
         </details>
         <div class="step-nav actions">
-          <button type="button" class="back-step">Back</button>
+          <button type="button" class="back-step">Atgal</button>
         </div>
         </div>
       </div>
@@ -226,7 +230,7 @@
                 <th>Priedas (viso)</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="shiftTableBody">
               <tr>
                 <td>Gydytojas</td>
                 <td id="docDayCount">0</td>
@@ -263,7 +267,7 @@
                 <td id="assistShiftBonusNight">€0,00</td>
                 <td id="assistShiftBonusTotal">€0,00</td>
               </tr>
-              <tr>
+              <tr id="shiftTotalsRow">
                 <td class="accent">Iš viso</td>
                 <td></td>
                 <td></td>
@@ -289,7 +293,7 @@
                 <th>Mėnesio priedas (viso)</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="monthTableBody">
               <tr>
                 <td>Gydytojas</td>
                 <td id="docMonthDay">€0,00</td>
@@ -317,7 +321,7 @@
                 <td id="assistMonthBonusNight">€0,00</td>
                 <td id="assistMonthBonusTotal">€0,00</td>
               </tr>
-              <tr>
+              <tr id="monthTotalsRow">
                 <td class="accent">Iš viso</td>
                 <td class="accent" id="monthDayTotal">€0,00</td>
                 <td class="accent" id="monthNightTotal">€0,00</td>
