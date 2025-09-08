@@ -59,6 +59,7 @@ function sanitize(value) {
  * @param {number} params.baseDoc Base hourly wage for doctors.
  * @param {number} params.baseNurse Base hourly wage for nurses.
  * @param {number} params.baseAssist Base hourly wage for assistants.
+ * @param {Object} [params.extraRates] Additional roles with base hourly wages.
  * @param {number} params.shiftH Number of hours in a shift.
  * @param {number} params.monthH Number of hours in a month.
  * @param {number} params.n1 Number of ESI level 1 patients.
@@ -78,6 +79,7 @@ function compute({
   baseDoc,
   baseNurse,
   baseAssist,
+  extraRates = {},
   shiftH,
   monthH,
   n1,
@@ -129,6 +131,48 @@ function compute({
   const monthNurse = finalNurse * mh;
   const monthAssist = finalAssist * mh;
 
+  const base_rates = {
+    doctor: baseDoc,
+    nurse: baseNurse,
+    assistant: baseAssist,
+  };
+  const baseline_shift_salary = {
+    doctor: baseShiftDoc,
+    nurse: baseShiftNurse,
+    assistant: baseShiftAssist,
+  };
+  const baseline_month_salary = {
+    doctor: baseMonthDoc,
+    nurse: baseMonthNurse,
+    assistant: baseMonthAssist,
+  };
+  const final_rates = {
+    doctor: finalDoc,
+    nurse: finalNurse,
+    assistant: finalAssist,
+  };
+  const shift_salary = {
+    doctor: shiftDoc,
+    nurse: shiftNurse,
+    assistant: shiftAssist,
+  };
+  const month_salary = {
+    doctor: monthDoc,
+    nurse: monthNurse,
+    assistant: monthAssist,
+  };
+
+  for (const [role, base] of Object.entries(extraRates)) {
+    const clean = sanitize(base);
+    const final = Math.max(0, clean * K);
+    base_rates[role] = clean;
+    baseline_shift_salary[role] = Math.max(0, clean * sh);
+    baseline_month_salary[role] = Math.max(0, clean * mh);
+    final_rates[role] = final;
+    shift_salary[role] = final * sh;
+    month_salary[role] = final * mh;
+  }
+
   return {
     patientCount: totalN,
     N: totalN,
@@ -142,36 +186,12 @@ function compute({
     K_zona: K,
     shift_hours: sh,
     month_hours: mh,
-    base_rates: {
-      doctor: baseDoc,
-      nurse: baseNurse,
-      assistant: baseAssist,
-    },
-    baseline_shift_salary: {
-      doctor: baseShiftDoc,
-      nurse: baseShiftNurse,
-      assistant: baseShiftAssist,
-    },
-    baseline_month_salary: {
-      doctor: baseMonthDoc,
-      nurse: baseMonthNurse,
-      assistant: baseMonthAssist,
-    },
-    final_rates: {
-      doctor: finalDoc,
-      nurse: finalNurse,
-      assistant: finalAssist,
-    },
-    shift_salary: {
-      doctor: shiftDoc,
-      nurse: shiftNurse,
-      assistant: shiftAssist,
-    },
-    month_salary: {
-      doctor: monthDoc,
-      nurse: monthNurse,
-      assistant: monthAssist,
-    },
+    base_rates,
+    baseline_shift_salary,
+    baseline_month_salary,
+    final_rates,
+    shift_salary,
+    month_salary,
   };
 }
 

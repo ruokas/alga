@@ -7,7 +7,8 @@ import { suggestStaffing } from './src/optimizer.js';
 
 export function computeBudget({ counts = {}, rateInputs = {}, nightMultiplier = 1.5, optimize = false }) {
   const salaryData = compute(rateInputs);
-  const roles = ['doctor', 'nurse', 'assistant'];
+  const extraRoles = Object.keys(rateInputs.extraRates || {});
+  const roles = ['doctor', 'nurse', 'assistant', ...extraRoles];
 
   let usedCounts = counts;
   let recommendation = null;

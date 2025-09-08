@@ -102,6 +102,12 @@ const els = {
   staffChart: document.getElementById('staffChart'),
   forecast: document.getElementById('forecast'),
   forecastChart: document.getElementById('forecastChart'),
+  extraRoles: document.getElementById('extraRoles'),
+  addRole: document.getElementById('addRole'),
+  shiftBody: document.getElementById('shiftTableBody'),
+  shiftTotalsRow: document.getElementById('shiftTotalsRow'),
+  monthBody: document.getElementById('monthTableBody'),
+  monthTotalsRow: document.getElementById('monthTotalsRow'),
 };
 
 initThemeToggle();
@@ -118,6 +124,34 @@ const forecastChart = createForecastChart(els.forecastChart);
 
 const stepEls = Array.from(document.querySelectorAll('.step'));
 const navLinks = Array.from(document.querySelectorAll('.nav-sections a'));
+const extraRoleGroups = [];
+
+function addExtraRole(){
+  const wrap = document.createElement('div');
+  wrap.className = 'staff-group extra-role';
+  wrap.innerHTML = `
+    <h3><input type="text" class="role-name" placeholder="Rolė" /></h3>
+    <div class="row-3">
+      <div>
+        <label>Bazinis tarifas (€/val.)</label>
+        <input type="number" class="base-rate" min="0" step="0.01" value="0" />
+      </div>
+      <div>
+        <label>Darbuotojų (dieną)</label>
+        <input type="number" class="count-day" min="0" step="1" value="0" />
+      </div>
+      <div>
+        <label>Darbuotojų (naktį)</label>
+        <input type="number" class="count-night" min="0" step="1" value="0" />
+      </div>
+    </div>`;
+  els.extraRoles?.appendChild(wrap);
+  extraRoleGroups.push(wrap);
+}
+
+if (els.addRole){
+  els.addRole.addEventListener('click', e => { e.preventDefault(); addExtraRole(); });
+}
 const progressBar = document.getElementById('stepProgressBar');
 let currentStep = 0;
 
@@ -284,6 +318,18 @@ function compute(optimize = false){
     },
   };
 
+  const extraRates = {};
+  for (const group of extraRoleGroups) {
+    const role = group.querySelector('.role-name')?.value.trim();
+    if (!role) continue;
+    const base = toNum(group.querySelector('.base-rate')?.value);
+    const day = toNum(group.querySelector('.count-day')?.value);
+    const night = toNum(group.querySelector('.count-night')?.value);
+    extraRates[role] = base;
+    counts.day[role] = day;
+    counts.night[role] = night;
+  }
+
   const data = computeBudget({
     counts,
     rateInputs: {
@@ -301,6 +347,7 @@ function compute(optimize = false){
       n4,
       n5,
       min: { doctor: minDoc, nurse: minNurse, assistant: minAssist },
+      extraRates,
     },
     optimize,
   });
@@ -342,6 +389,22 @@ function compute(optimize = false){
   els.assistShiftBonusDay.textContent = money(data.shift_bonus_day.assistant);
   els.assistShiftBonusNight.textContent = money(data.shift_bonus_night.assistant);
   els.assistShiftBonusTotal.textContent = money(data.shift_bonus.assistant);
+  els.shiftBody?.querySelectorAll('.extra-role-row').forEach(r => r.remove());
+  els.monthBody?.querySelectorAll('.extra-role-row').forEach(r => r.remove());
+  for (const role of Object.keys(data.final_rates)) {
+    if (['doctor','nurse','assistant'].includes(role)) continue;
+    const day = usedCounts.day?.[role] || 0;
+    const night = usedCounts.night?.[role] || 0;
+    const row = document.createElement('tr');
+    row.className = 'extra-role-row';
+    row.innerHTML = `<td>${role}</td><td>${day}</td><td>${night}</td><td>${money(data.final_rates[role])}</td><td>${money(data.shift_budget_day[role])}</td><td>${money(data.shift_budget_night[role])}</td><td>${money(data.shift_budget[role])}</td><td>${money(data.shift_bonus_day[role])}</td><td>${money(data.shift_bonus_night[role])}</td><td>${money(data.shift_bonus[role])}</td>`;
+    els.shiftBody?.insertBefore(row, els.shiftTotalsRow);
+    const mrow = document.createElement('tr');
+    mrow.className = 'extra-role-row';
+    mrow.innerHTML = `<td>${role}</td><td>${money(data.month_budget_day[role])}</td><td>${money(data.month_budget_night[role])}</td><td>${money(data.month_budget[role])}</td><td>${money(data.month_bonus_day[role])}</td><td>${money(data.month_bonus_night[role])}</td><td>${money(data.month_bonus[role])}</td>`;
+    els.monthBody?.insertBefore(mrow, els.monthTotalsRow);
+  }
+
   els.shiftDayTotal.textContent = money(data.shift_budget_day.total);
   els.shiftNightTotal.textContent = money(data.shift_budget_night.total);
   els.shiftTotal.textContent = money(data.shift_budget.total);
