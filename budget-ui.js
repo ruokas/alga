@@ -116,6 +116,92 @@ const dayNightChart = createDayNightChart(els.dayNightChart);
 const staffChart = createStaffChart(els.staffChart);
 const forecastChart = createForecastChart(els.forecastChart);
 
+const stepEls = Array.from(document.querySelectorAll('.step'));
+const navLinks = Array.from(document.querySelectorAll('.nav-sections a'));
+const progressBar = document.getElementById('stepProgressBar');
+let currentStep = 0;
+
+function updateProgress(){
+  navLinks.forEach(link => {
+    const target = document.querySelector(link.getAttribute('href'));
+    const idx = stepEls.findIndex(step => step.contains(target));
+    link.classList.toggle('active', idx === currentStep);
+  });
+  if (progressBar) {
+    progressBar.style.width = `${((currentStep + 1) / stepEls.length) * 100}%`;
+  }
+}
+
+function showStep(i){
+  stepEls.forEach((el, idx) => {
+    el.classList.toggle('active', idx === i);
+  });
+  currentStep = i;
+  updateProgress();
+}
+
+function validateStep(i){
+  const step = stepEls[i];
+  const inputs = step.querySelectorAll('input, select, textarea');
+  for (const input of inputs){
+    if (!input.reportValidity()) return false;
+  }
+  return true;
+}
+
+function stepFromHash(hash){
+  const id = hash.replace('#','');
+  const target = document.getElementById(id);
+  return stepEls.findIndex(step => step.contains(target));
+}
+
+function goToHash(){
+  const idx = stepFromHash(location.hash);
+  if (idx >= 0) {
+    showStep(idx);
+  } else {
+    showStep(0);
+  }
+}
+
+window.addEventListener('hashchange', goToHash);
+
+stepEls.forEach((step, idx) => {
+  const next = step.querySelector('.next-step');
+  const back = step.querySelector('.back-step');
+  if (next) {
+    next.addEventListener('click', () => {
+      if (!validateStep(idx)) return;
+      const ni = Math.min(idx + 1, stepEls.length - 1);
+      showStep(ni);
+      const anchor = stepEls[ni].querySelector('[id]')?.id;
+      if (anchor) history.replaceState(null, '', `#${anchor}`);
+    });
+  }
+  if (back) {
+    back.addEventListener('click', () => {
+      const pi = Math.max(idx - 1, 0);
+      showStep(pi);
+      const anchor = stepEls[pi].querySelector('[id]')?.id;
+      if (anchor) history.replaceState(null, '', `#${anchor}`);
+    });
+  }
+});
+
+navLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const hash = link.getAttribute('href');
+    const idx = stepFromHash(hash);
+    if (idx >= 0) {
+      showStep(idx);
+      history.replaceState(null, '', hash);
+    }
+  });
+});
+
+goToHash();
+
 const INPUT_IDS = [
   'shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist',
   'countDocDay','countDocNight','countNurseDay','countNurseNight','countAssistDay','countAssistNight',
