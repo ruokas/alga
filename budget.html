@@ -44,6 +44,9 @@
           <a href="#staff-section">Darbuotojai</a>
           <a href="#advanced-section">Išplėstinės parinktys</a>
         </nav>
+        <div class="progress"><div id="stepProgressBar" class="bar"></div></div>
+
+        <div class="step active" data-step="1">
         <fieldset id="shift-section" class="section">
           <legend>Pamainos parametrai</legend>
           <div class="row">
@@ -57,6 +60,12 @@
             </div>
           </div>
         </fieldset>
+        <div class="step-nav actions">
+          <button type="button" class="next-step">Next</button>
+        </div>
+        </div>
+
+        <div class="step" data-step="2">
         <fieldset id="patients-section" class="section">
           <legend>Pacientų pasiskirstymas</legend>
           <div class="row">
@@ -94,68 +103,82 @@
             </div>
           </div>
         </fieldset>
-          <fieldset id="staff-section" class="section">
-            <legend>Darbuotojai</legend>
+        <div class="step-nav actions">
+          <button type="button" class="back-step">Back</button>
+          <button type="button" class="next-step">Next</button>
+        </div>
+        </div>
 
-            <div class="staff-group">
-              <h3>Gydytojas</h3>
-              <div class="row-3">
-                <div>
-                  <label for="baseRateDoc">Bazinis gydytojo tarifas (€ / val.)</label>
-                  <input id="baseRateDoc" type="number" min="0" step="0.01" value="0" placeholder="pvz. 25.00" />
-                </div>
-                <div>
-                  <label for="countDocDay">Gydytojų (dieną)</label>
-                  <input id="countDocDay" type="number" min="0" step="1" value="0" />
-                </div>
-                <div>
-                  <label for="countDocNight">Gydytojų (naktį)</label>
-                  <input id="countDocNight" type="number" min="0" step="1" value="0" />
-                </div>
+        <div class="step" data-step="3">
+        <fieldset id="staff-section" class="section">
+          <legend>Darbuotojai</legend>
+
+          <div class="staff-group">
+            <h3>Gydytojas</h3>
+            <div class="row-3">
+              <div>
+                <label for="baseRateDoc">Bazinis gydytojo tarifas (€ / val.)</label>
+                <input id="baseRateDoc" type="number" min="0" step="0.01" value="0" placeholder="pvz. 25.00" />
+              </div>
+              <div>
+                <label for="countDocDay">Gydytojų (dieną)</label>
+                <input id="countDocDay" type="number" min="0" step="1" value="0" />
+              </div>
+              <div>
+                <label for="countDocNight">Gydytojų (naktį)</label>
+                <input id="countDocNight" type="number" min="0" step="1" value="0" />
               </div>
             </div>
+          </div>
 
-            <div class="staff-group">
-              <h3>Slaugytojas</h3>
-              <div class="row-3">
-                <div>
-                  <label for="baseRateNurse">Bazinis slaugytojo tarifas (€ / val.)</label>
-                  <input id="baseRateNurse" type="number" min="0" step="0.01" value="0" placeholder="pvz. 14.00" />
-                </div>
-                <div>
-                  <label for="countNurseDay">Slaugytojų (dieną)</label>
-                  <input id="countNurseDay" type="number" min="0" step="1" value="0" />
-                </div>
-                <div>
-                  <label for="countNurseNight">Slaugytojų (naktį)</label>
-                  <input id="countNurseNight" type="number" min="0" step="1" value="0" />
-                </div>
+          <div class="staff-group">
+            <h3>Slaugytojas</h3>
+            <div class="row-3">
+              <div>
+                <label for="baseRateNurse">Bazinis slaugytojo tarifas (€ / val.)</label>
+                <input id="baseRateNurse" type="number" min="0" step="0.01" value="0" placeholder="pvz. 14.00" />
+              </div>
+              <div>
+                <label for="countNurseDay">Slaugytojų (dieną)</label>
+                <input id="countNurseDay" type="number" min="0" step="1" value="0" />
+              </div>
+              <div>
+                <label for="countNurseNight">Slaugytojų (naktį)</label>
+                <input id="countNurseNight" type="number" min="0" step="1" value="0" />
               </div>
             </div>
+          </div>
 
-            <div class="staff-group">
-              <h3>Padėjėjas</h3>
-              <div class="row-3">
-                <div>
-                  <label for="baseRateAssist">Bazinis padėjėjo tarifas (€ / val.)</label>
-                  <input id="baseRateAssist" type="number" min="0" step="0.01" value="0" placeholder="pvz. 9.00" />
-                </div>
-                <div>
-                  <label for="countAssistDay">Padėjėjų (dieną)</label>
-                  <input id="countAssistDay" type="number" min="0" step="1" value="0" />
-                </div>
-                <div>
-                  <label for="countAssistNight">Padėjėjų (naktį)</label>
-                  <input id="countAssistNight" type="number" min="0" step="1" value="0" />
-                </div>
+          <div class="staff-group">
+            <h3>Padėjėjas</h3>
+            <div class="row-3">
+              <div>
+                <label for="baseRateAssist">Bazinis padėjėjo tarifas (€ / val.)</label>
+                <input id="baseRateAssist" type="number" min="0" step="0.01" value="0" placeholder="pvz. 9.00" />
+              </div>
+              <div>
+                <label for="countAssistDay">Padėjėjų (dieną)</label>
+                <input id="countAssistDay" type="number" min="0" step="1" value="0" />
+              </div>
+              <div>
+                <label for="countAssistNight">Padėjėjų (naktį)</label>
+                <input id="countAssistNight" type="number" min="0" step="1" value="0" />
               </div>
             </div>
+          </div>
 
-            <div class="actions">
-              <button id="optimizeStaff" type="button">Optimize Staffing</button>
-              <button id="forecast">Forecast</button>
-            </div>
-          </fieldset>
+          <div class="actions">
+            <button id="optimizeStaff" type="button">Optimize Staffing</button>
+            <button id="forecast">Forecast</button>
+          </div>
+        </fieldset>
+        <div class="step-nav actions">
+          <button type="button" class="back-step">Back</button>
+          <button type="button" class="next-step">Next</button>
+        </div>
+        </div>
+
+        <div class="step" data-step="4">
         <details id="advanced-section" class="section">
           <summary>Išplėstinės parinktys</summary>
           <div class="row">
@@ -179,6 +202,10 @@
             </div>
           </div>
         </details>
+        <div class="step-nav actions">
+          <button type="button" class="back-step">Back</button>
+        </div>
+        </div>
       </div>
       <div class="resizer"></div>
       <div class="card">
@@ -333,19 +360,5 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9?v=4.4.9"></script>
   <script type="module" src="budget-ui.js"></script>
-  <script>
-    document.querySelectorAll('.nav-sections a').forEach(link => {
-      link.addEventListener('click', () => {
-        const target = document.querySelector(link.getAttribute('href'));
-        if (target && target.tagName === 'DETAILS') {
-          target.setAttribute('open', '');
-        }
-      });
-    });
-    const hashTarget = document.querySelector(location.hash);
-    if (hashTarget && hashTarget.tagName === 'DETAILS') {
-      hashTarget.setAttribute('open', '');
-    }
-  </script>
 </body>
 </html>
