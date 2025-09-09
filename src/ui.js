@@ -397,6 +397,7 @@ function goToBudgetPlanner(){
       n5: els.esi5?.value,
     };
     localStorage.setItem('budgetInputs', JSON.stringify(inputs));
+    localStorage.setItem('ratesFromZone', '1');
   } catch {
     alert('Nepavyko išsaugoti duomenų.');
   }

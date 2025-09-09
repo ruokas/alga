@@ -281,6 +281,12 @@ function loadInputs(){
       if (els[id] && saved[id] !== undefined) els[id].value = saved[id];
     });
 
+    if (localStorage.getItem('ratesFromZone') === '1') {
+      const notice = document.getElementById('zoneRatesNotice');
+      if (notice) notice.style.display = 'block';
+      localStorage.removeItem('ratesFromZone');
+    }
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
   }catch{}
 }
