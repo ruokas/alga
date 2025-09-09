@@ -29,7 +29,28 @@ export function createBudgetChart(canvas, type = 'bar') {
       ]
     },
     options: {
-      plugins: { legend: { display: true } },
+      plugins: {
+        legend: {
+          display: true,
+          // Doughnut charts with multiple datasets show only dataset labels by default.
+          // Generate legend items from role labels so each color is mapped to a role.
+          labels: type === 'doughnut' ? {
+            generateLabels(chart) {
+              const { labels = [], datasets = [] } = chart.data || {};
+              const base = datasets[0] || {};
+              const bg = Array.isArray(base.backgroundColor) ? base.backgroundColor : [];
+              const bd = Array.isArray(base.borderColor) ? base.borderColor : bg;
+              return labels.map((text, i) => ({
+                text,
+                fillStyle: bg[i],
+                strokeStyle: bd[i],
+                hidden: false,
+                index: i,
+              }));
+            }
+          } : {},
+        },
+      },
       scales: type === 'bar' ? { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } : {},
       maintainAspectRatio: false,
       responsive: true,

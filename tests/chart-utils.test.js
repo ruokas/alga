@@ -46,6 +46,21 @@ describe('createBudgetChart', () => {
     expect(chart).toBeTruthy();
     delete global.Chart;
   });
+
+  test('doughnut chart uses role names in legend', () => {
+    const ctx = {};
+    const canvas = { getContext: jest.fn(() => ctx) };
+    let passedConfig;
+    global.Chart = jest.fn((c, cfg) => {
+      passedConfig = cfg;
+      return { data: cfg.data, options: cfg.options, update: jest.fn() };
+    });
+    createBudgetChart(canvas, 'doughnut');
+    const gen = passedConfig.options.plugins.legend.labels.generateLabels;
+    const items = gen({ data: { labels: ['A','B'], datasets: [{ backgroundColor:['#000','#111'], borderColor:['#000','#111'] }] } });
+    expect(items.map(i => i.text)).toEqual(['A','B']);
+    delete global.Chart;
+  });
 });
 
 describe('updateBudgetChart', () => {
