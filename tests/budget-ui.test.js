@@ -56,6 +56,20 @@ test('loads saved values from localStorage', () => {
   expect(document.getElementById('zoneCapacity').value).toBe('3');
 });
 
+test('maps esi keys to n keys when loading', () => {
+  setupDOM();
+  localStorage.setItem(
+    'budgetInputs',
+    JSON.stringify({ esi1: '1', esi2: '2', esi3: '3', esi4: '4', esi5: '5' })
+  );
+  require('../budget-ui.js');
+  expect(document.getElementById('n1').value).toBe('1');
+  expect(document.getElementById('n5').value).toBe('5');
+  const saved = JSON.parse(localStorage.getItem('budgetInputs'));
+  expect(saved.n1).toBe('1');
+  expect(saved.n5).toBe('5');
+});
+
 test('saves inputs to localStorage on input', () => {
   setupDOM();
   require('../budget-ui.js');
