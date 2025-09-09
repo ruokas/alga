@@ -424,6 +424,31 @@ function resetAll(){
   compute();
 }
 
+function goToBudgetPlanner(){
+  try {
+    const inputs = {
+      zoneCapacity: els.zoneCapacity?.value,
+      patientCount: els.patientCount?.value,
+      maxCoefficient: els.maxCoefficient?.value,
+      shiftHours: els.shiftHours?.value,
+      monthHours: els.monthHours?.value,
+      baseRateDoc: els.baseRateDoc?.value,
+      baseRateNurse: els.baseRateNurse?.value,
+      baseRateAssist: els.baseRateAssist?.value,
+      n1: els.esi1?.value,
+      n2: els.esi2?.value,
+      n3: els.esi3?.value,
+      n4: els.esi4?.value,
+      n5: els.esi5?.value,
+    };
+    localStorage.setItem('budgetInputs', JSON.stringify(inputs));
+    localStorage.setItem('ratesFromZone', '1');
+  } catch {
+    alert('Nepavyko išsaugoti duomenų.');
+  }
+  window.location.href = 'budget.html';
+}
+
 // Events
 ['input','change'].forEach(evt => {
   ['date','zone','zoneCapacity','patientCount','maxCoefficient','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkPatientCount','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
@@ -465,7 +490,7 @@ els.saveRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); saveRa
 els.loadRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); loadRateTemplate(); });
 
 if (els.budgetPlanner) {
-  els.budgetPlanner.addEventListener('click', (e)=>{ e.preventDefault(); window.location.href = 'budget.html'; });
+  els.budgetPlanner.addEventListener('click', (e)=>{ e.preventDefault(); goToBudgetPlanner(); });
 }
 
 // Step management
