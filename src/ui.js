@@ -2,7 +2,7 @@ import { initThemeToggle } from '../theme.js';
 import { initZones } from '../zones.js';
 import { downloadCsv, downloadPdf } from '../downloads.js';
 import { compute as coreCompute } from '../compute.js';
-import { updateChart, updateFlowChart } from './chart/index.js';
+import { updateChart } from './chart/index.js';
 import { safeCreateChart } from './chart/utils.js';
 import { simulateEsiCounts } from '../simulation.js';
 import { getElements, bindEvents } from './ui/dom.js';
@@ -112,32 +112,6 @@ if (els.payCanvas) {
     }, 'pay');
   } else {
     console.warn('Chart.js not available: pay chart skipped');
-  }
-}
-
-if (els.flowCanvas) {
-  if (typeof Chart !== 'undefined') {
-    charts.flow = safeCreateChart(els.flowCanvas, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Pacientų srautas laike',
-          data: [],
-          borderColor: accent,
-          backgroundColor: 'transparent',
-          tension: 0.3,
-        }],
-      },
-      options: {
-        plugins: { legend: { display: false } },
-        scales: { x: { title: { display: true, text: 'Diena' } }, y: { beginAtZero: true } },
-        maintainAspectRatio: false,
-        responsive: true,
-      },
-    }, 'flow');
-  } else {
-    console.warn('Chart.js not available: flow chart skipped');
   }
 }
 
