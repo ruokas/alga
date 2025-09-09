@@ -47,8 +47,6 @@ export function getElements() {
     extraRoles: document.getElementById('extraRoles'),
     addRateRole: document.getElementById('addRateRole'),
     simulateEsi: document.getElementById('simulateEsi'),
-    days: document.getElementById('days'),
-    simulatePeriod: document.getElementById('simulatePeriod'),
     reset: document.getElementById('reset'),
     copy: document.getElementById('copy'),
     downloadCsv: document.getElementById('downloadCsv'),
@@ -64,8 +62,6 @@ export function getElements() {
     loadRateTemplate: document.getElementById('loadRateTemplate'),
     payCanvas: document.getElementById('payChart'),
     flowCanvas: document.getElementById('flowChart'),
-    forecastCanvas: document.getElementById('forecastChart'),
-    forecast: document.getElementById('forecast'),
     budgetPlanner: document.getElementById('budgetPlanner'),
   };
 
@@ -85,8 +81,6 @@ export function bindEvents(els, handlers) {
     handleShiftChange,
     setDefaultCapacity,
     simulateEsi,
-    simulatePeriodUi,
-    forecastPeriodUi,
     resetAll,
     copy,
     downloadCsv,
@@ -113,12 +107,6 @@ export function bindEvents(els, handlers) {
   els.shift.addEventListener('change', handleShiftChange);
   els.zone.addEventListener('change', setDefaultCapacity);
   els.simulateEsi.addEventListener('click', e => { e.preventDefault(); simulateEsi(); });
-  if (els.simulatePeriod) {
-    els.simulatePeriod.addEventListener('click', e => { e.preventDefault(); simulatePeriodUi(); });
-  }
-  if (els.forecast) {
-    els.forecast.addEventListener('click', e => { e.preventDefault(); forecastPeriodUi(); });
-  }
   els.reset.addEventListener('click', e => { e.preventDefault(); resetAll(); });
   els.copy.addEventListener('click', e => { e.preventDefault(); copy(); });
   els.downloadCsv.addEventListener('click', e => { e.preventDefault(); downloadCsv(); });
