@@ -52,7 +52,7 @@ const els = {
     monthAssistCell: document.getElementById('monthAssistCell'),
     deltaAssistCell: document.getElementById('deltaAssistCell'),
     rateTbody: document.getElementById('rateTbody'),
-    extraRateList: document.getElementById('extraRateList'),
+    extraRoles: document.getElementById('extraRoles'),
     addRateRole: document.getElementById('addRateRole'),
     simulateEsi: document.getElementById('simulateEsi'),
   days: document.getElementById('days'),
@@ -108,6 +108,7 @@ function handleChartError(canvas, name, err) {
   }
 }
 
+const ROLE_LABELS = { doctor: 'Gydytojas', nurse: 'Slaugytojas', assistant: 'Padėjėjas' };
 const charts = {};
 if (els.ratioCanvas) {
   if (typeof Chart !== 'undefined') {
@@ -196,10 +197,10 @@ if (els.payCanvas) {
         charts.pay = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: ['Doctor', 'Nurse', 'Assistant'],
+            labels: [],
             datasets: [
-              { label: 'Baseline', data: [0, 0, 0], backgroundColor: borderColor },
-              { label: 'Adjusted', data: [0, 0, 0], backgroundColor: accent }
+              { label: 'Bazinis', data: [], backgroundColor: borderColor },
+              { label: 'Pakoreguotas', data: [], backgroundColor: accent }
             ]
           },
           options: {
@@ -250,30 +251,36 @@ function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',c
 
 function getExtraRates(){
   const rates = {};
-  if (!els.extraRateList) return rates;
-  els.extraRateList.querySelectorAll('.extra-rate-row').forEach(row => {
-    const name = row.querySelector('.role-name')?.value.trim();
-    const rate = toNum(row.querySelector('.role-rate')?.value);
+  if (!els.extraRoles) return rates;
+  els.extraRoles.querySelectorAll('.extra-role').forEach(group => {
+    const name = group.querySelector('.role-name')?.value.trim();
+    const rate = toNum(group.querySelector('.role-rate')?.value);
     if (name) rates[name] = Math.max(0, rate);
   });
   return rates;
 }
 
 function addRateRole(name = '', rate = 0){
-  if (!els.extraRateList) return;
-  const row = document.createElement('div');
-  row.className = 'row extra-rate-row';
-  row.innerHTML = `
-    <div>
-      <input type="text" class="role-name" placeholder="Rolės pavadinimas" value="${name}" />
-    </div>
-    <div>
-      <input type="number" min="0" step="0.01" class="role-rate" value="${rate}" />
-      <button type="button" class="remove-rate-role">Šalinti</button>
+  if (!els.extraRoles) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'staff-group extra-role';
+  wrap.innerHTML = `
+    <h3><input type="text" class="role-name" placeholder="Rolė" value="${name}" /></h3>
+    <div class="row">
+      <div>
+        <label>Bazinis tarifas (€/val.)</label>
+        <input type="number" min="0" step="0.01" class="role-rate" value="${rate}" />
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <div class="actions">
+          <button type="button" class="remove-rate-role">Šalinti</button>
+        </div>
+      </div>
     </div>`;
-  els.extraRateList.appendChild(row);
-  row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', compute));
-  row.querySelector('.remove-rate-role').addEventListener('click', () => { row.remove(); compute(); });
+  els.extraRoles.appendChild(wrap);
+  wrap.querySelectorAll('input').forEach(inp => inp.addEventListener('input', compute));
+  wrap.querySelector('.remove-rate-role').addEventListener('click', () => { wrap.remove(); compute(); });
 }
 
 function validateInputs(){
@@ -353,16 +360,10 @@ function compute(){
   });
 
   updateChart(charts.pay, chart => {
-    chart.data.datasets[0].data = [
-      data.baseline_shift_salary.doctor,
-      data.baseline_shift_salary.nurse,
-      data.baseline_shift_salary.assistant
-    ];
-    chart.data.datasets[1].data = [
-      data.shift_salary.doctor,
-      data.shift_salary.nurse,
-      data.shift_salary.assistant
-    ];
+    const roles = Object.keys(data.base_rates);
+    chart.data.labels = roles.map(r => ROLE_LABELS[r] || r);
+    chart.data.datasets[0].data = roles.map(r => data.baseline_shift_salary[r]);
+    chart.data.datasets[1].data = roles.map(r => data.shift_salary[r]);
     chart.update();
   });
 
@@ -452,7 +453,7 @@ function handleShiftChange(){
     assist: toNum(els.baseRateAssist.value),
     extra: getExtraRates()
   };
-  try { localStorage.setItem(LS_RATE_KEY, JSON.stringify(payload)); alert('Tarifų šablonas įsimintas.'); } catch {}
+  try { localStorage.setItem(LS_RATE_KEY, JSON.stringify(payload)); alert('Darbuotojų šablonas įsimintas.'); } catch {}
   }
   function loadRateTemplate(){
   try {
@@ -463,7 +464,7 @@ function handleShiftChange(){
         els.baseRateDoc.value = t.doc ?? 0;
         els.baseRateNurse.value = t.nurse ?? 0;
         els.baseRateAssist.value = t.assist ?? 0;
-        if (els.extraRateList) els.extraRateList.innerHTML = '';
+        if (els.extraRoles) els.extraRoles.innerHTML = '';
         if (t.extra) {
           Object.entries(t.extra).forEach(([name, rate]) => addRateRole(name, rate));
         }
@@ -481,7 +482,7 @@ function handleShiftChange(){
   els.patientCount.value = 0; els.maxCoefficient.value = 1.30; els.linkPatientCount.checked = true;
   els.shiftHours.value = 12; els.monthHours.value = 0;
   els.esi1.value = 0; els.esi2.value = 0; els.esi3.value = 0; els.esi4.value = 0; els.esi5.value = 0;
-  if (els.extraRateList) els.extraRateList.innerHTML = '';
+  if (els.extraRoles) els.extraRoles.innerHTML = '';
   try {
     const j = localStorage.getItem(LS_RATE_KEY);
     if (j){

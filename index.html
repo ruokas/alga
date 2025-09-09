@@ -41,7 +41,7 @@
         <nav class="nav-sections">
           <a href="#shift-section">Pamainos parametrai</a>
           <a href="#patients-section">Pacientų pasiskirstymas</a>
-          <a href="#rates-section">Tarifai</a>
+          <a href="#staff-section">Darbuotojai</a>
           <a href="#advanced-section">Išplėstinės parinktys</a>
         </nav>
         <div class="progress"><div id="stepProgressBar" class="bar"></div></div>
@@ -149,34 +149,46 @@
         </div>
 
         <div class="step" data-step="3">
-        <fieldset id="rates-section" class="section">
-          <legend>Tarifai</legend>
-          <div class="row">
-            <div>
-              <label for="baseRateDoc">Bazinis gydytojo tarifas (€ / val.)</label>
-              <input id="baseRateDoc" type="number" min="0" step="0.01" value="0" placeholder="pvz. 25.00" />
-            </div>
-            <div>
-              <label for="baseRateNurse">Bazinis slaugytojo tarifas (€ / val.)</label>
-              <input id="baseRateNurse" type="number" min="0" step="0.01" value="0" placeholder="pvz. 14.00" />
-            </div>
-          </div>
-          <div class="row">
-            <div>
-              <label for="baseRateAssist">Bazinis padėjėjo tarifas (€ / val.)</label>
-              <input id="baseRateAssist" type="number" min="0" step="0.01" value="0" placeholder="pvz. 9.00" />
-            </div>
-            <div>
-              <label>&nbsp;</label>
-              <div class="actions">
-                <button id="addRateRole" type="button">+ Pridėti rolę</button>
-                <button id="saveRateTemplate">Įsiminti tarifų šabloną</button>
-                <button id="loadRateTemplate">Užkrauti šabloną</button>
+        <fieldset id="staff-section" class="section">
+          <legend>Darbuotojai</legend>
+
+          <div class="staff-group">
+            <h3>Gydytojas</h3>
+            <div class="row">
+              <div>
+                <label for="baseRateDoc">Bazinis tarifas (€/val.)</label>
+                <input id="baseRateDoc" type="number" min="0" step="0.01" value="0" placeholder="pvz. 25.00" />
               </div>
-              <div class="help">Tarifų šablonas saugomas vietoje (localStorage).</div>
             </div>
           </div>
-          <div id="extraRateList"></div>
+
+          <div class="staff-group">
+            <h3>Slaugytojas</h3>
+            <div class="row">
+              <div>
+                <label for="baseRateNurse">Bazinis tarifas (€/val.)</label>
+                <input id="baseRateNurse" type="number" min="0" step="0.01" value="0" placeholder="pvz. 14.00" />
+              </div>
+            </div>
+          </div>
+
+          <div class="staff-group">
+            <h3>Padėjėjas</h3>
+            <div class="row">
+              <div>
+                <label for="baseRateAssist">Bazinis tarifas (€/val.)</label>
+                <input id="baseRateAssist" type="number" min="0" step="0.01" value="0" placeholder="pvz. 9.00" />
+              </div>
+            </div>
+          </div>
+
+          <div id="extraRoles"></div>
+          <div class="actions">
+            <button id="addRateRole" type="button">+ Pridėti rolę</button>
+            <button id="saveRateTemplate">Įsiminti darbuotojų šabloną</button>
+            <button id="loadRateTemplate">Užkrauti šabloną</button>
+          </div>
+          <div class="help">Darbuotojų šablonas saugomas vietoje (localStorage).</div>
         </fieldset>
         <div class="step-nav actions">
           <button type="button" class="back-step">Atgal</button>
@@ -305,7 +317,7 @@
           </tbody>
         </table>
 
-        <h2 class="role-heading">Tarifai pagal rolę</h2>
+        <h2 class="role-heading">Darbuotojai pagal rolę</h2>
           <table class="table">
             <thead>
               <tr><th>Rolė</th><th>Bazė (€/val.)</th><th>Koef. K<sub>zona</sub></th><th>Galutinis (€/val.)</th><th>Pam. alga (€/pam.)</th><th>Mėn. alga (€/mėn.)</th><th>Improvement</th></tr>
