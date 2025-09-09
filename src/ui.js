@@ -4,7 +4,7 @@ import { downloadCsv, downloadPdf } from '../downloads.js';
 import { compute as coreCompute } from '../compute.js';
 import { updateChart, updateFlowChart } from './chart/index.js';
 import { safeCreateChart } from './chart/utils.js';
-import { simulateEsiCounts, simulatePeriod as simulatePeriodSim } from '../simulation.js';
+import { simulateEsiCounts } from '../simulation.js';
 import { getElements, bindEvents } from './ui/dom.js';
 import { saveRateTemplate, loadRateTemplate } from './storage.js';
 
@@ -138,32 +138,6 @@ if (els.flowCanvas) {
     }, 'flow');
   } else {
     console.warn('Chart.js not available: flow chart skipped');
-  }
-}
-
-if (els.forecastCanvas) {
-  if (typeof Chart !== 'undefined') {
-    charts.forecast = safeCreateChart(els.forecastCanvas, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Prognozė',
-          data: [],
-          borderColor: accent2,
-          backgroundColor: 'transparent',
-          tension: 0.3,
-        }],
-      },
-      options: {
-        plugins: { legend: { display: false } },
-        scales: { x: { title: { display: true, text: 'Diena' } }, y: { beginAtZero: true } },
-        maintainAspectRatio: false,
-        responsive: true,
-      },
-    }, 'forecast');
-  } else {
-    console.warn('Chart.js not available: forecast chart skipped');
   }
 }
 
@@ -344,20 +318,6 @@ function simulateEsi(){
   compute();
 }
 
-function simulatePeriodUi(){
-  const days = toNum(els.days.value);
-  const zoneCapacity = toNum(els.zoneCapacity.value);
-  const results = simulatePeriodSim(days, zoneCapacity, {});
-  updateFlowChart(charts.flow, results);
-}
-
-function forecastPeriodUi(){
-  const days = toNum(els.days.value);
-  const zoneCapacity = toNum(els.zoneCapacity.value);
-  const results = simulatePeriodSim(days, zoneCapacity, { useForecast: true });
-  updateFlowChart(charts.forecast, results);
-}
-
 function handleShiftChange(){
   setDefaultCapacity();
   if (els.shift.value === 'P') {
@@ -461,8 +421,6 @@ bindEvents(els, {
   handleShiftChange,
   setDefaultCapacity,
   simulateEsi,
-  simulatePeriodUi,
-  forecastPeriodUi,
   resetAll,
   copy: copyResults,
   downloadCsv: onDownloadCsv,
@@ -472,16 +430,16 @@ bindEvents(els, {
   saveZonesAndClose,
   resetToDefaults,
   closeZoneModal,
-    saveRateTemplate: onSaveRateTemplate,
-    loadRateTemplate: onLoadRateTemplate,
-    goToBudgetPlanner,
-    addRateRole,
-  });
+  saveRateTemplate: onSaveRateTemplate,
+  loadRateTemplate: onLoadRateTemplate,
+  goToBudgetPlanner,
+  addRateRole,
+});
 
 renderZoneSelect(false);
 resetAll();
 
 if (typeof module !== 'undefined') {
-  module.exports = { compute, resetAll, simulateEsi, simulatePeriodUi, forecastPeriodUi, goToBudgetPlanner };
+  module.exports = { compute, resetAll, simulateEsi, goToBudgetPlanner };
 }
 
