@@ -2,7 +2,7 @@ import { initThemeToggle } from './theme.js';
 import { initZones } from './zones.js';
 import { downloadCsv, downloadPdf } from './downloads.js';
 import { compute as coreCompute } from './compute.js';
-import { updateChart, createFlowChart, updateFlowChart } from './chart-utils.js';
+import { updateChart } from './chart-utils.js';
 import { simulateEsiCounts } from './simulation.js';
 
 const LS_RATE_KEY = 'ED_RATE_TEMPLATE_V2';
@@ -69,7 +69,6 @@ const els = {
   saveRateTemplate: document.getElementById('saveRateTemplate'),
   loadRateTemplate: document.getElementById('loadRateTemplate'),
   payCanvas: document.getElementById('payChart'),
-  flowCanvas: document.getElementById('flowChart'),
   budgetPlanner: document.getElementById('budgetPlanner'),
 };
 
@@ -214,18 +213,6 @@ if (els.payCanvas) {
     }
   } else {
     console.warn('Chart.js not available: pay chart skipped');
-  }
-}
-
-if (els.flowCanvas) {
-  if (typeof Chart !== 'undefined') {
-    try {
-      charts.flow = createFlowChart(els.flowCanvas, accent);
-    } catch (err) {
-      handleChartError(els.flowCanvas, 'flow', err);
-    }
-  } else {
-    console.warn('Chart.js not available: flow chart skipped');
   }
 }
 

@@ -61,7 +61,6 @@ export function getElements() {
     saveRateTemplate: document.getElementById('saveRateTemplate'),
     loadRateTemplate: document.getElementById('loadRateTemplate'),
     payCanvas: document.getElementById('payChart'),
-    flowCanvas: document.getElementById('flowChart'),
     budgetPlanner: document.getElementById('budgetPlanner'),
   };
 

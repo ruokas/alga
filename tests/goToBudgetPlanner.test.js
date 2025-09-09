@@ -95,7 +95,6 @@ beforeEach(() => {
     ratioCanvas: null,
     sCanvas: null,
     payCanvas: null,
-    flowCanvas: null,
     simulateEsi: { addEventListener: jest.fn() },
     reset: { addEventListener: jest.fn() },
     copy: { addEventListener: jest.fn() },
