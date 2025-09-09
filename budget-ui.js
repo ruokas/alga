@@ -268,9 +268,20 @@ function loadInputs(){
   if (typeof localStorage === 'undefined') return;
   try{
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+    for (let i = 1; i <= 5; i++) {
+      const nKey = `n${i}`;
+      const esiKey = `esi${i}`;
+      if (saved[nKey] === undefined && saved[esiKey] !== undefined) {
+        saved[nKey] = saved[esiKey];
+      }
+    }
+
     INPUT_IDS.forEach(id => {
       if (els[id] && saved[id] !== undefined) els[id].value = saved[id];
     });
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
   }catch{}
 }
 
