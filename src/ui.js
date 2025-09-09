@@ -379,7 +379,29 @@ function copyResults(){
 
 function onDownloadCsv(){ downloadCsv(compute()); }
 function onDownloadPdf(){ downloadPdf(compute()); }
-function goToBudgetPlanner(){ window.location.href = 'budget.html'; }
+function goToBudgetPlanner(){
+  try {
+    const inputs = {
+      zoneCapacity: els.zoneCapacity?.value,
+      patientCount: els.patientCount?.value,
+      maxCoefficient: els.maxCoefficient?.value,
+      shiftHours: els.shiftHours?.value,
+      monthHours: els.monthHours?.value,
+      baseRateDoc: els.baseRateDoc?.value,
+      baseRateNurse: els.baseRateNurse?.value,
+      baseRateAssist: els.baseRateAssist?.value,
+      n1: els.esi1?.value,
+      n2: els.esi2?.value,
+      n3: els.esi3?.value,
+      n4: els.esi4?.value,
+      n5: els.esi5?.value,
+    };
+    localStorage.setItem('budgetInputs', JSON.stringify(inputs));
+  } catch {
+    alert('Nepavyko išsaugoti duomenų.');
+  }
+  window.location.href = 'budget.html';
+}
 
 bindEvents(els, {
   compute,
@@ -406,6 +428,6 @@ renderZoneSelect(false);
 resetAll();
 
 if (typeof module !== 'undefined') {
-  module.exports = { compute, resetAll, simulateEsi, simulatePeriodUi, forecastPeriodUi };
+  module.exports = { compute, resetAll, simulateEsi, simulatePeriodUi, forecastPeriodUi, goToBudgetPlanner };
 }
 
