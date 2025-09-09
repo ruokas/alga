@@ -44,7 +44,7 @@ export function getElements() {
     monthAssistCell: document.getElementById('monthAssistCell'),
     deltaAssistCell: document.getElementById('deltaAssistCell'),
     rateTbody: document.getElementById('rateTbody'),
-    extraRateList: document.getElementById('extraRateList'),
+    extraRoles: document.getElementById('extraRoles'),
     addRateRole: document.getElementById('addRateRole'),
     simulateEsi: document.getElementById('simulateEsi'),
     days: document.getElementById('days'),
