@@ -1,6 +1,6 @@
 # Atlyginimo Skaičiuoklė
 
-Šis projektas – internetinis įrankis atlyginimo tarifams skaičiuoti skubios pagalbos skyriuje. Jis apskaičiuoja zonos koeficientą pagal pacientų skaičių ir triažo lygius, tuomet pritaiko jį baziniams gydytojų, slaugytojų ir padėjėjų valandiniams tarifams ir pateikia galutines sumas.
+Šis projektas – internetinis įrankis atlyginimo tarifams skaičiuoti skubios pagalbos skyriuje. Jis apskaičiuoja zonos koeficientą pagal pacientų skaičių ir triažo lygius, tuomet pritaiko jį baziniams gydytojų, slaugytojų, padėjėjų ir kitų pasirenkamų rolių valandiniams tarifams ir pateikia galutines sumas.
 
 Taip pat galite įvesti pamainos trukmę ir mėnesio valandų skaičių, kad pamatytumėte numatomą uždarbį už pamainą ar mėnesį.
 

@@ -45,13 +45,16 @@ const els = {
   shiftNurseCell: document.getElementById('shiftNurseCell'),
   monthNurseCell: document.getElementById('monthNurseCell'),
   deltaNurseCell: document.getElementById('deltaNurseCell'),
-  baseAssistCell: document.getElementById('baseAssistCell'),
-  kAssistCell: document.getElementById('kAssistCell'),
-  finalAssistCell: document.getElementById('finalAssistCell'),
-  shiftAssistCell: document.getElementById('shiftAssistCell'),
-  monthAssistCell: document.getElementById('monthAssistCell'),
-  deltaAssistCell: document.getElementById('deltaAssistCell'),
-  simulateEsi: document.getElementById('simulateEsi'),
+    baseAssistCell: document.getElementById('baseAssistCell'),
+    kAssistCell: document.getElementById('kAssistCell'),
+    finalAssistCell: document.getElementById('finalAssistCell'),
+    shiftAssistCell: document.getElementById('shiftAssistCell'),
+    monthAssistCell: document.getElementById('monthAssistCell'),
+    deltaAssistCell: document.getElementById('deltaAssistCell'),
+    rateTbody: document.getElementById('rateTbody'),
+    extraRateList: document.getElementById('extraRateList'),
+    addRateRole: document.getElementById('addRateRole'),
+    simulateEsi: document.getElementById('simulateEsi'),
   days: document.getElementById('days'),
   simulatePeriod: document.getElementById('simulatePeriod'),
   reset: document.getElementById('reset'),
@@ -245,6 +248,34 @@ function toNum(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
 function fmt(n, d=2){ return (Number.isFinite(n) ? n : 0).toFixed(d); }
 function money(n){ try{ return new Intl.NumberFormat('lt-LT',{style:'currency',currency:'EUR'}).format(n||0); }catch{ return `€${fmt(n)}`; } }
 
+function getExtraRates(){
+  const rates = {};
+  if (!els.extraRateList) return rates;
+  els.extraRateList.querySelectorAll('.extra-rate-row').forEach(row => {
+    const name = row.querySelector('.role-name')?.value.trim();
+    const rate = toNum(row.querySelector('.role-rate')?.value);
+    if (name) rates[name] = Math.max(0, rate);
+  });
+  return rates;
+}
+
+function addRateRole(name = '', rate = 0){
+  if (!els.extraRateList) return;
+  const row = document.createElement('div');
+  row.className = 'row extra-rate-row';
+  row.innerHTML = `
+    <div>
+      <input type="text" class="role-name" placeholder="Rolės pavadinimas" value="${name}" />
+    </div>
+    <div>
+      <input type="number" min="0" step="0.01" class="role-rate" value="${rate}" />
+      <button type="button" class="remove-rate-role">Šalinti</button>
+    </div>`;
+  els.extraRateList.appendChild(row);
+  row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', compute));
+  row.querySelector('.remove-rate-role').addEventListener('click', () => { row.remove(); compute(); });
+}
+
 function validateInputs(){
   ['zoneCapacity','patientCount','maxCoefficient','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
     const el = els[id];
@@ -283,12 +314,14 @@ function compute(){
   let patientCount = Math.max(0, toNum(els.patientCount.value));
   if (els.linkPatientCount.checked){ patientCount = n1 + n2 + n3 + n4 + n5; els.patientCount.value = patientCount; els.patientCount.disabled = true; } else els.patientCount.disabled = false;
 
+  const extraRates = getExtraRates();
   const data = coreCompute({
     zoneCapacity,
     maxCoefficient,
     baseDoc,
     baseNurse,
     baseAssist,
+    extraRates,
     shiftH,
     monthH,
     n1,
@@ -354,6 +387,17 @@ function compute(){
   els.monthAssistCell.textContent = money(data.month_salary.assistant);
   els.deltaAssistCell.textContent = `${money(data.shift_salary.assistant - data.baseline_shift_salary.assistant)} / ${money(data.month_salary.assistant - data.baseline_month_salary.assistant)}`;
 
+  if (els.rateTbody) {
+    Array.from(els.rateTbody.querySelectorAll('.extra-rate-result')).forEach(r => r.remove());
+    for (const role of Object.keys(data.base_rates)) {
+      if (['doctor', 'nurse', 'assistant'].includes(role)) continue;
+      const tr = document.createElement('tr');
+      tr.className = 'extra-rate-result';
+      tr.innerHTML = `<td>${role}</td><td>${money(data.base_rates[role])}</td><td>${data.K_zona.toFixed(2)}</td><td class="accent">${money(data.final_rates[role])}</td><td>${money(data.shift_salary[role])}</td><td>${money(data.month_salary[role])}</td><td>${money(data.shift_salary[role]-data.baseline_shift_salary[role])} / ${money(data.month_salary[role]-data.baseline_month_salary[role])}</td>`;
+      els.rateTbody.appendChild(tr);
+    }
+  }
+
   return {
     date: els.date.value || null,
     shift: els.shift.value,
@@ -401,30 +445,63 @@ function handleShiftChange(){
   compute();
 }
 
-function saveRateTemplate(){
+  function saveRateTemplate(){
   const payload = {
     doc: toNum(els.baseRateDoc.value),
     nurse: toNum(els.baseRateNurse.value),
-    assist: toNum(els.baseRateAssist.value)
+    assist: toNum(els.baseRateAssist.value),
+    extra: getExtraRates()
   };
   try { localStorage.setItem(LS_RATE_KEY, JSON.stringify(payload)); alert('Tarifų šablonas įsimintas.'); } catch {}
-}
-function loadRateTemplate(){
-  try { const j = localStorage.getItem(LS_RATE_KEY); if (j){ const t = JSON.parse(j); if (t){ els.baseRateDoc.value = t.doc ?? 0; els.baseRateNurse.value = t.nurse ?? 0; els.baseRateAssist.value = t.assist ?? 0; compute(); return; } } } catch {}
+  }
+  function loadRateTemplate(){
+  try {
+    const j = localStorage.getItem(LS_RATE_KEY);
+    if (j){
+      const t = JSON.parse(j);
+      if (t){
+        els.baseRateDoc.value = t.doc ?? 0;
+        els.baseRateNurse.value = t.nurse ?? 0;
+        els.baseRateAssist.value = t.assist ?? 0;
+        if (els.extraRateList) els.extraRateList.innerHTML = '';
+        if (t.extra) {
+          Object.entries(t.extra).forEach(([name, rate]) => addRateRole(name, rate));
+        }
+        compute();
+        return;
+      }
+    }
+  } catch {}
   alert('Nerasta išsaugoto šablono.');
-}
-
-function resetAll(){
+  }
+  
+  function resetAll(){
   els.date.value = ''; els.shift.value = 'D';
   renderZoneSelect(false);
   els.patientCount.value = 0; els.maxCoefficient.value = 1.30; els.linkPatientCount.checked = true;
   els.shiftHours.value = 12; els.monthHours.value = 0;
   els.esi1.value = 0; els.esi2.value = 0; els.esi3.value = 0; els.esi4.value = 0; els.esi5.value = 0;
-  try { const j = localStorage.getItem(LS_RATE_KEY); if (j){ const t = JSON.parse(j); els.baseRateDoc.value = t.doc ?? 0; els.baseRateNurse.value = t.nurse ?? 0; els.baseRateAssist.value = t.assist ?? 0; } else { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; } } catch { els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0; }
+  if (els.extraRateList) els.extraRateList.innerHTML = '';
+  try {
+    const j = localStorage.getItem(LS_RATE_KEY);
+    if (j){
+      const t = JSON.parse(j);
+      els.baseRateDoc.value = t.doc ?? 0;
+      els.baseRateNurse.value = t.nurse ?? 0;
+      els.baseRateAssist.value = t.assist ?? 0;
+      if (t.extra) {
+        Object.entries(t.extra).forEach(([name, rate]) => addRateRole(name, rate));
+      }
+    } else {
+      els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0;
+    }
+  } catch {
+    els.baseRateDoc.value = 0; els.baseRateNurse.value = 0; els.baseRateAssist.value = 0;
+  }
   compute();
-}
+  }
 
-function goToBudgetPlanner(){
+  function goToBudgetPlanner(){
   try {
     const inputs = {
       zoneCapacity: els.zoneCapacity?.value,
@@ -435,6 +512,7 @@ function goToBudgetPlanner(){
       baseRateDoc: els.baseRateDoc?.value,
       baseRateNurse: els.baseRateNurse?.value,
       baseRateAssist: els.baseRateAssist?.value,
+      extraRates: getExtraRates(),
       n1: els.esi1?.value,
       n2: els.esi2?.value,
       n3: els.esi3?.value,
@@ -488,6 +566,9 @@ els.closeZoneModal.addEventListener('click', closeZoneModal);
 
 els.saveRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); saveRateTemplate(); });
 els.loadRateTemplate.addEventListener('click', (e)=>{ e.preventDefault(); loadRateTemplate(); });
+if (els.addRateRole) {
+  els.addRateRole.addEventListener('click', (e)=>{ e.preventDefault(); addRateRole(); });
+}
 
 if (els.budgetPlanner) {
   els.budgetPlanner.addEventListener('click', (e)=>{ e.preventDefault(); goToBudgetPlanner(); });
