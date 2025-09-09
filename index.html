@@ -138,6 +138,9 @@
               <div class="help">Jei nėra triažo – palikite visur nulį.</div>
             </div>
           </div>
+          <div class="actions">
+            <button id="simulateEsi">Simuliuoti pamainą</button>
+          </div>
         </fieldset>
         <div class="step-nav actions">
           <button type="button" class="back-step">Atgal</button>
@@ -166,12 +169,14 @@
             <div>
               <label>&nbsp;</label>
               <div class="actions">
+                <button id="addRateRole" type="button">+ Pridėti rolę</button>
                 <button id="saveRateTemplate">Įsiminti tarifų šabloną</button>
                 <button id="loadRateTemplate">Užkrauti šabloną</button>
               </div>
               <div class="help">Tarifų šablonas saugomas vietoje (localStorage).</div>
             </div>
           </div>
+          <div id="extraRateList"></div>
         </fieldset>
         <div class="step-nav actions">
           <button type="button" class="back-step">Atgal</button>
@@ -218,7 +223,6 @@
         </div>
 
         <div class="actions">
-          <button id="simulateEsi">Simuliuoti pamainą</button>
           <button class="primary" id="reset">Išvalyti</button>
           <button id="copy">Kopijuoti rezultatą (JSON)</button>
           <button id="downloadCsv">Atsisiųsti CSV</button>
@@ -302,16 +306,16 @@
         </table>
 
         <h2 class="role-heading">Tarifai pagal rolę</h2>
-        <table class="table">
-          <thead>
-            <tr><th>Rolė</th><th>Bazė (€/val.)</th><th>Koef. K<sub>zona</sub></th><th>Galutinis (€/val.)</th><th>Pam. alga (€/pam.)</th><th>Mėn. alga (€/mėn.)</th><th>Improvement</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Gydytojas</td><td id="baseDocCell">€0,00</td><td id="kDocCell">1,00</td><td class="accent" id="finalDocCell">€0,00</td><td id="shiftDocCell">€0,00</td><td id="monthDocCell">€0,00</td><td id="deltaDocCell">€0,00 / €0,00</td></tr>
-            <tr><td>Slaugytojas</td><td id="baseNurseCell">€0,00</td><td id="kNurseCell">1,00</td><td class="accent" id="finalNurseCell">€0,00</td><td id="shiftNurseCell">€0,00</td><td id="monthNurseCell">€0,00</td><td id="deltaNurseCell">€0,00 / €0,00</td></tr>
-            <tr><td>Padėjėjas</td><td id="baseAssistCell">€0,00</td><td id="kAssistCell">1,00</td><td class="accent" id="finalAssistCell">€0,00</td><td id="shiftAssistCell">€0,00</td><td id="monthAssistCell">€0,00</td><td id="deltaAssistCell">€0,00 / €0,00</td></tr>
-          </tbody>
-        </table>
+          <table class="table">
+            <thead>
+              <tr><th>Rolė</th><th>Bazė (€/val.)</th><th>Koef. K<sub>zona</sub></th><th>Galutinis (€/val.)</th><th>Pam. alga (€/pam.)</th><th>Mėn. alga (€/mėn.)</th><th>Improvement</th></tr>
+            </thead>
+            <tbody id="rateTbody">
+              <tr><td>Gydytojas</td><td id="baseDocCell">€0,00</td><td id="kDocCell">1,00</td><td class="accent" id="finalDocCell">€0,00</td><td id="shiftDocCell">€0,00</td><td id="monthDocCell">€0,00</td><td id="deltaDocCell">€0,00 / €0,00</td></tr>
+              <tr><td>Slaugytojas</td><td id="baseNurseCell">€0,00</td><td id="kNurseCell">1,00</td><td class="accent" id="finalNurseCell">€0,00</td><td id="shiftNurseCell">€0,00</td><td id="monthNurseCell">€0,00</td><td id="deltaNurseCell">€0,00 / €0,00</td></tr>
+              <tr><td>Padėjėjas</td><td id="baseAssistCell">€0,00</td><td id="kAssistCell">1,00</td><td class="accent" id="finalAssistCell">€0,00</td><td id="shiftAssistCell">€0,00</td><td id="monthAssistCell">€0,00</td><td id="deltaAssistCell">€0,00 / €0,00</td></tr>
+            </tbody>
+          </table>
         <div class="footer">
           Patarimas: jei dažnai pasiekiate lubas, padidinkite zonos talpą arba sumažinkite priedų laiptelius.
         </div>

@@ -172,4 +172,25 @@ describe('compute core logic', () => {
     expect(result.shift_salary.doctor).toBe(0);
     expect(result.month_salary.doctor).toBe(0);
   });
+
+  test('handles extra rate roles', () => {
+    const result = compute({
+      zoneCapacity: 10,
+      patientCount: 10,
+      maxCoefficient: 2,
+      baseDoc: 0,
+      baseNurse: 0,
+      baseAssist: 0,
+      extraRates: { tech: 5 },
+      shiftH: 1,
+      monthH: 10,
+      n1: 0,
+      n2: 0,
+      n3: 0,
+      n4: 0,
+      n5: 0,
+    });
+    expect(result.final_rates.tech).toBeCloseTo(5 * result.K_zona);
+    expect(result.shift_salary.tech).toBeCloseTo(result.final_rates.tech * 1);
+  });
 });

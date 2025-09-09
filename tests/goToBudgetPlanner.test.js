@@ -152,6 +152,7 @@ test('stores inputs to localStorage', () => {
     baseRateDoc: '20',
     baseRateNurse: '15',
     baseRateAssist: '10',
+    extraRates: {},
     n1: '1',
     n2: '2',
     n3: '3',

@@ -43,6 +43,9 @@ export function getElements() {
     shiftAssistCell: document.getElementById('shiftAssistCell'),
     monthAssistCell: document.getElementById('monthAssistCell'),
     deltaAssistCell: document.getElementById('deltaAssistCell'),
+    rateTbody: document.getElementById('rateTbody'),
+    extraRateList: document.getElementById('extraRateList'),
+    addRateRole: document.getElementById('addRateRole'),
     simulateEsi: document.getElementById('simulateEsi'),
     days: document.getElementById('days'),
     simulatePeriod: document.getElementById('simulatePeriod'),
@@ -96,6 +99,7 @@ export function bindEvents(els, handlers) {
     saveRateTemplate,
     loadRateTemplate,
     goToBudgetPlanner,
+    addRateRole,
   } = handlers;
 
   ['input','change'].forEach(evt => {
@@ -128,6 +132,9 @@ export function bindEvents(els, handlers) {
 
   els.saveRateTemplate.addEventListener('click', e => { e.preventDefault(); saveRateTemplate(); });
   els.loadRateTemplate.addEventListener('click', e => { e.preventDefault(); loadRateTemplate(); });
+  if (els.addRateRole) {
+    els.addRateRole.addEventListener('click', e => { e.preventDefault(); addRateRole(); });
+  }
 
   if (els.budgetPlanner) {
     els.budgetPlanner.addEventListener('click', e => { e.preventDefault(); goToBudgetPlanner(); });
