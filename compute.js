@@ -1,4 +1,7 @@
-const THRESHOLDS = {
+// Default thresholds for volume (V) and acuity (A) bonuses.
+// Consumers can supply a custom object with the same shape
+// as the second argument to `compute` to override these values.
+const DEFAULT_THRESHOLDS = {
   V_BONUS: [
     { limit: 0.80, value: 0.00 },
     { limit: 1.00, value: 0.05 },
@@ -71,6 +74,9 @@ function sanitize(value) {
  * @param {number} [params.C] Legacy zone capacity input.
  * @param {number} [params.kMax] Legacy max coefficient input.
  * @param {number} [params.N] Legacy patient count input.
+ * @param {Object} [thresholds] Custom bonus threshold tables.
+ * @param {Array<{limit:number,value:number}>} [thresholds.V_BONUS] Volume bonus table.
+ * @param {Array<{limit:number,value:number}>} [thresholds.A_BONUS] Acuity bonus table.
  * @returns {ComputeResult} Detailed computation results.
  */
 function compute({
@@ -92,7 +98,7 @@ function compute({
   C,
   kMax,
   N,
-}) {
+}, thresholds = DEFAULT_THRESHOLDS) {
   const c = sanitize(zoneCapacity ?? C);
   const k = sanitize(maxCoefficient ?? kMax);
   const sh = sanitize(shiftH);
@@ -105,10 +111,10 @@ function compute({
   const providedN = sanitize(patientCount ?? N);
   const totalN = providedN > 0 ? providedN : sN1 + sN2 + sN3 + sN4 + sN5;
   const ratio = c > 0 ? totalN / c : 0;
-  const V = getBonus(ratio, THRESHOLDS.V_BONUS);
+  const V = getBonus(ratio, thresholds.V_BONUS);
   const high = sN1 + sN2;
   const S = totalN > 0 ? high / totalN : 0;
-  const A = getBonus(S, THRESHOLDS.A_BONUS);
+  const A = getBonus(S, thresholds.A_BONUS);
   const K = Math.max(0, Math.min(1 + V + A, k));
 
   const finalDoc = Math.max(0, baseDoc * K);
@@ -195,4 +201,4 @@ function compute({
   };
 }
 
-export { compute };
+export { compute, DEFAULT_THRESHOLDS };
