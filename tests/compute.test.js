@@ -193,4 +193,35 @@ describe('compute core logic', () => {
     expect(result.final_rates.tech).toBeCloseTo(5 * result.K_zona);
     expect(result.shift_salary.tech).toBeCloseTo(result.final_rates.tech * 1);
   });
+
+  test('supports custom bonus thresholds', () => {
+    const custom = {
+      V_BONUS: [
+        { limit: 1, value: 0 },
+        { limit: Infinity, value: 0.2 },
+      ],
+      A_BONUS: [
+        { limit: 0.2, value: 0 },
+        { limit: Infinity, value: 0.3 },
+      ],
+    };
+    const result = compute({
+      zoneCapacity: 100,
+      patientCount: 150,
+      maxCoefficient: 2,
+      baseDoc: 10,
+      baseNurse: 10,
+      baseAssist: 10,
+      shiftH: 0,
+      monthH: 0,
+      n1: 30,
+      n2: 30,
+      n3: 90,
+      n4: 0,
+      n5: 0,
+    }, custom);
+    expect(result.V_bonus).toBe(0.2);
+    expect(result.A_bonus).toBe(0.3);
+    expect(result.K_zona).toBeCloseTo(1.5);
+  });
 });
