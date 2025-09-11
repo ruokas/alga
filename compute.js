@@ -1,3 +1,5 @@
+import { DEFAULT_KZ_CONFIG } from "./kz-config.js";
+
 // Default thresholds for volume (V) and acuity (A) bonuses.
 // Consumers can supply a custom object with the same shape
 // as the second argument to `compute` to override these values.
@@ -77,8 +79,11 @@ function sanitize(value) {
  * @param {Object} [thresholds] Custom bonus threshold tables.
  * @param {Array<{limit:number,value:number}>} [thresholds.V_BONUS] Volume bonus table.
  * @param {Array<{limit:number,value:number}>} [thresholds.A_BONUS] Acuity bonus table.
+ * @param {Object} [options] Additional settings.
+ * @param {("legacy"|"ladder")} [options.formula="legacy"] Select formula variant.
+ * @param {Object} [options.kzConfig] Config for ladder formula.
  * @returns {ComputeResult} Detailed computation results.
- */
+*/
 function compute({
   zoneCapacity,
   maxCoefficient,
@@ -98,7 +103,8 @@ function compute({
   C,
   kMax,
   N,
-}, thresholds = DEFAULT_THRESHOLDS) {
+}, thresholds = DEFAULT_THRESHOLDS, options = {}) {
+  const { formula = 'legacy', kzConfig = DEFAULT_KZ_CONFIG } = options;
   const c = sanitize(zoneCapacity ?? C);
   const k = sanitize(maxCoefficient ?? kMax);
   const sh = sanitize(shiftH);
@@ -111,10 +117,30 @@ function compute({
   const providedN = sanitize(patientCount ?? N);
   const totalN = providedN > 0 ? providedN : sN1 + sN2 + sN3 + sN4 + sN5;
   const ratio = c > 0 ? totalN / c : 0;
-  const V = getBonus(ratio, thresholds.V_BONUS);
   const high = sN1 + sN2;
   const S = totalN > 0 ? high / totalN : 0;
-  const A = getBonus(S, thresholds.A_BONUS);
+  let V = 0;
+  let A = 0;
+  if (formula === 'ladder') {
+    for (const step of kzConfig.volume_ladder) {
+      if (ratio <= step.r_max) {
+        V = step.bonus;
+        break;
+      }
+    }
+    if (S < kzConfig.low_S_threshold) {
+      V = Math.min(V, kzConfig.volume_cap_if_low_S);
+    }
+    for (const step of kzConfig.triage_ladder) {
+      if (S <= step.s_max) {
+        A = step.bonus;
+        break;
+      }
+    }
+  } else {
+    V = getBonus(ratio, thresholds.V_BONUS);
+    A = getBonus(S, thresholds.A_BONUS);
+  }
   const K = Math.max(0, Math.min(1 + V + A, k));
 
   const finalDoc = Math.max(0, baseDoc * K);
@@ -201,4 +227,4 @@ function compute({
   };
 }
 
-export { compute, DEFAULT_THRESHOLDS };
+export { compute, DEFAULT_THRESHOLDS, DEFAULT_KZ_CONFIG };
