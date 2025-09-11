@@ -1,16 +1,23 @@
 import { initThemeToggle } from '../theme.js';
 import { initZones } from '../zones.js';
 import { downloadCsv, downloadPdf } from '../downloads.js';
-import { compute as coreCompute } from '../compute.js';
+import { computeVariant, DEFAULT_KZ_CONFIG } from '../kz-variant.js';
 import { updateChart } from './chart/index.js';
 import { safeCreateChart } from './chart/utils.js';
 import { simulateEsiCounts } from '../simulation.js';
 import { getElements, bindEvents } from './ui/dom.js';
 import { saveRateTemplate, loadRateTemplate } from './storage.js';
 
+const LS_VARIANT_KEY = 'CALC_VARIANT';
+
 initThemeToggle();
 
 const els = getElements();
+
+const savedVariant = localStorage.getItem(LS_VARIANT_KEY);
+if (els.calcVariant && savedVariant) {
+  els.calcVariant.value = savedVariant;
+}
 
 const zoneApi = initZones(els);
 const { renderZoneSelect, setDefaultCapacity, openZoneModal, closeZoneModal, addZone, saveZonesAndClose, resetToDefaults, getZones } = zoneApi;
@@ -175,6 +182,7 @@ function validateInputs(){
 
 function compute(){
   validateInputs();
+  const variant = els.calcVariant ? els.calcVariant.value : 'legacy';
   const zoneCapacity = Math.max(0, toNum(els.zoneCapacity.value));
   const maxCoefficient = Math.min(2, Math.max(1, toNum(els.maxCoefficient.value)));
   const baseDoc = Math.max(0, toNum(els.baseRateDoc.value));
@@ -192,22 +200,84 @@ function compute(){
   if (els.linkPatientCount.checked){ patientCount = n1 + n2 + n3 + n4 + n5; els.patientCount.value = patientCount; els.patientCount.disabled = true; } else els.patientCount.disabled = false;
 
   const extraRates = getExtraRates();
-  const data = coreCompute({
-    zoneCapacity,
-    maxCoefficient,
-    baseDoc,
-    baseNurse,
-    baseAssist,
-    extraRates,
-    shiftH,
-    monthH,
-    n1,
-    n2,
-    n3,
-    n4,
-    n5,
-    patientCount,
-  });
+  let data;
+  if (variant === 'ladder') {
+    const cfg = DEFAULT_KZ_CONFIG;
+    const ratio = zoneCapacity > 0 ? patientCount / zoneCapacity : 0;
+    const S = patientCount > 0 ? (n1 + n2) / patientCount : 0;
+    let V = 0;
+    for (const step of cfg.volume_ladder) {
+      if (ratio <= step.r_max) { V = step.bonus; break; }
+    }
+    if (S < cfg.low_S_threshold) {
+      V = Math.min(V, cfg.volume_cap_if_low_S);
+    }
+    let A = 0;
+    for (const step of cfg.triage_ladder) {
+      if (S <= step.s_max) { A = step.bonus; break; }
+    }
+    const cfgCap = { ...(cfg.capacity_defaults[els.zone.value] || {}) };
+    cfgCap[els.shift.value] = zoneCapacity;
+    const cfg2 = { ...cfg, k_max: maxCoefficient, capacity_defaults: { ...cfg.capacity_defaults, [els.zone.value]: cfgCap } };
+    const kz = computeVariant('ladder', {
+      esi: [n1, n2, n3, n4, n5],
+      zone: els.zone.value,
+      shift: els.shift.value,
+      base_rate_eur_h: 1,
+      shift_hours: 1,
+      cfg: cfg2,
+    }).K_zona;
+    const K = kz;
+    const roles = { doctor: baseDoc, nurse: baseNurse, assistant: baseAssist, ...extraRates };
+    const base_rates = { ...roles };
+    const baseline_shift_salary = {};
+    const baseline_month_salary = {};
+    const final_rates = {};
+    const shift_salary = {};
+    const month_salary = {};
+    for (const [role, base] of Object.entries(roles)) {
+      const clean = Math.max(0, base);
+      final_rates[role] = clean * K;
+      shift_salary[role] = final_rates[role] * shiftH;
+      month_salary[role] = final_rates[role] * monthH;
+      baseline_shift_salary[role] = clean * shiftH;
+      baseline_month_salary[role] = clean * monthH;
+    }
+    data = {
+      patientCount,
+      ratio,
+      S,
+      V_bonus: V,
+      A_bonus: A,
+      maxCoefficient,
+      K_zona: K,
+      shift_hours: shiftH,
+      month_hours: monthH,
+      base_rates,
+      baseline_shift_salary,
+      baseline_month_salary,
+      final_rates,
+      shift_salary,
+      month_salary,
+    };
+  } else {
+    data = computeVariant('legacy', {
+      zoneCapacity,
+      maxCoefficient,
+      baseDoc,
+      baseNurse,
+      baseAssist,
+      extraRates,
+      shiftH,
+      monthH,
+      n1,
+      n2,
+      n3,
+      n4,
+      n5,
+      patientCount,
+    });
+  }
 
   els.ratio.textContent = fmt(data.ratio);
   els.sShare.textContent = fmt(data.S);
@@ -332,6 +402,10 @@ function onLoadRateTemplate(){
 
 function resetAll(){
   els.date.value = ''; els.shift.value = 'D';
+  if (els.calcVariant) {
+    const sv = localStorage.getItem(LS_VARIANT_KEY);
+    els.calcVariant.value = sv || 'legacy';
+  }
   renderZoneSelect(false);
   els.patientCount.value = 0; els.maxCoefficient.value = 1.30; els.linkPatientCount.checked = true;
   els.shiftHours.value = 12; els.monthHours.value = 0;
@@ -409,6 +483,13 @@ bindEvents(els, {
   goToBudgetPlanner,
   addRateRole,
 });
+
+if (els.calcVariant) {
+  els.calcVariant.addEventListener('change', () => {
+    try { localStorage.setItem(LS_VARIANT_KEY, els.calcVariant.value); } catch {}
+    compute();
+  });
+}
 
 renderZoneSelect(false);
 resetAll();
