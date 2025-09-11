@@ -4,6 +4,7 @@ import { downloadCsv, downloadPdf } from './downloads.js';
 import { compute as coreCompute } from './compute.js';
 import { updateChart } from './chart-utils.js';
 import { simulateEsiCounts } from './simulation.js';
+import { DEFAULT_KZ_CONFIG } from './kz-config.js';
 
 const LS_RATE_KEY = 'ED_RATE_TEMPLATE_V2';
 
@@ -14,6 +15,7 @@ const els = {
   zoneCapacity: document.getElementById('zoneCapacity') || document.getElementById('capacity'),
   patientCount: document.getElementById('patientCount') || document.getElementById('N'),
   formula: document.getElementById('formula'),
+  formulaInfo: document.getElementById('formulaInfo'),
   maxCoefficient: document.getElementById('maxCoefficient') || document.getElementById('kmax'),
   shiftHours: document.getElementById('shiftHours'),
   monthHours: document.getElementById('monthHours'),
@@ -277,6 +279,44 @@ function validateInputs(){
   });
 }
 
+/**
+ * Rodoma informacija apie pasirinktą formulę.
+ * @param {string} formula "legacy" arba "ladder"
+ */
+function renderFormulaInfo(formula){
+  const el = els.formulaInfo;
+  if (!el) return;
+  if (formula === 'legacy') {
+    el.innerHTML = `
+      <table class="table">
+        <tbody>
+          <tr><td>V<sub>priedas</sub> (apkrova)</td><td>≤0.8 → 0.00 · (0.8–1.0] → 0.05 · (1.0–1.25] → 0.10 · &gt;1.25 → 0.15</td></tr>
+          <tr><td>A<sub>priedas</sub> (triažas)</td><td>≤10% → 0.00 · (10–20]% → 0.05 · (20–30]% → 0.10 · &gt;30% → 0.15</td></tr>
+        </tbody>
+      </table>`;
+  } else if (formula === 'ladder') {
+    const vRows = DEFAULT_KZ_CONFIG.volume_ladder
+      .map(l => `<tr><td>≤ ${l.r_max.toFixed(2)}</td><td>+${l.bonus.toFixed(2)}</td></tr>`)
+      .join('');
+    const sRows = DEFAULT_KZ_CONFIG.triage_ladder
+      .map(l => `<tr><td>≤ ${(l.s_max*100).toFixed(0)}%</td><td>+${l.bonus.toFixed(2)}</td></tr>`)
+      .join('');
+    el.innerHTML = `
+      <div class="row">
+        <table class="table">
+          <thead><tr><th>R</th><th>V</th></tr></thead>
+          <tbody>${vRows}</tbody>
+        </table>
+        <table class="table">
+          <thead><tr><th>S</th><th>A</th></tr></thead>
+          <tbody>${sRows}</tbody>
+        </table>
+      </div>`;
+  } else {
+    el.innerHTML = '';
+  }
+}
+
 function compute(){
   validateInputs();
   const zoneCapacity = Math.max(0, toNum(els.zoneCapacity.value));
@@ -373,6 +413,8 @@ function compute(){
       els.rateTbody.appendChild(tr);
     }
   }
+
+  renderFormulaInfo(formula);
 
   return {
     date: els.date.value || null,
@@ -502,6 +544,9 @@ function handleShiftChange(){
 });
 els.shift.addEventListener('change', handleShiftChange);
 els.zone.addEventListener('change', setDefaultCapacity);
+if (els.formula) {
+  els.formula.addEventListener('change', () => renderFormulaInfo(els.formula.value));
+}
 els.simulateEsi.addEventListener('click', (e)=>{ e.preventDefault(); simulateEsi(); });
 // simulation handlers removed
 els.reset.addEventListener('click', (e)=>{ e.preventDefault(); resetAll(); });

@@ -6,6 +6,9 @@ Taip pat galite įvesti pamainos trukmę ir mėnesio valandų skaičių, kad pam
 
 Skaičiuoklėje galima perjungti formulę tarp „Triažas + apkrova“ ir „Laiptelinės“ versijų.
 
+* **Triažas + apkrova (legacy)** – du priedai apskaičiuojami pagal fiksuotas apkrovos ir triažo ribas.
+* **Laiptelinė (ladder)** – priedai nustatomi iš `volume_ladder` ir `triage_ladder` lentelių.
+
 Biudžeto planavimo įrankyje galima nurodyti minimalų gydytojų, slaugytojų ir padėjėjų skaičių. Šios reikšmės (`minDoctor`, `minNurse`, `minAssistant`) naudojamos optimizacijos metu, kad siūlomas personalo skaičius niekada nenukristų žemiau nustatytų ribų.
 
 ## Vykdymas vietoje
