@@ -12,7 +12,6 @@ export function getElements() {
     baseRateNurse: document.getElementById('baseRateNurse'),
     baseRateAssist: document.getElementById('baseRateAssist'),
     linkPatientCount: document.getElementById('linkPatientCount') || document.getElementById('linkN'),
-    calcVariant: document.getElementById('calcVariant'),
     esi1: document.getElementById('esi1'),
     esi2: document.getElementById('esi2'),
     esi3: document.getElementById('esi3'),
