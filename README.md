@@ -4,6 +4,8 @@
 
 Taip pat galite įvesti pamainos trukmę ir mėnesio valandų skaičių, kad pamatytumėte numatomą uždarbį už pamainą ar mėnesį.
 
+Skaičiuoklėje galima perjungti formulę tarp „Triažas + apkrova“ ir „Laiptelinės“ versijų.
+
 Biudžeto planavimo įrankyje galima nurodyti minimalų gydytojų, slaugytojų ir padėjėjų skaičių. Šios reikšmės (`minDoctor`, `minNurse`, `minAssistant`) naudojamos optimizacijos metu, kad siūlomas personalo skaičius niekada nenukristų žemiau nustatytų ribų.
 
 ## Vykdymas vietoje

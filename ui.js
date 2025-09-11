@@ -13,6 +13,7 @@ const els = {
   zone: document.getElementById('zone'),
   zoneCapacity: document.getElementById('zoneCapacity') || document.getElementById('capacity'),
   patientCount: document.getElementById('patientCount') || document.getElementById('N'),
+  formula: document.getElementById('formula'),
   maxCoefficient: document.getElementById('maxCoefficient') || document.getElementById('kmax'),
   shiftHours: document.getElementById('shiftHours'),
   monthHours: document.getElementById('monthHours'),
@@ -294,6 +295,7 @@ function compute(){
   let patientCount = Math.max(0, toNum(els.patientCount.value));
   if (els.linkPatientCount.checked){ patientCount = n1 + n2 + n3 + n4 + n5; els.patientCount.value = patientCount; els.patientCount.disabled = true; } else els.patientCount.disabled = false;
 
+  const formula = els.formula ? els.formula.value : 'legacy';
   const extraRates = getExtraRates();
   const data = coreCompute({
     zoneCapacity,
@@ -310,7 +312,7 @@ function compute(){
     n4,
     n5,
     patientCount,
-  });
+  }, undefined, { formula });
 
   els.ratio.textContent = fmt(data.ratio);
   els.sShare.textContent = fmt(data.S);
@@ -377,6 +379,7 @@ function compute(){
     shift: els.shift.value,
     zone: els.zone.value,
     zone_label: (getZones().find(z=>z.id===els.zone.value)?.name) || els.zone.value,
+    formula,
     zoneCapacity,
     ...data,
   };
@@ -441,6 +444,7 @@ function handleShiftChange(){
   els.date.value = ''; els.shift.value = 'D';
   renderZoneSelect(false);
   els.patientCount.value = 0; els.maxCoefficient.value = 1.30; els.linkPatientCount.checked = true;
+  if (els.formula) els.formula.value = 'legacy';
   els.shiftHours.value = 12; els.monthHours.value = 0;
   els.esi1.value = 0; els.esi2.value = 0; els.esi3.value = 0; els.esi4.value = 0; els.esi5.value = 0;
   if (els.extraRoles) els.extraRoles.innerHTML = '';
@@ -491,7 +495,7 @@ function handleShiftChange(){
 
 // Events
 ['input','change'].forEach(evt => {
-  ['date','zone','zoneCapacity','patientCount','maxCoefficient','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkPatientCount','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
+  ['date','zone','zoneCapacity','patientCount','formula','maxCoefficient','shiftHours','monthHours','baseRateDoc','baseRateNurse','baseRateAssist','linkPatientCount','esi1','esi2','esi3','esi4','esi5'].forEach(id => {
     const el = els[id];
     if (el) el.addEventListener(evt, compute);
   });
