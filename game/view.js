@@ -10,20 +10,36 @@ export function initView({ onStart, onSubmit }) {
 
   startBtn?.addEventListener('click', () => {
     onStart();
-    render();
+    showStart();
   });
 
   submitBtn?.addEventListener('click', () => {
     onSubmit(answerInput?.value || '');
-    render();
   });
 }
 
-/** Atvaizduoja rezultatą ekrane */
-export function render() {
+/** Rodo pradžios pranešimą */
+export function showStart() {
   const result = document.getElementById('result');
   if (result) {
-    result.textContent = `Taškai: ${state.score}`;
+    result.textContent = 'Per 60 s pasiek K_zona ≥ 1.1 su mažiausiais tarifais';
+  }
+}
+
+/**
+ * Atvaizduoja rezultatą ir siūlo kitą raundą
+ * @param {{K_zona:number,cost:number,score:number,onNext:Function}} param0
+ */
+export function showResult({ K_zona, cost, score, onNext }) {
+  const result = document.getElementById('result');
+  if (result) {
+    result.innerHTML = `K_zona: ${K_zona.toFixed(2)} | Sąnaudos: ${cost} | Taškai: ${score}`;
+    const btn = document.createElement('button');
+    btn.id = 'next';
+    btn.textContent = 'Kitas raundas';
+    btn.addEventListener('click', onNext);
+    result.appendChild(document.createElement('br'));
+    result.appendChild(btn);
   }
   renderHighScores();
 }

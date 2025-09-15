@@ -6,7 +6,7 @@ Paprasta struktūra su būsenos mašina ir DOM atvaizdavimu. Lygiai apibrėžti 
 
 1. Į HTML įtrauk `<script type="module" src="./game/main.js"></script>`.
 2. HTML turėk elementus: `#start`, `#submit`, `#answer`, `#result`, `#highscores` (ul ar ol).
-3. `onStart` kviečia `engine.startRound(0)` ir parenka pirmo lygio konfigūraciją.
+3. Paspaudus **Start** rodoma žinutė „Per 60 s pasiek K_zona ≥ 1.1 su mažiausiais tarifais“ ir startuojamas laikmatis.
 
 ## Smoke test
 
@@ -14,5 +14,5 @@ Paprasta struktūra su būsenos mašina ir DOM atvaizdavimu. Lygiai apibrėžti 
 - Spausk **Start**.
 - Naršyklės konsolėje `game.state.roundData.correct` parodys teisingą atsakymą.
 - Įvesk šį skaičių ir spausk **Submit**.
-- Rezultatas turėtų rodyti surinktus taškus, pvz., `Taškai: 10` jei atsakyta greitai.
+- Pasibaigus laikui ar pateikus atsakymą rodomas `K_zona`, sąnaudos ir taškai, siūlomas kitas raundas.
 - `#highscores` sąraše matysis geriausi rezultatai (top 5).
