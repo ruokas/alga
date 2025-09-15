@@ -154,12 +154,13 @@ if (els.payCanvas) {
         labels: [],
         datasets: [
           { label: 'Bazinis', data: [], backgroundColor: borderColor },
-          { label: 'Pakoreguotas', data: [], backgroundColor: accent }
+          { label: 'Pakoreguotas', data: [], backgroundColor: accent },
+          { label: 'Priedas', data: [], backgroundColor: danger }
         ]
       },
       options: {
-        plugins: { legend: { display: false }, tooltip: { enabled: false } },
-        scales: { x: { display: false }, y: { display: false } },
+        plugins: { legend: { display: true }, tooltip: { enabled: false } },
+        scales: { x: { display: false, stacked: true }, y: { display: false, stacked: true } },
         maintainAspectRatio: false,
         responsive: true,
         datasets: { barPercentage: 0.6, categoryPercentage: 0.5 }
@@ -292,6 +293,7 @@ function compute(){
     chart.data.labels = roles.map(r => ROLE_LABELS[r] || r);
     chart.data.datasets[0].data = roles.map(r => data.baseline_shift_salary[r]);
     chart.data.datasets[1].data = roles.map(r => data.shift_salary[r]);
+    chart.data.datasets[2].data = roles.map(r => data.shift_salary[r] - data.baseline_shift_salary[r]);
     chart.update();
   });
 
