@@ -1,52 +1,68 @@
-import { Engine } from './engine.js';
-import { initView, showResult, renderHighScores } from './view.js';
+import { DirectorGameEngine } from './engine.js';
+import { initView } from './view.js';
 import { state } from './state.js';
+import { levels } from './levels.js';
 
-const engine = new Engine({
-  onTimeout: handleResult,
-});
-// eksponuojama debug'ui konsolėje
-if (typeof window !== 'undefined') {
-  window.game = { state, engine };
-}
+let engine;
+let view;
 
-function calculateOutcome() {
-  const data = state.roundData;
-  if (!data) return { K_zona: 0, cost: 0 };
-  const K_zona = data.config.capacity
-    ? data.esi.total / data.config.capacity
-    : 0;
-  const cost = data.esi.total;
-  return { K_zona, cost };
-}
+function boot() {
+  const canvas = document.getElementById('game-canvas');
+  if (!canvas) {
+    console.error('Nerastas žaidimo drobės elementas (#game-canvas)');
+    return;
+  }
 
-function handleResult() {
-  engine.showResult();
-  const { K_zona, cost } = calculateOutcome();
-  showResult({
-    K_zona,
-    cost,
-    score: state.score,
-    onNext: () => engine.startRound(0),
-  });
-}
+  state.loadHighScores();
 
-function startGame() {
-  engine.init();
-  initView({
-    onStart: () => engine.startRound(0),
-    onSubmit: (answer) => {
-      engine.submit(answer);
-      handleResult();
+  engine = new DirectorGameEngine(canvas, {
+    onUpdate: (payload) => view?.updateHUD(payload),
+    onEnd: (payload) => {
+      view?.showEnd(payload);
+      view?.renderHighScores(state.highScores);
     },
   });
-  renderHighScores();
+
+  view = initView({
+    levels,
+    onStart: (levelIndex) => {
+      engine.start(levelIndex);
+      view.updateLevelDescription(levelIndex);
+      view.renderHighScores(state.highScores);
+    },
+    onRestart: (levelIndex) => {
+      engine.start(levelIndex);
+      view.updateLevelDescription(levelIndex);
+      view.renderHighScores(state.highScores);
+    },
+    onClearScores: () => {
+      state.clearHighScores();
+    },
+  });
+
+  view.toggleRunningState(false);
+  view.renderHighScores(state.highScores);
+  view.updateHUD({
+    score: 0,
+    suspicion: 0,
+    suspicionMax: levels[0].suspicionMax,
+    timeLeft: levels[0].timeLimit,
+    directorMode: 'distracted',
+  });
 }
 
-// automatiškai inicijuoja žaidimą
-document.addEventListener('DOMContentLoaded', () => {
-  startGame();
-});
+document.addEventListener('DOMContentLoaded', boot);
 
-// eksportuojama testams ar plėtimui
-export { startGame, state, engine };
+if (typeof window !== 'undefined') {
+  window.directorGame = {
+    get state() {
+      return state;
+    },
+    start(levelIndex = 0) {
+      engine?.start(levelIndex);
+    },
+    levels,
+  };
+}
+
+export { boot, state };

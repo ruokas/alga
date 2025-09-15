@@ -1,39 +1,60 @@
-/** LocalStorage raktas geriausiems rezultatams */
-export const GAME_HIGHSCORES = 'GAME_HIGHSCORES';
+export const GAME_HIGHSCORES = 'DIRECTOR_HEIST_HIGHSCORES';
 
 export const state = {
-  roundData: null, // dabartinio raundo duomenys
-  score: 0, // surinkti taškai
-  highScores: [], // geriausi rezultatai
-  startTime: 0, // raundo pradžios laikas
+  running: false,
+  levelIndex: 0,
+  score: 0,
+  suspicion: 0,
+  suspicionMax: 100,
+  timeLeft: 0,
+  lastResult: null,
+  highScores: [],
 
-  /** Perskaito rekordus iš LocalStorage */
+  resetForLevel(level) {
+    this.running = true;
+    this.score = 0;
+    this.suspicion = 0;
+    this.suspicionMax = level.suspicionMax;
+    this.timeLeft = level.timeLimit;
+    this.lastResult = null;
+  },
+
   loadHighScores() {
     if (typeof localStorage === 'undefined') {
       this.highScores = [];
       return;
     }
-
     try {
       const saved = localStorage.getItem(GAME_HIGHSCORES);
       this.highScores = saved ? JSON.parse(saved) : [];
-    } catch {
+    } catch (error) {
+      console.error('Nepavyko nuskaityti rekordų', error);
       this.highScores = [];
     }
   },
 
-  /**
-   * Išsaugo rezultatą LocalStorage.
-   * @param {number} score Gauti taškai
-   */
   saveHighScore(score) {
+    const cleanScore = Math.max(0, Math.round(score));
+    if (!Number.isFinite(cleanScore)) return;
+    const next = [...this.highScores, cleanScore]
+      .sort((a, b) => b - a)
+      .slice(0, 5);
+    this.highScores = next;
     if (typeof localStorage === 'undefined') return;
-    const scores = [...this.highScores, score].sort((a, b) => b - a).slice(0, 5);
-    this.highScores = scores;
     try {
-      localStorage.setItem(GAME_HIGHSCORES, JSON.stringify(scores));
-    } catch {
-      // saugojimo klaidos nutylimos
+      localStorage.setItem(GAME_HIGHSCORES, JSON.stringify(next));
+    } catch (error) {
+      console.warn('Nepavyko išsaugoti rekordų', error);
+    }
+  },
+
+  clearHighScores() {
+    this.highScores = [];
+    if (typeof localStorage === 'undefined') return;
+    try {
+      localStorage.removeItem(GAME_HIGHSCORES);
+    } catch (error) {
+      console.warn('Nepavyko ištrinti rekordų', error);
     }
   },
 };
