@@ -6,8 +6,10 @@ import { levels } from './levels.js';
  * Paprasta būsenos mašina: init -> startRound -> submit -> showResult
  */
 export class Engine {
-  constructor() {
+  constructor({ onTimeout } = {}) {
     this.current = 'init';
+    this.onTimeout = onTimeout;
+    this.timerId = null;
   }
 
   /** Inicializuoja žaidimą */
@@ -16,6 +18,10 @@ export class Engine {
     state.score = 0;
     state.loadHighScores();
     this.current = 'init';
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+      this.timerId = null;
+    }
   }
 
   /**
@@ -28,6 +34,15 @@ export class Engine {
     state.roundData = { config, esi, correct: String(esi.total) };
     state.startTime = Date.now();
     this.current = 'startRound';
+    if (this.timerId) clearTimeout(this.timerId);
+    if (config.timeLimit) {
+      this.timerId = setTimeout(() => {
+        this.current = 'timeout';
+        if (typeof this.onTimeout === 'function') {
+          this.onTimeout();
+        }
+      }, config.timeLimit * 1000);
+    }
   }
 
   /**
@@ -44,6 +59,10 @@ export class Engine {
 
   /** Pateikia atsakymą */
   submit(answer) {
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+      this.timerId = null;
+    }
     const timeMs = Date.now() - state.startTime;
     const points = this.checkAnswer(answer, timeMs);
     state.score += points;
@@ -53,6 +72,10 @@ export class Engine {
 
   /** Parodo rezultatą ir išsaugo rekordus */
   showResult() {
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+      this.timerId = null;
+    }
     state.saveHighScore(state.score);
     this.current = 'showResult';
     return state.score;
