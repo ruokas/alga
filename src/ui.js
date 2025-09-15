@@ -23,6 +23,60 @@ const accent2 = style.getPropertyValue('--accent-2').trim();
 const muted = style.getPropertyValue('--muted').trim();
 const textColor = style.getPropertyValue('--text').trim();
 
+// Draw threshold arcs for the ratio gauge
+const thresholdPlugin = {
+  id: 'thresholdPlugin',
+  afterDraw(chart) {
+    const meta = chart.getDatasetMeta(0);
+    if (!meta?.data?.length) return;
+    const arc = meta.data[0];
+    const r = arc.outerRadius + 4;
+    const max = 1.25;
+    const rotation = (chart.options.rotation || 0) * (Math.PI / 180);
+    const circumference = (chart.options.circumference || 0) * (Math.PI / 180);
+    const ranges = [
+      { limit: 0.8, color: accent2 },
+      { limit: 1.0, color: accent },
+      { limit: 1.25, color: danger }
+    ];
+    const { ctx } = chart;
+    ctx.save();
+    ctx.lineWidth = 6;
+    let start = rotation;
+    ranges.forEach(({ limit, color }) => {
+      const end = rotation + (limit / max) * circumference;
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.arc(arc.x, arc.y, r, start, end);
+      ctx.stroke();
+      start = end;
+    });
+    ctx.restore();
+  }
+};
+
+// Vertical guides for the S chart
+const sGuidePlugin = {
+  id: 'sGuides',
+  afterDraw(chart) {
+    const { ctx, chartArea } = chart;
+    if (!chartArea) return;
+    const positions = [0.1, 0.2, 0.3];
+    const { left, top, bottom, width } = chartArea;
+    ctx.save();
+    ctx.strokeStyle = borderColor;
+    ctx.setLineDash([4, 2]);
+    positions.forEach(p => {
+      const x = left + width * p;
+      ctx.beginPath();
+      ctx.moveTo(x, top);
+      ctx.lineTo(x, bottom);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+};
+
 const ROLE_LABELS = { doctor: 'Gydytojas', nurse: 'Slaugytojas', assistant: 'Padėjėjas' };
 const charts = {};
 if (els.ratioCanvas) {
@@ -31,7 +85,7 @@ if (els.ratioCanvas) {
       type: 'doughnut',
       data: {
         labels: ['Pacientų skaičius', 'Likutis'],
-        datasets: [{ data: [0, 1], backgroundColor: [accent, borderColor], borderWidth: 0 }]
+        datasets: [{ data: [0, 1.25], backgroundColor: [accent, borderColor], borderWidth: 0 }]
       },
       options: {
         rotation: -90,
@@ -40,7 +94,8 @@ if (els.ratioCanvas) {
         plugins: { legend: { display: false }, tooltip: { enabled: false } },
         maintainAspectRatio: false,
         responsive: true
-      }
+      },
+      plugins: [thresholdPlugin]
     }, 'ratio');
   } else {
     console.warn('Chart.js not available: ratio chart skipped');
@@ -59,7 +114,8 @@ if (els.sCanvas) {
         scales: { x: { display: false }, y: { display: false } },
         maintainAspectRatio: false,
         responsive: true
-      }
+      },
+      plugins: [sGuidePlugin]
     }, 's');
   } else {
     console.warn('Chart.js not available: s chart skipped');
@@ -217,9 +273,11 @@ function compute(){
   els.kZona.textContent = data.K_zona.toFixed(2);
 
   updateChart(charts.ratio, chart => {
+    const maxCap = zoneCapacity * 1.25;
+    const filled = Math.min(data.patientCount, maxCap);
     chart.data.datasets[0].data = [
-      Math.min(data.patientCount, zoneCapacity),
-      Math.max(zoneCapacity - Math.min(data.patientCount, zoneCapacity), 0)
+      filled,
+      Math.max(maxCap - filled, 0)
     ];
     chart.update();
   });
