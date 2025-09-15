@@ -25,4 +25,17 @@ export function render() {
   if (result) {
     result.textContent = `Taškai: ${state.score}`;
   }
+  renderHighScores();
+}
+
+/** Rodo top 5 rezultatų sąrašą */
+export function renderHighScores() {
+  const list = document.getElementById('highscores');
+  if (!list) return;
+  list.innerHTML = '';
+  state.highScores.slice(0, 5).forEach((score, i) => {
+    const li = document.createElement('li');
+    li.textContent = `${i + 1}. ${score}`;
+    list.appendChild(li);
+  });
 }

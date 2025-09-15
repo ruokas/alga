@@ -1,5 +1,5 @@
 import { Engine } from './engine.js';
-import { initView } from './view.js';
+import { initView, render } from './view.js';
 import { state } from './state.js';
 
 const engine = new Engine();
@@ -17,6 +17,7 @@ function startGame() {
       engine.showResult();
     },
   });
+  render();
 }
 
 // automatiškai inicijuoja žaidimą

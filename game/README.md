@@ -5,7 +5,7 @@ Paprasta struktūra su būsenos mašina ir DOM atvaizdavimu. Lygiai apibrėžti 
 ## Naudojimas
 
 1. Į HTML įtrauk `<script type="module" src="./game/main.js"></script>`.
-2. HTML turėk elementus: `#start`, `#submit`, `#answer`, `#result`.
+2. HTML turėk elementus: `#start`, `#submit`, `#answer`, `#result`, `#highscores` (ul ar ol).
 3. `onStart` kviečia `engine.startRound(0)` ir parenka pirmo lygio konfigūraciją.
 
 ## Smoke test
@@ -14,4 +14,5 @@ Paprasta struktūra su būsenos mašina ir DOM atvaizdavimu. Lygiai apibrėžti 
 - Spausk **Start**.
 - Naršyklės konsolėje `game.state.roundData.correct` parodys teisingą atsakymą.
 - Įvesk šį skaičių ir spausk **Submit**.
-- Rezultatas turėtų rodyti `Taškai: 1`.
+- Rezultatas turėtų rodyti surinktus taškus, pvz., `Taškai: 10` jei atsakyta greitai.
+- `#highscores` sąraše matysis geriausi rezultatai (top 5).
