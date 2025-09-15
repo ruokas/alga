@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skubiosios pagalbos žaidimo simuliatorius</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.5;
+    }
+
+    body {
+      margin: 0;
+      padding: 2rem 1.5rem 3rem;
+      display: flex;
+      justify-content: center;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+
+    main {
+      width: min(640px, 100%);
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      letter-spacing: 0.01em;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f172a;
+      background: linear-gradient(135deg, #38bdf8, #22d3ee);
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+
+    button:focus-visible {
+      outline: 3px solid #22d3ee;
+      outline-offset: 3px;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(56, 189, 248, 0.35);
+    }
+
+    label {
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.6);
+      color: inherit;
+      font-size: 1rem;
+    }
+
+    input:focus-visible {
+      outline: 3px solid rgba(56, 189, 248, 0.6);
+      outline-offset: 2px;
+    }
+
+    .field {
+      margin-bottom: 1.5rem;
+    }
+
+    #result {
+      min-height: 3rem;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(15, 23, 42, 0.45);
+      margin-bottom: 2rem;
+    }
+
+    #shortcuts {
+      font-size: 0.9rem;
+      color: rgba(226, 232, 240, 0.85);
+      margin-top: -1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    ol#highscores {
+      margin: 0;
+      padding-left: 1.25rem;
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 1.5rem 1rem 2.5rem;
+      }
+
+      main {
+        padding: 1.5rem;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Skubiosios pagalbos resursų žaidimas</h1>
+      <p>Greitai paskirstyk resursus ir pasiek <strong>K_zona ≥ 1.1</strong> per 60&nbsp;s.</p>
+    </header>
+
+    <section class="actions" aria-label="Žaidimo valdymas">
+      <button id="start" type="button">Pradėti</button>
+      <button id="submit" type="button">Pateikti</button>
+    </section>
+
+    <section class="field" aria-label="Atsakymo įvestis">
+      <label for="answer">Tavo sprendimas (pvz., 14 gyd. valandų)</label>
+      <input
+        id="answer"
+        name="answer"
+        type="text"
+        inputmode="decimal"
+        autocomplete="off"
+        placeholder="Įvesk skaičių"
+        aria-describedby="shortcuts"
+      />
+      <p id="shortcuts">Spustelėk <kbd>Ctrl</kbd> + <kbd>Enter</kbd>, kad pateiktum atsakymą klaviatūra.</p>
+    </section>
+
+    <section id="result" role="status" aria-live="polite" aria-atomic="true">
+      Paspausk „Pradėti“, kad sužinotum užduotį.
+    </section>
+
+    <section aria-labelledby="highscores-title">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+        <h2 id="highscores-title">Geriausi rezultatai</h2>
+        <small>Duomenys saugomi tik tavo naršyklėje.</small>
+      </div>
+      <ol id="highscores" aria-live="polite" aria-atomic="false">
+        <li>Nėra rezultatų – pradėk žaidimą!</li>
+      </ol>
+    </section>
+  </main>
+
+  <script>
+    // Klaviatūros šauktinis: Ctrl+Enter arba Cmd+Enter pateikia atsakymą
+    document.addEventListener('DOMContentLoaded', () => {
+      const answerInput = document.getElementById('answer');
+      const submitButton = document.getElementById('submit');
+      if (answerInput && submitButton) {
+        answerInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+            event.preventDefault();
+            submitButton.click();
+          }
+        });
+      }
+    });
+  </script>
+  <script type="module" src="./game/main.js"></script>
+</body>
+</html>
