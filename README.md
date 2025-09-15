@@ -17,6 +17,28 @@ Biudžeto planavimo įrankyje galima nurodyti minimalų gydytojų, slaugytojų i
 2. Atidarykite `index.html` modernioje naršyklėje.
 3. Užpildykite formą ir pamatysite apskaičiuotus koeficientus bei galutinius tarifus.
 
+## Mini žaidimo modulis
+
+Mini žaidimas padeda komandos nariams greitai praktikuoti triažo scenarijus. Žemiau pateiktas HTML fragmentas įterpia modulį į bet kurį puslapį:
+
+```html
+<!-- Mini žaidimo konteineris; prireikus atnaujinkite klasę ir stilius -->
+<section id="mini-game" class="game-wrapper">
+  <h2>Mini žaidimas: Triažo treniruotė</h2>
+  <div id="game-root" aria-live="polite"></div>
+  <!-- Įkeliamas žaidimo modulis iš /game katalogo -->
+  <script type="module" src="./game/main.js"></script>
+</section>
+```
+
+Naudojimo žingsniai:
+
+1. Įtraukite pateiktą fragmentą į savo HTML puslapį arba nukopijuokite jį į atskirą projektą.
+2. Įsitikinkite, kad `game` katalogas iš šios saugyklos yra pasiekiamas tame pačiame kelyje kaip ir puslapis, kuriame rodote modulį.
+3. Atidarykite puslapį naršyklėje, spauskite **Start** ir sekite ekrane rodomas instrukcijas.
+
+Galite tiesiogiai paleisti žaidimą atidarę `game.html` arba integruoti aukščiau pateiktą skriptą į kitą jūsų skyriui skirtą puslapį.
+
 ## Priklausomybės
 
 Projektas naudoja [Chart.js](https://www.chartjs.org/) iš CDN ir fiksuoja versiją **4.4.0**. Atnaujinkite versiją atsakingai, kad išvengtumėte netikėtų pokyčių.
