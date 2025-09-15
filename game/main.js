@@ -3,11 +3,15 @@ import { initView } from './view.js';
 import { state } from './state.js';
 
 const engine = new Engine();
+// eksponuojama debug'ui konsolėje
+if (typeof window !== 'undefined') {
+  window.game = { state, engine };
+}
 
 function startGame() {
   engine.init();
   initView({
-    onStart: () => engine.startRound({ correct: '42' }),
+    onStart: () => engine.startRound(0),
     onSubmit: (answer) => {
       engine.submit(answer);
       engine.showResult();

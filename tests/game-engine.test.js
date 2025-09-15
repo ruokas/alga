@@ -7,10 +7,10 @@ describe('Engine state machine', () => {
     engine.init();
     expect(engine.current).toBe('init');
 
-    engine.startRound({ correct: '42' });
+    engine.startRound(0);
     expect(engine.current).toBe('startRound');
 
-    engine.submit('42');
+    engine.submit(state.roundData.correct);
     expect(engine.current).toBe('submit');
 
     const result = engine.showResult();
