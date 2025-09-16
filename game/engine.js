@@ -28,6 +28,7 @@ export class DirectorGameEngine {
     this.player = this.createPlayer();
     this.director = this.createDirector();
     this.scoreFlash = 0;
+    this.bgOffset = 0;
     this._boundLoop = this.loop.bind(this);
     this.attachInput();
   }
@@ -74,6 +75,10 @@ export class DirectorGameEngine {
 
     window.addEventListener('blur', () => {
       this.keys.clear();
+    });
+
+    window.addEventListener('resize', () => {
+      this.bgOffset = 0;
     });
   }
 
@@ -141,6 +146,8 @@ export class DirectorGameEngine {
     if (state.suspicion >= config.suspicionMax) {
       this.finish('caught');
     }
+
+    this.bgOffset = (this.bgOffset + dt * 20) % 40;
   }
 
   updatePlayer(dt) {
@@ -293,6 +300,9 @@ export class DirectorGameEngine {
 
     ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
     ctx.lineWidth = 1;
+
+    ctx.save();
+    ctx.translate(0, this.bgOffset);
     for (let y = 40; y < this.canvas.height; y += 40) {
       ctx.beginPath();
       ctx.moveTo(0, y);
@@ -305,6 +315,7 @@ export class DirectorGameEngine {
       ctx.lineTo(x, this.canvas.height);
       ctx.stroke();
     }
+    ctx.restore();
   }
 
   drawTokens(ctx) {
