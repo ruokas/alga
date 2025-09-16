@@ -24,7 +24,7 @@ game/strings.js     – visos LT tekstinės eilutės
    - **Netikėtas auditas** – įtarimas kyla žaibiškai, reikia daugiau manevrų.
    - **Ministerijos inspektorius** – galutinis iššūkis su aukščiausiais įkainiais.
 3. Spausk **„Pradėti misiją“**. Direktorius pradeda žiūrėti/nusisukti.
-4. Naudok **rodyklių arba WASD klavišus** judėti, kai direktorius išsiblaškęs. Kai žiūri – sustok.
+4. Naudok **rodyklių arba WASD klavišus** judėti, kai direktorius išsiblaškęs. Kai žiūri – sustok. Lietimui po drobe automatiškai pasirodo virtualios rodyklės – paspausk ir laikyk kryptį.
 5. Rink žalius grantų aplankus. Laikmatis parodo, kiek dar turi laiko.
 6. Kai laikas baigsis arba direktorius pagaus – gausi rezultatą, o sumos įrašomos į vietinius rekordus.
 
@@ -32,9 +32,16 @@ game/strings.js     – visos LT tekstinės eilutės
 
 - [ ] Atidaryta `game.html`, matomas Canvas, HUD ir valdikliai.
 - [ ] Pasirinktas lygis, paspausta „Pradėti misiją“ – drobėje juda personažas, atsiranda žali aplankai.
+- [ ] Naršyklėje įjungtas „Device Toolbar“ (ar realiame planšetės/telefono įrenginyje) – po drobe pasirodo lietimo valdiklių kryžiukas, laikant kryptį personažas juda be klaviatūros.
 - [ ] Įtarimo juosta kinta priklausomai nuo judėjimo, laikmatis skaičiuoja žemyn.
 - [ ] Pasiekus 0 s rodomas rezultatų perdangos langas ir įrašomas rekordas.
 - [ ] Mygtukas „Išvalyti rekordus“ ištrina vietinius rezultatus.
+
+## Mobilus naudojimas
+
+- Virtualios rodyklės aktyvuojamos tik kai įrenginys praneša apie `pointer: coarse` (telefonai/planšetės). Staliniams kompiuteriams jos nerodomos.
+- Geriausia testuoti įjungus „Device Toolbar“ (Chrome DevTools → Toggle device toolbar) arba realiame įrenginyje – drobė lieka laisva, valdikliai atsiranda apačioje.
+- Jei rodyklės užstringa (nutrūkęs „pointerup“ įvykis), užtenka trumpai paliesti drobę arba paspausti „Restart“ – kryptys automatiškai išvalomos.
 
 ## Dažniausios problemos
 

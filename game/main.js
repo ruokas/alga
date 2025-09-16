@@ -261,6 +261,62 @@ const STYLE_CONTENT = `
   color: rgba(148, 163, 184, 0.85);
 }
 
+.dg-touch-controls {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  max-width: min(320px, 100%);
+  pointer-events: none;
+}
+
+.dg-touch-controls__pad {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  pointer-events: auto;
+}
+
+.dg-touch-controls__spacer {
+  display: block;
+}
+
+.dg-touch-button {
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(14, 165, 233, 0.9));
+  color: #082f49;
+  font-weight: 700;
+  font-size: 1.35rem;
+  box-shadow: 0 16px 26px rgba(14, 165, 233, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  min-height: 64px;
+  touch-action: none;
+  user-select: none;
+  transition: transform 120ms ease, box-shadow 150ms ease;
+}
+
+.dg-touch-button:active {
+  transform: scale(0.96);
+  box-shadow: 0 10px 20px rgba(14, 165, 233, 0.28);
+}
+
+.dg-touch-button:focus-visible {
+  outline: 3px solid rgba(56, 189, 248, 0.85);
+  outline-offset: 3px;
+}
+
+@media (max-width: 540px) {
+  .dg-touch-button {
+    min-height: 56px;
+    font-size: 1.1rem;
+  }
+}
+
 @media (max-width: 720px) {
   .dg-app {
     padding: 1.5rem;
@@ -432,6 +488,12 @@ function boot() {
     },
     onClearScores: () => {
       state.clearHighScores();
+    },
+    onDirectionalInput: (direction, isActive) => {
+      engine?.setDirectionalInput?.(direction, isActive);
+    },
+    onDirectionalClear: () => {
+      engine?.clearDirectionalInput?.();
     },
   });
 

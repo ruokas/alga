@@ -15,6 +15,7 @@ export const STRINGS = {
     'Kai direktorius žiūri (raudonas žvilgsnis) – lik vietoje, kitaip įtarimas auga.',
     'Surink grantų aplankus (žalsvi) ir laimėk kuo daugiau eurų.',
     'Laikas ribotas – kai baigsis, gausi tiek lėšų, kiek sukaupei.',
+    'Telefonuose ir planšetėse po drobe rodoma virtuali valdymo kryžmė.',
   ],
   lookingWarning: 'Direktorius stebi – stovėk ramiai!',
   distractedInfo: 'Direktorius išsiblaškęs, judėk!',
@@ -28,6 +29,7 @@ export const STRINGS = {
   localOnly: 'Rezultatai saugomi tik šioje naršyklėje.',
   overlayButton: 'Dar kartą!',
   shortcuts: 'Klaviatūra: rodyklės / WASD judėjimui, tarpas – trumpam sustoti.',
+  touchHint: 'Lietimas: naudok ekranines rodykles apačioje.',
 };
 
 export function formatTime(totalSeconds) {
