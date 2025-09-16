@@ -10,14 +10,9 @@ const STYLE_CONTENT = `
   font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   color-scheme: dark;
   color: #f8fafc;
-  width: 100%;
-  min-height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  padding: clamp(1.5rem, 4vw, 3.5rem);
+  display: block;
+  padding: 1.5rem 0;
   box-sizing: border-box;
-  flex: 1;
 }
 
 .dg-root * {
@@ -26,33 +21,25 @@ const STYLE_CONTENT = `
 
 .dg-embed {
   background: radial-gradient(circle at top, #1e293b, #0f172a 60%);
-  min-height: 100vh;
-  width: 100%;
+  padding: 2rem 1rem 3rem;
   display: flex;
-  align-items: stretch;
   justify-content: center;
-  padding: clamp(1.5rem, 4vw, 3.5rem);
-  box-sizing: border-box;
+  align-items: flex-start;
 }
 
 .dg-embed .dg-root {
-  padding: 0;
-  min-height: 100%;
-  width: 100%;
+  width: min(960px, 100%);
 }
 
 .dg-app {
-  width: 100%;
+  width: min(960px, 100%);
   background: rgba(15, 23, 42, 0.92);
-  border-radius: 24px;
-  padding: clamp(1.75rem, 3.5vw, 3rem);
+  border-radius: 18px;
+  padding: 2rem;
   box-shadow: 0 25px 60px rgba(15, 23, 42, 0.55);
   border: 1px solid rgba(148, 163, 184, 0.35);
   position: relative;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  margin: 0 auto;
 }
 
 .dg-app h1 {
@@ -72,8 +59,6 @@ const STYLE_CONTENT = `
   gap: 1rem;
   margin: 1.8rem 0 1.2rem;
   align-items: flex-end;
-  width: 100%;
-  justify-content: space-between;
 }
 
 .dg-field {
@@ -132,9 +117,9 @@ const STYLE_CONTENT = `
 
 .dg-hud {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.25rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .dg-card {
@@ -198,74 +183,18 @@ const STYLE_CONTENT = `
 
 .dg-app canvas {
   width: 100%;
-  height: auto;
+  max-width: 720px;
   background: rgba(15, 23, 42, 0.8);
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.25);
   margin: 0 auto 2rem;
   display: block;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
 }
 
 .dg-info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem;
-  width: 100%;
-}
-
-@media (min-width: 1200px) {
-  .dg-app {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    grid-template-areas:
-      'header sidebar'
-      'controls sidebar'
-      'level sidebar'
-      'hud sidebar'
-      'status sidebar'
-      'canvas sidebar';
-    column-gap: 2.5rem;
-    row-gap: 1.75rem;
-    align-items: start;
-  }
-
-  .dg-app header {
-    grid-area: header;
-  }
-
-  .dg-controls {
-    grid-area: controls;
-  }
-
-  .dg-level {
-    grid-area: level;
-  }
-
-  .dg-hud {
-    grid-area: hud;
-  }
-
-  .dg-status {
-    grid-area: status;
-  }
-
-  .dg-app canvas {
-    grid-area: canvas;
-    justify-self: stretch;
-    align-self: start;
-  }
-
-  .dg-info-grid {
-    grid-area: sidebar;
-    grid-template-columns: 1fr;
-    align-self: stretch;
-    align-content: start;
-  }
-
-  .dg-info-grid .dg-panel {
-    height: 100%;
-  }
 }
 
 .dg-panel {
@@ -333,22 +262,13 @@ const STYLE_CONTENT = `
 }
 
 @media (max-width: 720px) {
-  .dg-root {
-    padding: 1rem;
-  }
-
-  .dg-embed {
-    padding: 1rem;
-  }
-
   .dg-app {
-    padding: 1.25rem;
+    padding: 1.5rem;
   }
 
   .dg-controls {
     flex-direction: column;
     align-items: stretch;
-    justify-content: flex-start;
   }
 
   .dg-app button,
@@ -357,7 +277,7 @@ const STYLE_CONTENT = `
   }
 
   .dg-app canvas {
-    margin: 0 0 1.5rem;
+    max-width: 100%;
   }
 }
 `;
@@ -407,8 +327,8 @@ const GAME_TEMPLATE = `
 
   <canvas
     id="game-canvas"
-    width="1280"
-    height="720"
+    width="720"
+    height="420"
     role="img"
     aria-label="Žaidimo laukas: direktoriumi prižiūrima salė"
   >
