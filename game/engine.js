@@ -43,6 +43,7 @@ export class DirectorGameEngine {
     this.tokens = [];
     this.particles = [];
     this.keys = new Set();
+    this.virtualDirections = new Set();
     this.running = false;
     this.player = this.createPlayer();
     this.director = this.createDirector();
@@ -74,6 +75,29 @@ export class DirectorGameEngine {
   }
 
   attachInput() {
+    const normalizeDirection = (direction) => {
+      if (typeof direction !== 'string') return null;
+      const value = direction.toLowerCase();
+      if (value === 'up' || value === 'down' || value === 'left' || value === 'right') {
+        return value;
+      }
+      return null;
+    };
+
+    this.setDirectionalInput = (direction, isActive) => {
+      const normalized = normalizeDirection(direction);
+      if (!normalized) return;
+      if (isActive) {
+        this.virtualDirections.add(normalized);
+      } else {
+        this.virtualDirections.delete(normalized);
+      }
+    };
+
+    this.clearDirectionalInput = () => {
+      this.virtualDirections.clear();
+    };
+
     window.addEventListener('keydown', (event) => {
       if (!this.running) return;
       const key = event.key.toLowerCase();
@@ -94,6 +118,7 @@ export class DirectorGameEngine {
 
     window.addEventListener('blur', () => {
       this.keys.clear();
+      this.clearDirectionalInput();
     });
 
     window.addEventListener('resize', () => {
@@ -117,6 +142,7 @@ export class DirectorGameEngine {
     this.spawnTimer = 0;
     this.scoreFlash = 0;
     this.lastTimestamp = 0;
+    this.clearDirectionalInput();
     this.running = true;
     if (this.ctx) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -127,6 +153,7 @@ export class DirectorGameEngine {
   stop() {
     this.running = false;
     state.running = false;
+    this.clearDirectionalInput();
   }
 
   loop(timestamp) {
@@ -175,10 +202,10 @@ export class DirectorGameEngine {
     let dx = 0;
     let dy = 0;
 
-    if (this.keys.has('arrowleft') || this.keys.has('a')) dx -= 1;
-    if (this.keys.has('arrowright') || this.keys.has('d')) dx += 1;
-    if (this.keys.has('arrowup') || this.keys.has('w')) dy -= 1;
-    if (this.keys.has('arrowdown') || this.keys.has('s')) dy += 1;
+    if (this.keys.has('arrowleft') || this.keys.has('a') || this.virtualDirections.has('left')) dx -= 1;
+    if (this.keys.has('arrowright') || this.keys.has('d') || this.virtualDirections.has('right')) dx += 1;
+    if (this.keys.has('arrowup') || this.keys.has('w') || this.virtualDirections.has('up')) dy -= 1;
+    if (this.keys.has('arrowdown') || this.keys.has('s') || this.virtualDirections.has('down')) dy += 1;
 
     const moving = dx !== 0 || dy !== 0;
     if (moving) {

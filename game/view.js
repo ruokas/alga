@@ -9,6 +9,8 @@ export function initView({
   onStart,
   onRestart,
   onClearScores,
+  onDirectionalInput,
+  onDirectionalClear,
 }) {
   const title = document.getElementById('game-title');
   const subtitle = document.getElementById('game-subtitle');
@@ -28,6 +30,7 @@ export function initView({
   const clearScoresButton = document.getElementById('clear-scores');
   const instructionsList = document.getElementById('instructions');
   const shortcuts = document.getElementById('shortcuts');
+  const canvas = document.getElementById('game-canvas');
 
   title.textContent = STRINGS.title;
   subtitle.textContent = STRINGS.subtitle;
@@ -42,6 +45,13 @@ export function initView({
   clearScoresButton.textContent = STRINGS.clearScores;
   document.getElementById('local-note').textContent = STRINGS.localOnly;
   shortcuts.textContent = STRINGS.shortcuts;
+
+  const touchControls = setupTouchControls({
+    canvas,
+    shortcutsEl: shortcuts,
+    onDirectionalInput,
+    onDirectionalClear,
+  });
 
   instructionsList.innerHTML = '';
   STRINGS.instructions.forEach((line) => {
@@ -92,6 +102,9 @@ export function initView({
     startButton.disabled = isRunning;
     restartButton.disabled = !isRunning;
     levelSelect.disabled = isRunning;
+    if (!isRunning) {
+      touchControls.clearDirections();
+    }
   }
 
   function updateHUD({ score, suspicion, suspicionMax, timeLeft, directorMode }) {
@@ -146,6 +159,142 @@ export function initView({
     updateLevelDescription(index) {
       levelSelect.value = String(index);
       levelDescription.textContent = levels[index]?.description || '';
+    },
+  };
+}
+
+function setupTouchControls({
+  canvas,
+  shortcutsEl,
+  onDirectionalInput,
+  onDirectionalClear,
+}) {
+  const noop = () => {};
+  if (!canvas || typeof window === 'undefined' || !window.matchMedia) {
+    return { clearDirections: noop };
+  }
+
+  const mediaQuery = window.matchMedia('(pointer: coarse)');
+  const wrapper = document.createElement('div');
+  wrapper.className = 'dg-touch-controls';
+  wrapper.setAttribute('role', 'group');
+  wrapper.setAttribute('aria-label', 'Lietimo valdymo pultelis');
+  wrapper.hidden = true;
+
+  const pad = document.createElement('div');
+  pad.className = 'dg-touch-controls__pad';
+  wrapper.appendChild(pad);
+
+  const pointerMap = new Map();
+
+  const buttons = {
+    up: { label: 'Judėti aukštyn', icon: '↑' },
+    left: { label: 'Judėti kairėn', icon: '←' },
+    down: { label: 'Judėti žemyn', icon: '↓' },
+    right: { label: 'Judėti dešinėn', icon: '→' },
+  };
+
+  const layout = [
+    null,
+    'up',
+    null,
+    'left',
+    null,
+    'right',
+    null,
+    'down',
+    null,
+  ];
+
+  layout.forEach((slot) => {
+    if (!slot) {
+      const spacer = document.createElement('span');
+      spacer.className = 'dg-touch-controls__spacer';
+      pad.appendChild(spacer);
+      return;
+    }
+
+    const config = buttons[slot];
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'dg-touch-button';
+    button.dataset.direction = slot;
+    button.setAttribute('aria-label', config.label);
+    button.textContent = config.icon;
+
+    const release = (event) => {
+      const direction = pointerMap.get(event.pointerId) || slot;
+      pointerMap.delete(event.pointerId);
+      if (typeof onDirectionalInput === 'function' && direction) {
+        onDirectionalInput(direction, false);
+      }
+      if (typeof button.releasePointerCapture === 'function') {
+        button.releasePointerCapture(event.pointerId);
+      }
+    };
+
+    button.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      pointerMap.set(event.pointerId, slot);
+      if (typeof onDirectionalInput === 'function') {
+        onDirectionalInput(slot, true);
+      }
+      if (typeof button.setPointerCapture === 'function') {
+        button.setPointerCapture(event.pointerId);
+      }
+    });
+
+    ['pointerup', 'pointercancel', 'pointerleave', 'pointerout'].forEach((eventName) => {
+      button.addEventListener(eventName, release);
+    });
+
+    pad.appendChild(button);
+  });
+
+  canvas.insertAdjacentElement('afterend', wrapper);
+
+  const updateShortcuts = (showTouch) => {
+    if (!shortcutsEl) return;
+    shortcutsEl.textContent = showTouch
+      ? `${STRINGS.shortcuts} ${STRINGS.touchHint}`
+      : STRINGS.shortcuts;
+  };
+
+  const updateVisibility = (query) => {
+    const showControls = Boolean(query?.matches);
+    wrapper.hidden = !showControls;
+    updateShortcuts(showControls);
+    if (!showControls) {
+      pointerMap.clear();
+      if (typeof onDirectionalClear === 'function') {
+        onDirectionalClear();
+      } else if (typeof onDirectionalInput === 'function') {
+        ['up', 'down', 'left', 'right'].forEach((direction) =>
+          onDirectionalInput(direction, false)
+        );
+      }
+    }
+  };
+
+  updateVisibility(mediaQuery);
+
+  const listener = (event) => updateVisibility(event);
+  if (typeof mediaQuery.addEventListener === 'function') {
+    mediaQuery.addEventListener('change', listener);
+  } else if (typeof mediaQuery.addListener === 'function') {
+    mediaQuery.addListener(listener);
+  }
+
+  return {
+    clearDirections() {
+      pointerMap.clear();
+      if (typeof onDirectionalClear === 'function') {
+        onDirectionalClear();
+      } else if (typeof onDirectionalInput === 'function') {
+        ['up', 'down', 'left', 'right'].forEach((direction) =>
+          onDirectionalInput(direction, false)
+        );
+      }
     },
   };
 }
