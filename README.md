@@ -22,20 +22,21 @@ Biudžeto planavimo įrankyje galima nurodyti minimalų gydytojų, slaugytojų i
 Mini žaidimas padeda komandos nariams greitai praktikuoti triažo scenarijus. Žemiau pateiktas HTML fragmentas įterpia modulį į bet kurį puslapį:
 
 ```html
-<!-- Mini žaidimo konteineris; prireikus atnaujinkite klasę ir stilius -->
-<section id="mini-game" class="game-wrapper">
-  <h2>Mini žaidimas: Triažo treniruotė</h2>
-  <div id="game-root" aria-live="polite"></div>
-  <!-- Įkeliamas žaidimo modulis iš /game katalogo -->
+<!-- Mini žaidimo konteineris; skriptas pats sugeneruos vidinę sąsają -->
+<section id="mini-game" class="dg-embed">
+  <div id="game-root" data-game-root aria-live="polite"></div>
   <script type="module" src="./game/main.js"></script>
 </section>
 ```
 
+> Pastaba: `main.js` pridės reikalingus stilius ir žymeles, todėl papildoma HTML struktūra nebūtina. Stilių blokas įterpiamas kaip `<style id="director-game-styles">`, tad prireikus galite jį perrašyti savo CSS.
+
 Naudojimo žingsniai:
 
-1. Įtraukite pateiktą fragmentą į savo HTML puslapį arba nukopijuokite jį į atskirą projektą.
+1. Įtraukite pateiktą fragmentą į savo HTML puslapį arba nukopijuokite jį į atskirą projektą. Vidinė žaidimo sąsaja sugeneruojama automatiškai, svarbu turėti `div` su atributu `data-game-root`.
 2. Įsitikinkite, kad `game` katalogas iš šios saugyklos yra pasiekiamas tame pačiame kelyje kaip ir puslapis, kuriame rodote modulį.
 3. Atidarykite puslapį naršyklėje, spauskite **Start** ir sekite ekrane rodomas instrukcijas.
+4. (Pasirinktinai) pridėkite CSS klasę `dg-embed` savo konteineriui, jei norite greitai pritaikyti numatytą tamsų foną.
 
 Galite tiesiogiai paleisti žaidimą atidarę `game.html` arba integruoti aukščiau pateiktą skriptą į kitą jūsų skyriui skirtą puslapį.
 
