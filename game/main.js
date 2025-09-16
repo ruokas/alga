@@ -158,6 +158,19 @@ const STYLE_CONTENT = `
   background: linear-gradient(90deg, rgba(248, 113, 113, 0.85), rgba(239, 68, 68, 1));
 }
 
+#suspicion-bar.danger {
+  animation: pulse 0.8s infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.6);
+  }
+}
+
 #suspicion-bar[data-mode='distracted'] {
   background: linear-gradient(90deg, rgba(251, 191, 36, 0.85), rgba(34, 197, 94, 0.95));
 }
