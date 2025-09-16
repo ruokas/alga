@@ -17,7 +17,12 @@ game/strings.js     – visos LT tekstinės eilutės
 ## Naudojimas
 
 1. Atidaryk `game.html` naršyklėje (Chrome/Edge/Firefox). Failas savarankiškas.
-2. Pasirink misijos lygį („Rezidentų triukas“, „Skyriaus vadovė“, „Valdybos posėdis“).
+2. Pasirink vieną iš penkių misijų lygių:
+   - **Rezidentų triukas** – ilgesnis startinis bėgimas, žema rizika.
+   - **Skyriaus vadovė** – direktorius akylesnis, bet dar įmanoma suktis.
+   - **Valdybos posėdis** – trumpesnis laikas, bet vertingesni grantai.
+   - **Netikėtas auditas** – įtarimas kyla žaibiškai, reikia daugiau manevrų.
+   - **Ministerijos inspektorius** – galutinis iššūkis su aukščiausiais įkainiais.
 3. Spausk **„Pradėti misiją“**. Direktorius pradeda žiūrėti/nusisukti.
 4. Naudok **rodyklių arba WASD klavišus** judėti, kai direktorius išsiblaškęs. Kai žiūri – sustok.
 5. Rink žalius grantų aplankus. Laikmatis parodo, kiek dar turi laiko.
