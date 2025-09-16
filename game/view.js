@@ -98,6 +98,11 @@ export function initView({
     fundsEl.textContent = formatCurrency(score);
     timerEl.textContent = formatTime(timeLeft);
     const percent = suspicionMax > 0 ? Math.round((suspicion / suspicionMax) * 100) : 0;
+    if (percent >= 85) {
+      suspicionBar.classList.add('danger');
+    } else {
+      suspicionBar.classList.remove('danger');
+    }
     suspicionBar.style.width = `${clamp(percent, 0, 100)}%`;
     suspicionBar.setAttribute('aria-valuenow', String(percent));
     suspicionBar.setAttribute('aria-valuemax', String(100));
