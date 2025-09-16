@@ -279,7 +279,10 @@ function handleMiniGameKeydown(event) {
 
 document.addEventListener('keydown', handleMiniGameKeydown, { passive: false });
 
-// Reikalaujamas įvykio registravimas (scenarijus įkeliamas su defer, todėl DOM jau paruoštas).
-document.getElementById('miniGameBtn').addEventListener('click', startMiniGame);
+// Jei ateityje bus pridėtas fizinis mygtukas – paliekame suderinamumą.
+const miniGameButton = document.getElementById('miniGameBtn');
+if (miniGameButton) {
+  miniGameButton.addEventListener('click', startMiniGame);
+}
 
 console.info('[MiniGame] Paruošta. ' + MINI_GAME_TEXT.shortcutHint);
