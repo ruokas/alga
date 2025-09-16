@@ -22,6 +22,7 @@ export class DirectorGameEngine {
     this.lastTimestamp = 0;
     this.spawnTimer = 0;
     this.tokens = [];
+    this.particles = [];
     this.keys = new Set();
     this.running = false;
     this.player = this.createPlayer();
@@ -88,6 +89,7 @@ export class DirectorGameEngine {
     this.player = this.createPlayer();
     this.director = this.createDirector();
     this.tokens = [];
+    this.particles = [];
     this.spawnTimer = 0;
     this.scoreFlash = 0;
     this.lastTimestamp = 0;
@@ -123,6 +125,7 @@ export class DirectorGameEngine {
     this.updateDirector(dt);
     this.updatePlayer(dt);
     this.updateTokens(dt);
+    this.updateParticles(dt);
 
     if (typeof this.onUpdate === 'function') {
       this.onUpdate({
@@ -208,6 +211,7 @@ export class DirectorGameEngine {
       if (dist < collisionDistance) {
         state.score += token.value;
         this.scoreFlash = 0.4;
+        this.spawnParticles(token.x, token.y);
         return false;
       }
       return true;
@@ -228,6 +232,46 @@ export class DirectorGameEngine {
     };
   }
 
+  spawnParticles(x, y) {
+    const count = 12;
+    for (let i = 0; i < count; i += 1) {
+      const angle = Math.random() * TAU;
+      const speed = 80 + Math.random() * 160;
+      this.particles.push({
+        x,
+        y,
+        dx: Math.cos(angle) * speed,
+        dy: Math.sin(angle) * speed,
+        life: 1,
+      });
+    }
+  }
+
+  updateParticles(dt) {
+    const damping = Math.pow(0.92, dt * 60);
+    const fadeSpeed = 2.5;
+    this.particles = this.particles.filter((particle) => {
+      particle.x += particle.dx * dt;
+      particle.y += particle.dy * dt;
+      particle.dx *= damping;
+      particle.dy *= damping;
+      particle.life -= dt * fadeSpeed;
+      return particle.life > 0;
+    });
+  }
+
+  drawParticles(ctx) {
+    if (!ctx) return;
+    const radius = 4;
+    this.particles.forEach((particle) => {
+      const alpha = clamp(particle.life, 0, 1);
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(190, 242, 100, ${alpha})`;
+      ctx.arc(particle.x, particle.y, radius, 0, TAU);
+      ctx.fill();
+    });
+  }
+
   draw() {
     if (!this.ctx) return;
     const ctx = this.ctx;
@@ -235,6 +279,7 @@ export class DirectorGameEngine {
 
     this.drawBackground(ctx);
     this.drawTokens(ctx);
+    this.drawParticles(ctx);
     this.drawDirector(ctx);
     this.drawPlayer(ctx);
   }
