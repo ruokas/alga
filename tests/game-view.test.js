@@ -69,5 +69,15 @@ describe('view helpers', () => {
     expect(document.getElementById('funds').textContent).toContain('€');
     expect(document.getElementById('timer').textContent).toBeDefined();
     expect(document.getElementById('suspicion-bar').style.width).toBe('50%');
+    expect(document.getElementById('status').dataset.mode).toBe('looking');
+
+    view.updateHUD({
+      score: 1400,
+      suspicion: 10,
+      suspicionMax: 100,
+      timeLeft: 35,
+      directorMode: 'distracted',
+    });
+    expect(document.getElementById('status').dataset.mode).toBe('distracted');
   });
 });

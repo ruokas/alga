@@ -179,6 +179,36 @@ const STYLE_CONTENT = `
   margin: 0.5rem 0 1.5rem;
   font-weight: 600;
   color: rgba(248, 250, 252, 0.9);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  transition: background 200ms ease, box-shadow 200ms ease, color 200ms ease;
+}
+
+.dg-status[data-mode='looking'] {
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.9), rgba(239, 68, 68, 0.95));
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.4), 0 16px 28px rgba(239, 68, 68, 0.45);
+  animation: status-pulse 1.2s ease-in-out infinite;
+}
+
+.dg-status[data-mode='distracted'] {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.4));
+  color: rgba(236, 253, 245, 0.95);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2), 0 12px 20px rgba(16, 185, 129, 0.25);
+  animation: none;
+}
+
+@keyframes status-pulse {
+  0% {
+    filter: brightness(1);
+    transform: translateY(0px);
+  }
+  100% {
+    filter: brightness(1.3);
+    transform: translateY(-2px);
+  }
 }
 
 .dg-app canvas {
@@ -379,7 +409,7 @@ const GAME_TEMPLATE = `
     </div>
   </section>
 
-  <p class="dg-status" id="status">Pasiruošk misijai.</p>
+  <p class="dg-status" id="status" role="status" aria-live="polite">Pasiruošk misijai.</p>
 
   <canvas
     id="game-canvas"

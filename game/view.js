@@ -121,6 +121,7 @@ export function initView({
     suspicionBar.setAttribute('aria-valuemax', String(100));
     suspicionBar.setAttribute('aria-valuemin', String(0));
     suspicionBar.dataset.mode = directorMode;
+    statusMsg.dataset.mode = directorMode;
     statusMsg.textContent = directorMode === 'looking' ? STRINGS.lookingWarning : STRINGS.distractedInfo;
   }
 
